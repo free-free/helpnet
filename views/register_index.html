@@ -1,0 +1,13 @@
+<!DOCTYPE HTML>
+<html>
+<body>
+</body>
+<body>
+	<form method="POST" action="/">
+		{% module xsrf_form_html() %}
+		<p>email:<input type="text" name="_email"/></p>
+		<p>password:<input type="password" name="_password"></p>
+		<p><button type="submit">Sign Up</button></p>
+	</form>
+</body>
+</html>
