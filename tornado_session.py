@@ -11,51 +11,95 @@ from collections import deque
 class AbstractSession(object):
 
     def __init__(self, session_id=None):
+        r"""
+            @Args:
+                 session_id: if not given,auto create new session is
+        """
         if session_id:
             self._session_id = session_id
         else:
             self._session_id = self._gen_session_id()
 
     def _gen_session_id(self):
+        r"""
+            generate session id 
+        """
         uuidhex = str(uuid.uuid4().hex)
         return base64.b64encode(uuidhex.encode("utf-8"))
 
     def set(self, key, value):
+        r"""
+            store value to session storage
+        """
         raise NotImplementedError
 
     def get(self, key):
+        r"""
+            get value from session storage
+        """   
         raise NotImplementedError
 
     def multi_set(self, pairs):
+        r"""
+            store multiple value to session 
+            @Args:
+                pairs: a dict of session key-value 
+        """
         raise NotImplementedError
 
     def multi_get(self, key_l):
+        r"""
+            get multiple value from session 
+            @Args:
+                key_l: a list of session key
+        """
         raise NotImplementedError
 
     def all(self):
+        """
+            get all data from current session storage
+        """
         raise NotImplementedError
 
     def refresh(self, session_id=None):
+        """
+            create new session 
+        """
         raise NotImplementedError
 
     @gen.coroutine
     def start(self, session_id=None):
+        r"""
+            start session  operation
+        """
         raise NotImplementedError
 
     @gen.coroutine
     def save(self, expire=0):
+        r"""
+            save data of the  session instance 
+        """
         raise NotImplementedError
 
     @gen.coroutine
     def destroy(self, session_id):
+        r"""
+            destroy the session 
+        """
         raise NotImplementedError
 
     @gen.coroutine
     def delete(self, key, session_id):
+        r"""
+            delete specific data of the related session
+        """ 
         raise NotImplementedError
 
     @property
     def session_id(self):
+        r"""
+            return the session instance'id
+        """
         return self._session_id
 
 
