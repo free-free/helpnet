@@ -2,16 +2,9 @@ import tornadis
 from tornado import gen,ioloop
 from tornado_hbredis import TornadoHBRedis
 from tornado_session import SessionCacheFactory
-from storage  import StorageFactory
-from config import Config
-#client=tornadis.Client(host="localhost",port=6379,autoconnect=True)
 #client=TornadoHBRedis('localhost',6379,True)
 @gen.coroutine
 def test_redis():
-	sff=StorageFactory(Config.storage.all)
-	st=sff.get_storage()
-	#print(st.token())
-	print(st.get_url("fhsuifesf.jpg"))
 	#result=yield client.sadd("skey",[32,43,54,2])
 	#print(result)
 	#pipeline=client.pipeline()
