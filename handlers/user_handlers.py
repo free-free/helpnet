@@ -32,10 +32,8 @@ class UserLoginMixin(object):
         yield self.session.start()
         self.session.multi_set(user_data)
         yield self.session.save()
-        self.set_secure_cookie(self.application.settings[
-                               'session_cookie'], self.session.session_id)
-        self.set_secure_cookie("_lgtsp", str(
-            datetime.timestamp(datetime.now())))
+        self.set_secure_cookie(self.application.settings['session_cookie'], self.session.session_id)
+        self.set_secure_cookie("_lgtsp", str(datetime.timestamp(datetime.now())))
         self.set_secure_cookie("_auth", "1")
         self.redirect(success_redirect_url)
 
