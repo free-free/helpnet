@@ -1,4 +1,5 @@
 #!/usr/bin/env python3.5
+
 from tornado import web
 from tornado import ioloop
 import tornado.options
@@ -48,10 +49,8 @@ class Application(web.Application):
             (r'/search/?', SearchHandler),
             (r'/settings/?', UserSettingsHandler),
             (r'/([a-zA-Z0-9]+)/?', UserHomeHandler),
-            (r'/resource/UserSettingsResource/update/?',
-             ResourceUserSettingsResourceUpdateHandler),
-            (r'/resource/UserSettingsResource/get/?',
-             ResourceUserSettingsResourceGetHandler),
+            (r'/resource/UserSettingsResource/update/?',ResourceUserSettingsResourceUpdateHandler),
+            (r'/resource/UserSettingsResource/get/?',ResourceUserSettingsResourceGetHandler),
         ]
         super(Application, self).__init__(handlers=handlers, **settings)
         conn = MotorClient('localhost', 27017)
