@@ -65,8 +65,7 @@ class UserSignUpMixin(object):
             del user_data['_id']
             self.session.multi_set(user_data)
             yield self.session.save()
-            self.set_secure_cookie(self.application.settings[
-                                   'session_cookie'], self.session.session_id)
+            self.set_secure_cookie(self.application.settings['session_cookie'], self.session.session_id)
             self.set_secure_cookie("_auth", "1")
             self.set_secure_cookie("_lgtsp", now_timestamp)
             self.redirect(success_url)
@@ -79,11 +78,11 @@ class IndexHandler(AuthNeedBaseHandler, UserSignUpMixin):
         if not self.get_secure_cookie("_auth") and self.request.method != "POST":
             source_url = self.get_argument("next", None)
             if source_url:
-                self.set_secure_cookie('source_url', source_url)
+                self.set_secure_cookie("source_url",source_url)
                 self.render("register_index.html")
-            else:
-                yield super(IndexHandler, self).prepare()
-
+                return 
+        yield super(IndexHandler, self).prepare()
+    
     @web.authenticated
     def get(self):
         self.render("index.html")
