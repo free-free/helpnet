@@ -71,30 +71,13 @@ class UserSignUpMixin(object):
             self.redirect(success_url)
 
 
-class IndexHandler(AuthNeedBaseHandler, UserSignUpMixin):
+class IndexHandler(BaseHandler,UserSignUpMixin):
 
-    @gen.coroutine
-    def prepare(self):
-        if not self.get_secure_cookie("_auth") and self.request.method != "POST":
-            source_url = self.get_argument("next", None)
-            if source_url:
-                self.set_secure_cookie("source_url",source_url)
-                self.render("register_index.html")
-                return 
-        yield super(IndexHandler, self).prepare()
     
-    @web.authenticated
+    @gen.coroutine
     def get(self):
         self.render("index.html")
 
     @gen.coroutine
     def post(self):
-        if self.get_query_argument("check_email", None):
-            yield self.check_email_existence(self.get_argument("_email", None))
-        else:
-            source_url = self.get_secure_cookie("source_url", None)
-            if source_url:
-                self.clear_cookie("source_url")
-                yield self.signup("/", source_url)
-            else:
-                yield self.signup("/", "/")
+        pass
