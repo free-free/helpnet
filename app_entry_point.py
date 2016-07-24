@@ -34,7 +34,7 @@ class Application(web.Application):
         settings = {
             'template_path': os.path.join(os.path.dirname(__file__), 'views'),
             'static_path': os.path.join(os.path.dirname(__file__), 'static'),
-            'login_url': '/',
+            'login_url': '/login',
             'cookie_secret': 'MmUyZmU2NmIyNDM4NDc4YWE4OTNiODUzMjhhZTgzM2U3NDU5OGUwNzNlODY0ODI5ODM1MGNmNjcxZmU5M2FjNg==',
             'xsrf_cookies': True,
             'default_handler_class': DefaultHandler,
@@ -43,7 +43,6 @@ class Application(web.Application):
 
         handlers = [
             (r'/', IndexHandler),
-            (r'/signup/?', web.RedirectHandler, dict(url='/')),
             (r'/logout/?', UserLogoutHandler),
             (r'/login/?', UserLoginHandler),
             (r'/search/?', SearchHandler),
