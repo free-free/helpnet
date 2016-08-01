@@ -6,9 +6,10 @@ import tornado.options
 from tornado.options import options, define
 
 from handlers.user_handlers import *
-from handlers.common_handlers import *
 from handlers.resource_api_handlers import *
 from handlers.search_handlers import *
+from handlers.page_view_handlers import *
+from handlers.callback_handlers import *
 from tornado_session import SessionCacheFactory
 import os
 from motor import MotorClient
@@ -44,6 +45,7 @@ class Application(web.Application):
         handlers = [
             (r'/', IndexHandler),
             (r'/logout/?', UserLogoutHandler),
+            (r'/callback', CallbackHandler),
             (r'/login/?', UserLoginHandler),
             (r'/search/?', SearchHandler),
             (r'/settings/?', UserSettingsHandler),
