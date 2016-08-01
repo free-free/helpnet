@@ -7,12 +7,6 @@ import base64
 from datetime import datetime
 import re
 
-CEHCK_RESPONSE_FORMAT = {
-    "type": "",
-    "data": {"exist": 1, "check_field": ""}
-}
-
-
 class UserSignUpMixin(object):
 
     @gen.coroutine
@@ -69,15 +63,3 @@ class UserSignUpMixin(object):
             self.set_secure_cookie("_auth", "1")
             self.set_secure_cookie("_lgtsp", now_timestamp)
             self.redirect(success_url)
-
-
-class IndexHandler(BaseHandler,UserSignUpMixin):
-
-    
-    @gen.coroutine
-    def get(self):
-        self.render("index.html")
-
-    @gen.coroutine
-    def post(self):
-        pass
