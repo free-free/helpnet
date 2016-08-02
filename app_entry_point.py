@@ -37,7 +37,7 @@ class Application(web.Application):
             'static_path': os.path.join(os.path.dirname(__file__), 'static'),
             'login_url': '/login',
             'cookie_secret': 'MmUyZmU2NmIyNDM4NDc4YWE4OTNiODUzMjhhZTgzM2U3NDU5OGUwNzNlODY0ODI5ODM1MGNmNjcxZmU5M2FjNg==',
-            'xsrf_cookies': True,
+            #'xsrf_cookies': True,
             'default_handler_class': DefaultHandler,
             'session_cookie': '_helpnet_sess'
         }
