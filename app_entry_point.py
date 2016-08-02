@@ -10,6 +10,7 @@ from handlers.resource_api_handlers import *
 from handlers.search_handlers import *
 from handlers.page_view_handlers import *
 from handlers.callback_handlers import *
+from handlers.check_signature_handlers import CheckSignatureHandler
 from tornado_session import SessionCacheFactory
 import os
 from motor import MotorClient
