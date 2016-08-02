@@ -1,7 +1,7 @@
 #-*- coding:utf-8 -*-
 
 from tornado import gen,web
-
+import xml.etree.ElementTree as etree
 #
 # weixin callback url handler
 class CallbackHandler(web.RequestHandler):
@@ -12,4 +12,6 @@ class CallbackHandler(web.RequestHandler):
     
     @gen.coroutine
     def post(self):
-        print(self.request.body)
+        root = etree.fromstring(self.request.body)
+        print(root.findtext("ToUserName"))
+      
