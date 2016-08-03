@@ -74,8 +74,15 @@ class CallbackHandler(BaseHandler):
            Event = TEMPLATESENDJOBFINISH
                Status:
         """
-        self.write(self.get_request_msg("MsgType"))
-   
+        event_type = self.get_request_msg("Event").lower()
+        getattr(self,'handle_'+event_type+'_event',self.handle_other)()
+  
+    def handle_location_event(self):
+        user_openid = self.get_request_msg("FromUserName")
+        latitude = self.get_request_msg("Latitude")
+        longitude = self.get_request_msg("Longitude")
+        create_time = self.get_request_msg("CreateTime")
+        self.write(latitude) 
     def handle_other(self):
         self.write("")
 
