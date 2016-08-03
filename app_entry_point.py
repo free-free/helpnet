@@ -6,14 +6,14 @@ import tornado.options
 from tornado.options import options, define
 
 from handlers.user_handlers import *
-from handlers.resource_api_handlers import *
 from handlers.search_handlers import *
-from handlers.page_view_handlers import *
 from handlers.callback_handlers import *
+from handlers.help_list_handlers import *
+from handlers.post_help_handlers import *
 from handlers.check_signature_handlers import CheckSignatureHandler
 from tornado_session import SessionCacheFactory
 import os
-from motor import MotorClient
+from motor.motor_tornado import MotorClient
 import concurrent.futures
 
 
@@ -44,15 +44,14 @@ class Application(web.Application):
         }
 
         handlers = [
-            (r'/', IndexHandler),
+            (r'/', HelpListHandler),
+            (r'/posthelp/?',PostHelpHandler),
             (r'/logout/?', UserLogoutHandler),
             (r'/callback', CallbackHandler),
             (r'/login/?', UserLoginHandler),
             (r'/search/?', SearchHandler),
             (r'/settings/?', UserSettingsHandler),
             (r'/([a-zA-Z0-9]+)/?', UserHomeHandler),
-            (r'/resource/UserSettingsResource/update/?',ResourceUserSettingsResourceUpdateHandler),
-            (r'/resource/UserSettingsResource/get/?',ResourceUserSettingsResourceGetHandler),
         ]
         super(Application, self).__init__(handlers=handlers, **settings)
         conn = MotorClient('localhost', 27017)
