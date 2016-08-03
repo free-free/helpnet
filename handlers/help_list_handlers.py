@@ -6,10 +6,13 @@ from .base_handler import BaseHandler
 
 
 class HelpListHandler(BaseHandler):
-   
+     
+    r'''
+     @url: /
+    ''' 
     @gen.coroutine
     def get(self):
-        self.render("index.html")
+        self.render("help_list.html")
 
 
 
