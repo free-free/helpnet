@@ -2,9 +2,10 @@
 
 from tornado import gen,web
 import xml.etree.ElementTree as etree
+from .base_handler import BaseHandler
 #
 # weixin callback url handler
-class CallbackHandler(web.RequestHandler):
+class CallbackHandler(BaseHandler):
     r'''
        Request Message common keys:
            ToUserName: receive user name
@@ -34,9 +35,6 @@ class CallbackHandler(web.RequestHandler):
         """            
         self.write(self.get_request_msg("MsgType"))
 
-    def handle_event(self):
-        self.write(self.get_request_msg("MsgType"))
-   
     def handle_location(self):
         r"""
         request location msg keys:
@@ -48,18 +46,42 @@ class CallbackHandler(web.RequestHandler):
         self.write(self.get_request_msg("MsgType"))
 
     def handle_link(self):
+        r"""
+        request  link msg keys:
+            Title
+            Description
+            Url
+        """
         self.write(self.get_request_msg("MsgType"))
 
+    def handle_event(self):
+        r"""
+        request evet msg keys:
+           Event = subscribe/unsubscribe:
+               EventKey:qrscene_*
+               Ticket: 
+           Event = SCAN:
+               EventKey:int32(scene_id)
+               Ticket:
+           Event = LOCATION:
+               Latitude:
+               Longitude:
+               Precision:
+           Event = CLICK:
+               EventKey:
+           Event = VIEW:
+               EventKey: url
+           Event = TEMPLATESENDJOBFINISH
+               Status:
+        """
+        self.write(self.get_request_msg("MsgType"))
+   
     def handle_other(self):
         self.write("")
 
     @gen.coroutine
-    def get(self):
-        self.write("callback handler")
-    
-    @gen.coroutine
     def post(self):
         msg_type = self.get_request_msg("MsgType")
-        getattr(self,'handle_'+msg_type,'handle_other')()
+        getattr(self,'handle_'+msg_type,self.handle_other)()
         
       
