@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=0">
+
+    <title>帮助详情</title>
+    <!-- <link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/weui/0.4.2/style/weui.css"> -->
+    <link rel="stylesheet" type="text/css" href="stylesheets/weui.css">
+    <link rel="stylesheet" type="text/css" href="stylesheets/style.css">
+</head>
+<body>
+
+    <header class="center text_center" style="font-size: 1rem;">
+        <p>接单详情</p>      
+    </header>
+    <div id="content" class="a_help" style="background-color: #fff;">
+        <div>
+            <img src="images/cat.jpg" class="head_img">
+            <span>一只叫狗狗的鸡</span>
+        </div>
+        <article class="weui_article">   
+            <h3>需求</h3>
+            <p>
+                请从360超市带一桶老坛酸菜泡面，外加一根玉米火腿肠，我住在东六A304，万分感谢！
+            </p>
+            <h3>备注</h3>
+
+            <p>时间在九点之前</p>
+        </article>
+        <p class="text_center" style="font-size: 0.9rem; margin-top: 1rem; color: #f00;">赏金：￥ 1</p>
+
+        <a href="#" class="weui_btn" style="width:4rem;margin-top:1rem;background-color:#f00; font-size:0.8rem">接单</a>
+    </div>
+    <div class="footer">
+        <div class="weui_tab">
+            <div class="weui_tabbar">
+                <a href="/helplist" class="weui_tabbar_item ">
+                    <div class="weui_tabbar_icon">
+                        <img src="images/near.png" alt="">
+                    </div>
+                    <p class="weui_tabbar_label">周边</p>
+                </a>
+                <a href="/askhelp" class="weui_tabbar_item">
+                    <div class="weui_tabbar_icon">
+                        <img src="images/help.png" alt="">
+                    </div>
+                    <p class="weui_tabbar_label">求助</p>
+                </a>
+                <a href="/mine" class="weui_tabbar_item">
+                    <div class="weui_tabbar_icon">
+                        <img src="images/me.png" alt="">
+                    </div>
+                    <p class="weui_tabbar_label">我的</p>
+                </a>
+            </div>
+        </div>
+    </div>
+    <script type="text/javascript" src="javascripts/jquery-3.1.0.min.js"></script>
+    <script type="text/javascript">
+        // $(function () {
+        //     $("#content").height($(window).height() - $(".weui_tab").height());
+        // })
+        var list = document.getElementsByClassName("request_list");
+        console.log(list);
+    </script>
+
+
+</body>
+</html>

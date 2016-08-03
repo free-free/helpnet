@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=0">
+
+	<title>互助服务</title>
+	<!-- <link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/weui/0.4.2/style/weui.css"> -->
+	<link rel="stylesheet" type="text/css" href="stylesheets/weui.css">
+	<link rel="stylesheet" type="text/css" href="stylesheets/style.css">
+</head>
+<body>
+
+	<header class="center text_center">
+		<a href="" >求单</a>
+		
+	</header>
+
+
+	<div id="content">
+		<ul class="request_list center">
+			
+		</ul>
+	</div>
+	
+	<div class="footer">
+		<div class="weui_tab">
+			<div class="weui_tabbar">
+				<a href="/helplist" class="weui_tabbar_item ">
+					<div class="weui_tabbar_icon">
+						<img src="images/near.png" alt="">
+					</div>
+					<p class="weui_tabbar_label">周边</p>
+				</a>
+				<a href="/askhelp" class="weui_tabbar_item">
+					<div class="weui_tabbar_icon">
+						<img src="images/help.png" alt="">
+					</div>
+					<p class="weui_tabbar_label">求助</p>
+				</a>
+
+				<a href="/mine" class="weui_tabbar_item">
+					<div class="weui_tabbar_icon">
+						<img src="images/me.png" alt="">
+					</div>
+					<p class="weui_tabbar_label">我的</p>
+				</a>
+			</div>
+		</div>
+	</div>
+
+	<script type="text/javascript" src="javascripts/jquery-3.1.0.min.js"></script>
+
+	<script type="text/javascript">
+		// $(function () {
+		// 	$("#content").height($(window).height() - $(".weui_tab").height());
+		// })
+		var list = document.getElementsByClassName("request_list");
+
+		for(var i=0;i<10;i++){
+			var node=document.createElement("li");
+			node.className="a_help";
+			var nodeContent=' <a href="/detail"><div class="help_asker"><img class="head_img" src="images/cat.jpg"> <span class="asker_name">一只叫狗狗的鸡</span><span class="help_price" >￥2</span></div><div>	<p>助！  从360带一桶老坛酸菜泡面，外加一根玉米火腿肠，我住在东六A304，万分感谢！</p></div><div><span id="post_time" class="footer_p">还剩32分钟</span></div></a>';
+			node.innerHTML=nodeContent;
+			list[0].appendChild(node);
+		}
+
+
+		
+	</script>
+
+
+</body>
+</html>

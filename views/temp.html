@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Document</title>
+</head>
+<body>
+
+	<script type="text/javascript" src="javascripts/jquery-3.1.0.min.js"></script>
+	<script type="text/javascript">
+
+		$.ajax({
+			url:"/data",
+			type:"GET",
+			dataType:"json",
+			success:function(data){
+				alert(data.name);
+			},
+			error:function(){
+				console.log(err);
+			}
+		});
+
+
+	</script>	
+</body>
+</html>
