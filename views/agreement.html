@@ -1,14 +1,8 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-	<meta charset="UTF-8">
-	<meta name="viewport" content="width=deviec-width,initial-scale=1,user-scalable=0">
+{% extends "base.html" %}
+{% block header %}
+{% end %}
+{% block main_content %}
 
-	<title>用户协议</title>
-	<link rel="stylesheet" type="text/css" href="stylesheets/style.css">
-	<link rel="stylesheet" type="text/css" href="stylesheets/weui.css">
-</head>
-<body>
 	<article class="weui_article">
 		<h2>
 			用户协议
@@ -22,7 +16,9 @@
 			</p>
 		</section>
 	</article>
-	<script type="text/javascript" src=javascripts/jquery-3.1.0.min.js></script>
+{% end %}
+{% block js_zone %}
+	<script type="text/javascript" src="{{static_url('javascripts/jquery-3.1.0.min.js')}}"></script>
 	<script type="text/javascript">
 		var list=document.getElementsByClassName("weui_article");
 
@@ -34,6 +30,4 @@
 
 
 	</script>
-
-</body>
-</html>
+{% end %}

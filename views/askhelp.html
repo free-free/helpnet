@@ -1,18 +1,10 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=0">
-
-    <title>互助服务</title>
-    <!-- <link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/weui/0.4.2/style/weui.css"> -->
-    <link rel="stylesheet" type="text/css" href="stylesheets/weui.css">
-    <link rel="stylesheet" type="text/css" href="stylesheets/style.css">
-</head>
-<body>
+{% extends "base.html" %}
+{% block header %}
     <header class="center text_center" style="font-size: 1rem;">
         <p>发布请求</p>
     </header>
+{% end %}
+{% block main_content %}
     <div class="weui_cells weui_cells_form">
         <div class="weui_cell">
             <div class="weui_cell_bd weui_cell_primary">
@@ -40,30 +32,7 @@
     </div>
     <div class="content" style="font-size: 0.8rem; background-color: #fff;">
     </div>
-    <div class="footer">
-        <div class="weui_tab">
-            <div class="weui_tabbar">
-                <a href="/helplist" class="weui_tabbar_item ">
-                    <div class="weui_tabbar_icon">
-                        <img src="images/near.png" alt="">
-                    </div>
-                    <p class="weui_tabbar_label">周边</p>
-                </a>
-                <a href="/askhelp" class="weui_tabbar_item">
-                    <div class="weui_tabbar_icon">
-                        <img src="images/help.png" alt="">
-                    </div>
-                    <p class="weui_tabbar_label">求助</p>
-                </a>
-                <a href="/mine" class="weui_tabbar_item">
-                    <div class="weui_tabbar_icon">
-                        <img src="images/me.png" alt="">
-                    </div>
-                    <p class="weui_tabbar_label">我的</p>
-                </a>
-            </div>
-        </div>
-    </div>
-    <script type="text/javascript" src="javascripts/jquery-3.1.0.min.js"></script>
-</body>
-</html>
+{% end %}
+{% block js_zone %}
+    <script type="text/javascript" src="{{static_url('javascripts/jquery-3.1.0.min.js')}}"></script>
+{% end %}

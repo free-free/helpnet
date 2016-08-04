@@ -1,20 +1,9 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-	<meta charset="UTF-8">
-	<title>Document</title>
-	<meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=0 "> 
-
-
-	<!-- <link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/weui/0.4.2/style/weui.css"> -->
-	<link rel="stylesheet" type="text/css" href="stylesheets/weui.css">
-	<link rel="stylesheet" type="text/css" href="stylesheets/style.css">
-
-</head>
-<body>
-
+{% extends "base.html" %}
+{% block header %}
+{% end %}
+{% block main_content %}
 	<div>
-		<img src="images/cat.jpg" style="width:50%;text-align: center;margin:2rem auto;display: block;  ">
+		<img src="{{ static_url('images/cat.jpg')}}" style="width:50%;text-align: center;margin:2rem auto;display: block;  ">
 	</div>
 	
 	<article class="weui_article">
@@ -42,5 +31,4 @@
 		</section>
 	</article>
 	
-</body>
-</html>
+{% end %}
