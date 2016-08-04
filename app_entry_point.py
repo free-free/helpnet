@@ -11,6 +11,11 @@ from handlers.callback_handlers import *
 from handlers.help_list_handlers import *
 from handlers.post_help_handlers import *
 from handlers.check_signature_handlers import CheckSignatureHandler
+from handlers.about_handler import AboutHandler
+from handlers.document_handler import DocumentHandler
+from handlers.agreement_handler import AgreementHandler
+
+
 from tornado_session import SessionCacheFactory
 import os
 from motor.motor_tornado import MotorClient
@@ -45,12 +50,15 @@ class Application(web.Application):
 
         handlers = [
             (r'/', HelpListHandler),
-            (r'/posthelp/?',PostHelpHandler),
+            (r'/askhelp/?',PostHelpHandler),
             (r'/logout/?', UserLogoutHandler),
             (r'/callback', CallbackHandler),
             (r'/login/?', UserLoginHandler),
             (r'/search/?', SearchHandler),
             (r'/settings/?', UserSettingsHandler),
+            (r'/about/?',AboutHandler), 
+            (r'/document/?',DocumentHandler),
+            (r'/agreement/?',AgreementHandler),
             (r'/([a-zA-Z0-9]+)/?', UserHomeHandler),
         ]
         super(Application, self).__init__(handlers=handlers, **settings)
@@ -58,6 +66,7 @@ class Application(web.Application):
         self.db = conn['fsp']
         self.executor = concurrent.futures.ThreadPoolExecutor(2)
         self.session_cache = SessionCacheFactory('redis', 'localhost', 6379)
+        self.cache = TornadoHBRedis("localhost",6379)
 
 define("port", default=8000, help="server port", type=int)
 if __name__ == '__main__':
