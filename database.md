@@ -11,7 +11,9 @@ country,
 provience,
 language,
 headimgurl,
-subscribe_time.
+subscribe_time,
+location([latitude,longitude]),
+location_precision,
 }
 
 求单:
