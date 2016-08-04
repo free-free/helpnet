@@ -3,6 +3,7 @@
 from tornado import gen,web
 import xml.etree.ElementTree as etree
 from .base_handler import BaseHandler
+from . import send_async_request
 #
 # weixin callback url handler
 class CallbackHandler(BaseHandler):
@@ -54,6 +55,7 @@ class CallbackHandler(BaseHandler):
         """
         self.write(self.get_request_msg("MsgType"))
 
+    @gen.coroutine
     def handle_event(self):
         r"""
         request evet msg keys:
@@ -75,20 +77,64 @@ class CallbackHandler(BaseHandler):
                Status:
         """
         event_type = self.get_request_msg("Event").lower()
-        getattr(self,'handle_'+event_type+'_event',self.handle_other)()
+        yield getattr(self,'handle_'+event_type+'_event',self.handle_other)()
   
+    @gen.coroutine 
     def handle_location_event(self):
         user_openid = self.get_request_msg("FromUserName")
         latitude = self.get_request_msg("Latitude")
         longitude = self.get_request_msg("Longitude")
+        precision = self.get_request_msg("Precision")
         create_time = self.get_request_msg("CreateTime")
-        self.write(latitude) 
+        self.write(latitude)
+
+    @gen.coroutine
+    def handle_subscribe_event(self):
+        user_openid = self.get_request_msg("FromUserName")
+        user_exist = yield self.application.db.user.find_one({"open_id":user_openid},{"open_id":1})
+        if not user_exist:
+            try:
+                access_token = self.application.cache.get('weixin_api_token')
+            except Exception:
+                self.write("")
+            if access_token:
+                url = "https://api.weixin.qq.com/cgi-bin/user/info?access_token={0}&openid={1}&lang={2}"
+                url.format(access_token,user_openid,"zh_CN")
+                response = yield send_async_request(url)
+                if response:
+                    user_info = response.body.decode("utf-8")
+                    try:
+                        self.application.db.user.insert(user_info)
+                    except Exception:
+                        pass
+                self.write("")  
+        else: 
+            self.write("") 
+
+    @gen.coroutine
+    def handle_unsubscribe_event(self):
+        user_openid = self.get_request_msg("FromUserName")
+        try:
+            yield self.application.db.user.remove({"open_id":user_openid})
+        except Exception:
+            pass
+        self.write("")
+    
+    @gen.coroutine
+    def handle_click_event(self):
+        self.write("")
+  
+    @gen.coroutine
+    def handle_view_event(self):
+        self.write("") 
+
+    @gen.coroutine
     def handle_other(self):
         self.write("")
 
     @gen.coroutine
     def post(self):
         msg_type = self.get_request_msg("MsgType")
-        getattr(self,'handle_'+msg_type,self.handle_other)()
+        yield getattr(self,'handle_'+msg_type,self.handle_other)()
         
       
