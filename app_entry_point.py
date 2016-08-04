@@ -17,6 +17,7 @@ from handlers.agreement_handler import AgreementHandler
 
 
 from tornado_session import SessionCacheFactory
+from tornado_hbredis import TornadoHBRedis
 import os
 from motor.motor_tornado import MotorClient
 import concurrent.futures
