@@ -12,7 +12,7 @@ class HelpListHandler(BaseHandler):
     ''' 
     @gen.coroutine
     def get(self):
-        self.render("help_list.html")
+        self.render("helplist.html")
 
 
 

@@ -8,7 +8,7 @@ class PostHelpHandler(BaseHandler):
    
     @gen.coroutine
     def get(self):
-        self.render("post_help.html")
+        self.render("askhelp.html")
   
     @gen.coroutine
     def post(self):
