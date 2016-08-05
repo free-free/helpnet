@@ -51,15 +51,16 @@ class Application(web.Application):
 
         handlers = [
             (r'/', HelpListHandler),
-            (r'/askhelp/?',PostHelpHandler),
+            (r'/askhelp/?', PostHelpHandler),
             (r'/logout/?', LogoutHandler),
             (r'/callback', CallbackHandler),
             (r'/login/?', LoginHandler),
             (r'/search/?', SearchHandler),
             (r'/settings/?', UserSettingsHandler),
-            (r'/about/?',AboutHandler), 
-            (r'/document/?',DocumentHandler),
-            (r'/agreement/?',AgreementHandler),
+            (r'/about/?', AboutHandler), 
+            (r'/document/?', DocumentHandler),
+            (r'/agreement/?', AgreementHandler),
+            (r'/help/([0-9a-zA-Z]+)/?', HelpHandler),
             (r'/([a-zA-Z0-9]+)/?', UserHomeHandler),
         ]
         super(Application, self).__init__(handlers=handlers, **settings)
