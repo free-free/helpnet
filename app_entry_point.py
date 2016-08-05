@@ -3,6 +3,7 @@
 from tornado import web
 from tornado import ioloop
 import tornado.options
+import tornado.autoreload
 from tornado.options import options, define
 
 from handlers.user_handlers import *
@@ -75,4 +76,6 @@ if __name__ == '__main__':
     tornado.options.parse_command_line()
     app = Application()
     app.listen(options.port)
-    ioloop.IOLoop.current().start()
+    loop = ioloop.IOLoop.current()
+    tornado.autoreload.start(loop)
+    loop.start()
