@@ -15,6 +15,7 @@ from handlers.check_signature_handlers import CheckSignatureHandler
 from handlers.about_handler import AboutHandler
 from handlers.document_handler import DocumentHandler
 from handlers.agreement_handler import AgreementHandler
+from handlers.api_handlers import *
 
 
 from tornado_session import SessionCacheFactory
@@ -61,6 +62,7 @@ class Application(web.Application):
             (r'/about/?', AboutHandler), 
             (r'/document/?', DocumentHandler),
             (r'/agreement/?', AgreementHandler),
+            (r'/resources/WeixinQRCodeResource/get/?',WeixinQRCodeAPIHandler),
             (r'/help/([0-9a-zA-Z]+)/?', HelpHandler),
             (r'/([a-zA-Z0-9]+)/?', UserHomeHandler),
         ]
