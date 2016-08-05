@@ -15,6 +15,15 @@ class HelpListHandler(BaseHandler):
         self.render("helplist.html")
 
 
+class PostHelpHandler(BaseHandler):
+   
+    @gen.coroutine
+    def get(self):
+        self.render("askhelp.html")
+  
+    @gen.coroutine
+    def post(self):
+        self.write("")
 
 
 
