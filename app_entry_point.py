@@ -9,8 +9,7 @@ from handlers.user_handlers import *
 from handlers.auth_handlers import *
 from handlers.search_handlers import *
 from handlers.callback_handlers import *
-from handlers.help_list_handlers import *
-from handlers.post_help_handlers import *
+from handlers.help_handlers import *
 from handlers.check_signature_handlers import CheckSignatureHandler
 from handlers.about_handler import AboutHandler
 from handlers.document_handler import DocumentHandler
