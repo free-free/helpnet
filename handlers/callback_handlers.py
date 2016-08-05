@@ -82,11 +82,18 @@ class CallbackHandler(BaseHandler):
     @gen.coroutine 
     def handle_location_event(self):
         user_openid = self.get_request_msg("FromUserName")
-        latitude = self.get_request_msg("Latitude")
-        longitude = self.get_request_msg("Longitude")
-        precision = self.get_request_msg("Precision")
-        create_time = self.get_request_msg("CreateTime")
-        self.write(latitude)
+        user_exist = yield self.application.db.user.find_one({"open_id":user_openid},{"open_id":1})
+        print(user_exist)
+        if user_exist:
+            location = [self.get_request_msg("Latitude"), self.get_request_msg("Longitude")]
+            location_precision = self.get_request_msg("Precision")
+            try:
+                yield self.application.db.user.update({"open_id":user_openid},\
+                    {"$set":{"location":location,"location_precision":location_precision}},\
+                    upsert=True)
+            except Exception:
+                pass   
+        self.write("success")
 
     @gen.coroutine
     def handle_subscribe_event(self):
