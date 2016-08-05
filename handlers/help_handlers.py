@@ -17,6 +17,9 @@ class HelpListHandler(BaseHandler):
 
 class PostHelpHandler(BaseHandler):
    
+    r"""
+        @url:/askhelp
+    """
     @gen.coroutine
     def get(self):
         self.render("askhelp.html")
@@ -26,5 +29,17 @@ class PostHelpHandler(BaseHandler):
         self.write("")
 
 
+class HelpHandler(BaseHandler):
 
-
+    r"""
+        @url:/help/([0-9a-zA-Z]+)/?
+    """
+    @gen.coroutine
+    def get(self, help_id):
+        help_info = yield self.application.db['help'].find_one({"help_id":help_id})
+        if help_info:
+            del help_info['_id']
+            self.write(help_info)
+        else:
+            self.set_status(404)
+            self.render("errors/404.html")
