@@ -27,14 +27,14 @@ class CallbackHandler(BaseHandler):
         request text msg keys:
            Content
         """
-        self.write(self.get_request_msg("MsgType"))
+        self.write("")
 
     def handle_image(self):
         r"""
          request image msg keys:
                 PicUrl
         """            
-        self.write(self.get_request_msg("MsgType"))
+        self.write("")
 
     def handle_location(self):
         r"""
@@ -44,7 +44,7 @@ class CallbackHandler(BaseHandler):
             Scale
             Label
         """    
-        self.write(self.get_request_msg("MsgType"))
+        self.write("")
 
     def handle_link(self):
         r"""
@@ -53,7 +53,7 @@ class CallbackHandler(BaseHandler):
             Description
             Url
         """
-        self.write(self.get_request_msg("MsgType"))
+        self.write("")
 
     @gen.coroutine
     def handle_event(self):
