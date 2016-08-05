@@ -12,27 +12,28 @@ provience,
 language,
 headimgurl,
 subscribe_time,
-location([latitude,longitude]),
+location([longitude,latitude]),
 location_precision,
 }
 
 求单:
 order:
 {
-object_id,
-order_postser,//nickname
+postuser_nickname,
 postuser_openid,
 postuser_headimgurl,
-order_content,
-order_pay,
-order_getuser,
+remark,
+reward,
+getuser_openid,
 getuser_openid,
 getuser_headimgurl,
-start_time,
+post_time,
 finish_time,
 time_limit,
-order_state,
-is_pay
+state,
+is_pay,
+location([longitude,latitude]),
+location_precision,
 }
 
 
