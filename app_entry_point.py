@@ -6,6 +6,7 @@ import tornado.options
 from tornado.options import options, define
 
 from handlers.user_handlers import *
+from handlers.auth_handlers import *
 from handlers.search_handlers import *
 from handlers.callback_handlers import *
 from handlers.help_list_handlers import *
@@ -26,13 +27,13 @@ import concurrent.futures
 class DefaultHandler(web.RequestHandler):
 
     def write_error(self, status_code, **kw):
+        self.set_status(status_code)
         self.render("errors/" + str(status_code) + ".html")
 
     def get(self):
+        self.set_status(404)
         self.render("errors/404.html")
 
-    def post(self):
-        self.render("errors/404.html")
 
 
 class Application(web.Application):
@@ -52,9 +53,9 @@ class Application(web.Application):
         handlers = [
             (r'/', HelpListHandler),
             (r'/askhelp/?',PostHelpHandler),
-            (r'/logout/?', UserLogoutHandler),
+            (r'/logout/?', LogoutHandler),
             (r'/callback', CallbackHandler),
-            (r'/login/?', UserLoginHandler),
+            (r'/login/?', LoginHandler),
             (r'/search/?', SearchHandler),
             (r'/settings/?', UserSettingsHandler),
             (r'/about/?',AboutHandler), 
@@ -63,7 +64,7 @@ class Application(web.Application):
             (r'/([a-zA-Z0-9]+)/?', UserHomeHandler),
         ]
         super(Application, self).__init__(handlers=handlers, **settings)
-        conn = MotorClient('localhost', 27017)
+        conn = MotorClient('localhost', 4000)
         self.db = conn['fsp']
         self.executor = concurrent.futures.ThreadPoolExecutor(2)
         self.session_cache = SessionCacheFactory('redis', 'localhost', 6379)
