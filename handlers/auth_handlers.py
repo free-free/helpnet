@@ -9,6 +9,7 @@ import bcrypt
 from datetime import datetime
 import uuid
 import base64
+import json
 
 
 class LoginMixin(object):
@@ -49,6 +50,7 @@ class LoginHandler(AuthNeedBaseHandler, LoginMixin):
         if self.current_user:
             self.redirect('/')
 
+    @gen.coroutine
     def get(self):
         self.render('login.html')
 

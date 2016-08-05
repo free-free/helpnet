@@ -101,7 +101,7 @@ class CallbackHandler(BaseHandler):
         user_exist = yield self.application.db.user.find_one({"open_id":user_openid},{"open_id":1})
         if not user_exist:
             try:
-                access_token = self.application.cache.get('weixin_api_token')
+                access_token = self.application.cache.sget('weixin_api_token')
             except Exception:
                 self.write("")
             if access_token:
