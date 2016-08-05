@@ -24,7 +24,7 @@ class AbstractSession(object):
         r"""
             generate session id 
         """
-        uuidhex = str(uuid.uuid4().hex)
+        uuidhex = str(uuid.uuid1().hex)
         return base64.b64encode(uuidhex.encode("utf-8"))
 
     def set(self, key, value):
