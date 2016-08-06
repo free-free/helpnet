@@ -1,7 +1,7 @@
 # coding:utf-8
 
 from tornado import gen,web
-from .base_handler import BaseHandler
+from .base_handler import BaseHandler,AuthNeedBaseHandler
 import json
 from . import send_async_request
 
@@ -9,7 +9,7 @@ from . import send_async_request
 class WeixinQRCodeAPIHandler(BaseHandler):
 
     r"""
-        @url:/resources/WeixinQRCodeResource/get/?
+        @url:/resource/WXQRCodeResource/get/?
     """ 
     @gen.coroutine
     def get(self):
@@ -38,4 +38,20 @@ class WeixinQRCodeAPIHandler(BaseHandler):
             except Exception as e:
                 print(e)
                 self.write({"errmsg":"can't get qrcode","errcode":40001})
-            
+    
+
+
+class HelpContentAPIHandler(AuthNeedBaseHandler):
+   
+    r"""
+        @url:/resource/HelpContentResource/get/?
+    """
+    @web.authenticated
+    @gen.coroutine
+    def get(self):
+        source_url = self.get_argument("source_url")
+        data = self.get_argument("data")
+        print(source_url)
+        print(data)
+        
+                
