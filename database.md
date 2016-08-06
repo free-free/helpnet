@@ -19,9 +19,11 @@ location_precision,
 求单:
 order:
 {
+helpid
 postuser_nickname,
 postuser_openid,
 postuser_headimgurl,
+content,
 remark,
 reward,
 getuser_openid,
