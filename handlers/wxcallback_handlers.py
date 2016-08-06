@@ -4,9 +4,11 @@ from tornado import gen,web
 import xml.etree.ElementTree as etree
 from .base_handler import BaseHandler
 from . import send_async_request
+import time
+import json
 #
 # weixin callback url handler
-class CallbackHandler(BaseHandler):
+class WXCallbackHandler(BaseHandler):
     r'''
        Request Message common keys:
            ToUserName: receive user name
@@ -82,14 +84,14 @@ class CallbackHandler(BaseHandler):
     @gen.coroutine 
     def handle_location_event(self):
         user_openid = self.get_request_msg("FromUserName")
-        user_exist = yield self.application.db.user.find_one({"openid":user_openid},{"openid":1})
+        user_exist = yield self.application.db.user.find_one({"userid":user_openid},{"userid":1})
         print(user_exist)
         if user_exist:
             location = [self.get_request_msg("Latitude"), self.get_request_msg("Longitude")]
             location_precision = self.get_request_msg("Precision")
             try:
-                yield self.application.db.user.update({"openid":user_openid},\
-                    {"$set":{"location":location,"location_precision":location_precision}},\
+                yield self.application.db.user.update({"userid":user_openid},\
+                    {"$set":{"location":location,"locprec":location_precision}},\
                     upsert=True)
             except Exception:
                 pass   
@@ -98,7 +100,7 @@ class CallbackHandler(BaseHandler):
     @gen.coroutine
     def handle_subscribe_event(self):
         user_openid = self.get_request_msg("FromUserName")
-        user_exist = yield self.application.db.user.find_one({"openid":user_openid},{"openid":1})
+        user_exist = yield self.application.db['user'].find_one({"userid":user_openid},{"userid":1})
         if not user_exist:
             try:
                 access_token = self.application.cache.sget('weixin_api_token')
@@ -107,13 +109,19 @@ class CallbackHandler(BaseHandler):
             if access_token:
                 url = "https://api.weixin.qq.com/cgi-bin/user/info?access_token={0}&openid={1}&lang={2}"
                 url.format(access_token,user_openid,"zh_CN")
-                response = yield send_async_request(url)
-                if response:
-                    user_info = response.body.decode("utf-8")
-                    try:
-                        self.application.db.user.insert(user_info)
-                    except Exception:
-                        pass
+                try:
+                    response = yield send_async_request(url)
+                    userdata = response.body.decode("utf-8")
+                    userdata['createtime'] = userdata.pop('subscribe_time',time.time())
+                    userdata['userid'] = userdata.pop('openid')
+                    userdata['username'] = userdata.pop('nickname')
+                    del userdata['remark']
+                    del userdata['groupid']
+                    del userdata['tagid_list']
+                    del userdata['language']
+                    yield self.application.db['user'].insert(userdata)
+                except Exception:
+                    pass
                 self.write("")  
         else: 
             self.write("") 
@@ -122,7 +130,7 @@ class CallbackHandler(BaseHandler):
     def handle_unsubscribe_event(self):
         user_openid = self.get_request_msg("FromUserName")
         try:
-            yield self.application.db.user.remove({"openid":user_openid})
+            yield self.application.db.user.remove({"userid":user_openid})
         except Exception:
             pass
         self.write("")
