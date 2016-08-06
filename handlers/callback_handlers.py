@@ -82,13 +82,13 @@ class CallbackHandler(BaseHandler):
     @gen.coroutine 
     def handle_location_event(self):
         user_openid = self.get_request_msg("FromUserName")
-        user_exist = yield self.application.db.user.find_one({"open_id":user_openid},{"open_id":1})
+        user_exist = yield self.application.db.user.find_one({"openid":user_openid},{"openid":1})
         print(user_exist)
         if user_exist:
             location = [self.get_request_msg("Latitude"), self.get_request_msg("Longitude")]
             location_precision = self.get_request_msg("Precision")
             try:
-                yield self.application.db.user.update({"open_id":user_openid},\
+                yield self.application.db.user.update({"openid":user_openid},\
                     {"$set":{"location":location,"location_precision":location_precision}},\
                     upsert=True)
             except Exception:
@@ -98,7 +98,7 @@ class CallbackHandler(BaseHandler):
     @gen.coroutine
     def handle_subscribe_event(self):
         user_openid = self.get_request_msg("FromUserName")
-        user_exist = yield self.application.db.user.find_one({"open_id":user_openid},{"open_id":1})
+        user_exist = yield self.application.db.user.find_one({"openid":user_openid},{"openid":1})
         if not user_exist:
             try:
                 access_token = self.application.cache.sget('weixin_api_token')
@@ -122,7 +122,7 @@ class CallbackHandler(BaseHandler):
     def handle_unsubscribe_event(self):
         user_openid = self.get_request_msg("FromUserName")
         try:
-            yield self.application.db.user.remove({"open_id":user_openid})
+            yield self.application.db.user.remove({"openid":user_openid})
         except Exception:
             pass
         self.write("")
