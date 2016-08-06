@@ -9,7 +9,7 @@ from tornado.options import options, define
 from handlers.user_handlers import *
 from handlers.auth_handlers import *
 from handlers.search_handlers import *
-from handlers.callback_handlers import *
+from handlers.wxcallback_handlers import *
 from handlers.help_handlers import *
 from handlers.check_signature_handlers import CheckSignatureHandler
 from handlers.about_handler import AboutHandler
@@ -55,15 +55,16 @@ class Application(web.Application):
             (r'/', HelpListHandler),
             (r'/askhelp/?', PostHelpHandler),
             (r'/logout/?', LogoutHandler),
-            (r'/callback', CallbackHandler),
+            (r'/wxcallback', WXCallbackHandler),
             (r'/login/?', LoginHandler),
             (r'/search/?', SearchHandler),
             (r'/settings/?', UserSettingsHandler),
             (r'/about/?', AboutHandler), 
             (r'/document/?', DocumentHandler),
             (r'/agreement/?', AgreementHandler),
-            (r'/resources/WeixinQRCodeResource/get/?',WeixinQRCodeAPIHandler),
-            (r'/help/([0-9a-zA-Z]+)/?', HelpHandler),
+            (r'/resource/WXQRCodeResource/get/?',WeixinQRCodeAPIHandler),
+            (r'/resource/HelpContentResource/get/?',HelpContentAPIHandler),
+            (r'/help/([0-9a-zA-Z]+)/?', HelpItemDetailHandler),
             (r'/([a-zA-Z0-9]+)/?', UserHomeHandler),
         ]
         super(Application, self).__init__(handlers=handlers, **settings)
