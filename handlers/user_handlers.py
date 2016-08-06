@@ -16,14 +16,13 @@ class UserHomeHandler(AuthNeedBaseHandler):
     @web.authenticated
     @gen.coroutine
     def get(self, username):
-        user_data = yield self.application.db['users'].find_one({"username": username})
+        user_data = yield self.application.db['user'].find_one({"username": username})
         if not user_data:
             self.set_status(404)
             self.write("Page Not Found!")
             self.finish()
         else:
             del user_data['_id']
-            del user_data['hashed_password']
             self.write(user_data)
 
 
