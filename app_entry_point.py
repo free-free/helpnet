@@ -40,7 +40,8 @@ class DefaultHandler(web.RequestHandler):
 class Application(web.Application):
 
     def __init__(self):
-
+        with open(os.path.join(os.path.dirname(__file__),'service_account.json')) as f:
+            app_config = json.load(f)
         settings = {
             'template_path': os.path.join(os.path.dirname(__file__), 'views'),
             'static_path': os.path.join(os.path.dirname(__file__), 'assets'),
@@ -50,7 +51,9 @@ class Application(web.Application):
             'default_handler_class': DefaultHandler,
             'session_cookie': '_helpnet_sess',
             'site_cookie_name':'_helpnet_com',
-            'site_cookie_val':'djeijioidjeoiodjoiejdoejodeojodejo'
+            'site_cookie_val':'djeijioidjeoiodjoiejdoejodeojodejo',
+            'public_appid':app_config['public_appid'],
+            'public_secret':app_config['public_secret'],
         }
 
         handlers = [
@@ -59,7 +62,7 @@ class Application(web.Application):
             (r'/logout/?', LogoutHandler),
             (r'/wxcallback', WXCallbackHandler),
             (r'/login/?', LoginHandler),
-            (r'/wxauthlogin/?',WXAuthCallbackLoginHandler),
+            (r'/wxsublogin/?',WXSubscribeLoginHandler),
             (r'/search/?', SearchHandler),
             (r'/about/?', AboutHandler), 
             (r'/document/?', DocumentHandler),
