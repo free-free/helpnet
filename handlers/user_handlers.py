@@ -11,25 +11,41 @@ import base64
 
 class UserHomeHandler(AuthNeedBaseHandler):
     r"""
-        @url:/([a-zA-Z0-9]+)/?
+        @url:/user/?
+    """
+    #@web.authenticated
+    @gen.coroutine
+    def get(self):
+        self.render("userhome.html")
+
+
+class UserPostHelpListHandler(AuthNeedBaseHandler):
+   
+    r"""
+        @url:/user/posthelp/?
     """
     @web.authenticated
     @gen.coroutine
-    def get(self, username):
-        user_data = yield self.application.db['user'].find_one({"username": username})
-        if not user_data:
-            self.set_status(404)
-            self.write("Page Not Found!")
-            self.finish()
-        else:
-            del user_data['_id']
-            self.write(user_data)
+    def get(self):
+        self.render("userposthelp.html")
 
 
-class UserSettingsHandler(AuthNeedBaseHandler):
+class UserGetHelpListHandler(AuthNeedBaseHandler):
+  
     r"""
-        @url:/settings
+        @url:/user/gethelp/?
     """
     @web.authenticated
+    @gen.coroutine
     def get(self):
-        self.write("settings page")
+        self.render("usergethelp.html")
+
+
+class UserProfileHandler(AuthNeedBaseHandler):
+    r"""
+        @url:/user/profile/?
+    """
+    @web.authenticated
+    @gen.coroutine
+    def get(self):
+        self.render("userprofile.html")
