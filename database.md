@@ -3,15 +3,17 @@
 | field name   |  description            |
 |:------------:|:-----------------------:|
 |subscribe     |                         |
-|userid        |to weixin openid         |
-|username      |// to weixin nickname    |
+|userid        |   weixin openid         |
+|username      |  weixin nickname        |
+|usercontact   |                         |
 |sex           |                         |
 |city          |                         |
 |country       |                         |
-|provience     |                         |
+|province      |                         |
 |language      |                         |
 |headimgurl    |                         |
-|subscribe_time|                         |
+|createtime    |                         |
+|address       |                         |
 |location:lng,lat|                       |
 |locprec       |                         |
 
@@ -22,6 +24,8 @@
 |post_username      |   user nickname    |
 |post_userid        |   unique user id   |
 |post_userheadimgurl|   user header img url|
+|post_usercontact   |                    |
+|address            |                    |
 |helpcontent        |   help main content|
 |helpremark         |                    |
 |helpreward         |  help tip          |
