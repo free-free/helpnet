@@ -85,9 +85,8 @@ class WXCallbackHandler(BaseHandler):
     def handle_location_event(self):
         user_openid = self.get_request_msg("FromUserName")
         user_exist = yield self.application.db.user.find_one({"userid":user_openid},{"userid":1})
-        print(user_exist)
         if user_exist:
-            location = [self.get_request_msg("Latitude"), self.get_request_msg("Longitude")]
+            location = [self.get_request_msg("Longitude"), self.get_request_msg("Latitude")]
             location_precision = self.get_request_msg("Precision")
             try:
                 yield self.application.db.user.update({"userid":user_openid},\
