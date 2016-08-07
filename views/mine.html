@@ -24,9 +24,9 @@
 
         <div class="weui_cells weui_cells_access" style="font-size:0.8rem;" >
 
-            <a class="weui_cell" href="/myhelplist">
+            <a class="weui_cell" href="/user/gethelp/">
                 <div class="weui_cell_hd">
-                    <img src="{{'static_url('images/message.png')}}" alt="icon" style="width:20px;margin-right:5px;display:block">
+                    <img src="{{static_url('images/message.png')}}" alt="icon" style="width:20px;margin-right:5px;display:block">
                 </div>
                 <div class="weui_cell_bd weui_cell_primary">
                     <p>我的帮助</p>
@@ -35,7 +35,7 @@
                     说明文字
                 </div>
             </a>
-            <a class="weui_cell" href="/myasklist" >
+            <a class="weui_cell" href="/user/posthelp/" >
                 <div class="weui_cell_hd">
                     <img src="{{static_url('images/ask.png')}}" alt="icon" style="width:20px;margin-right:5px;display:block">
                 </div>
@@ -54,7 +54,7 @@
 
             <a class="weui_cell" href="/document">
                 <div class="weui_cell_hd">
-                    <img src="images/bookmark.png" alt="icon" style="width:20px;margin-right:5px;display:block">
+                    <img src="{{static_url('images/bookmark.png')}}" alt="icon" style="width:20px;margin-right:5px;display:block">
                 </div>
                 <div class="weui_cell_bd weui_cell_primary">
                     <p>帮助文档</p>
@@ -65,7 +65,7 @@
             </a>
             <a class="weui_cell" href="/agreement">
                 <div div="weui_cell_hd">
-                    <img src="images/agreement.png" alt="icon" style="width:20px;margin-right: 5px;display: block;">
+                    <img src="{{ static_url('images/agreement.png')}}" alt="icon" style="width:20px;margin-right: 5px;display: block;">
                 </div>
                 <div class="weui_cell_bd weui_cell_primary">
                     <p>用户协议</p>
@@ -77,7 +77,7 @@
             </a>
             <a class="weui_cell" href="/about">
                 <div class="weui_cell_hd">
-                    <img src="images/about.png" alt="icon" style="width:20px;margin-right:5px;display:block">
+                    <img src="{{ static_url('images/about.png')}}" alt="icon" style="width:20px;margin-right:5px;display:block">
                 </div>
                 <div class="weui_cell_bd weui_cell_primary">
                     <p>关于我们</p>
@@ -93,7 +93,7 @@
        
 {% block js_zone %}
 
-    <script type="text/javascript" src="javascripts/jquery-3.1.0.min.js"></script>
+    <script type="text/javascript" src="{{ static_url('javascripts/jquery-3.1.0.min.js') }}"></script>
 
     <script type="text/javascript">
 
