@@ -24,10 +24,7 @@ def send_async_request(url, method="GET", headers={},body=""):
                      allow_nonstandard_methods=True
                      )
     httpclient = AsyncHTTPClient()
-    try:
-        response = yield httpclient.fetch(req)
-    except Exception:
-        return None
+    response = yield httpclient.fetch(req)
     return response 
 
 
