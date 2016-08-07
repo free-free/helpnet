@@ -51,23 +51,23 @@ def certify_state(key, state):
         @Returns:
             boolean
     '''
-    state_str = base64.urlsafe_b64decode(state).decode('utf-8')
-    state_list = state_str.split(':')
-    if len(state_list) != 2:
-        return False
-    ts_str = state_list[0]
     try:
+        state_str = base64.urlsafe_b64decode(state).decode('utf-8')
+        state_list = state_str.split(':')
+        if len(state_list) != 2:
+            return False
+        ts_str = state_list[0]
         if float(ts_str) < time.time():
             # state expired
             return False
-    except Exception:
-        return False
-    known_sha1_tsstr = state_list[1]
-    sha1 = hmac.new(key.encode("utf-8"),ts_str.encode('utf-8'),'sha1')
-    calc_sha1_tsstr = sha1.hexdigest()
-    if calc_sha1_tsstr != known_sha1_tsstr:
-        # state certification failed
-        return False
+        known_sha1_tsstr = state_list[1]
+        sha1 = hmac.new(key.encode("utf-8"),ts_str.encode('utf-8'),'sha1')
+        calc_sha1_tsstr = sha1.hexdigest()
+        if calc_sha1_tsstr != known_sha1_tsstr:
+            # state certification failed
+            return False
+    except Exception: 
+        return False 
     # state certification success
     return True 
      
