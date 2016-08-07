@@ -48,7 +48,9 @@ class Application(web.Application):
             'cookie_secret': 'MmUyZmU2NmIyNDM4NDc4YWE4OTNiODUzMjhhZTgzM2U3NDU5OGUwNzNlODY0ODI5ODM1MGNmNjcxZmU5M2FjNg==',
             #'xsrf_cookies': True,
             'default_handler_class': DefaultHandler,
-            'session_cookie': '_helpnet_sess'
+            'session_cookie': '_helpnet_sess',
+            'site_cookie_name':'_helpnet_com',
+            'site_cookie_val':'djeijioidjeoiodjoiejdoejodeojodejo'
         }
 
         handlers = [
@@ -57,15 +59,18 @@ class Application(web.Application):
             (r'/logout/?', LogoutHandler),
             (r'/wxcallback', WXCallbackHandler),
             (r'/login/?', LoginHandler),
+            (r'/wxauthlogin/?',WXAuthCallbackLoginHandler),
             (r'/search/?', SearchHandler),
-            (r'/settings/?', UserSettingsHandler),
             (r'/about/?', AboutHandler), 
             (r'/document/?', DocumentHandler),
             (r'/agreement/?', AgreementHandler),
+            (r'/user/?',UserHomeHandler),
+            (r'/user/posthelp/?',UserPostHelpListHandler),
+            (r'/user/gethelp/?',UserGetHelpListHandler),
+            (r'/user/profile/?',UserProfileHandler),
             (r'/resource/WXQRCodeResource/get/?',WeixinQRCodeAPIHandler),
             (r'/resource/HelpContentResource/get/?',HelpContentAPIHandler),
-            (r'/help/([0-9a-zA-Z]+)/?', HelpItemDetailHandler),
-            (r'/([a-zA-Z0-9]+)/?', UserHomeHandler),
+            (r'/help/([0-9a-zA-Z]+)/?', HelpDetailHandler),
         ]
         super(Application, self).__init__(handlers=handlers, **settings)
         conn = MotorClient('localhost', 4000)
