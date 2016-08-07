@@ -13,35 +13,8 @@ import base64
 import json
 import time
 
-class LoginMixin(object):
 
-    @gen.coroutine
-    def signin(self, success_redirect_url):
-        email = self.get_argument("_email", '')
-        password = self.get_argument("_password", '')
-        user_data = yield self.application.db['users'].find_one({"email": email})
-        if not user_data:
-            self.render("login.html")  # user not exists
-            return
-        hashed_password = yield self.application.executor.submit(bcrypt.hashpw, password.encode("utf-8"), user_data['hashed_password'])
-        if hashed_password != user_data['hashed_password']:
-            self.render("login.html")  # user password wrong
-            return
-        user_data['last_login_at'] = user_data['login_at']
-        user_data['login_at'] = str(datetime.timestamp(datetime.now()))
-        yield self.application.db['users'].update({"email": email}, {'$set': {'last_login_at': user_data['last_login_at'], 'login_at': user_data['login_at']}})
-        del user_data['_id']
-        del user_data['hashed_password']
-        yield self.session.start()
-        self.session.multi_set(user_data)
-        yield self.session.save()
-        self.set_secure_cookie(self.application.settings['session_cookie'], self.session.session_id)
-        self.set_secure_cookie("_lgtsp", str(datetime.timestamp(datetime.now())))
-        self.set_secure_cookie("_auth", "1")
-        self.redirect(success_redirect_url)
-
-
-class LoginHandler(AuthNeedBaseHandler, LoginMixin):
+class LoginHandler(AuthNeedBaseHandler):
     r"""
         @url:/login
     """
@@ -55,9 +28,6 @@ class LoginHandler(AuthNeedBaseHandler, LoginMixin):
     def get(self):
         self.render('login.html')
 
-    @gen.coroutine
-    def post(self):
-        yield self.signin('/')
 
 
 class WXSubscribeLoginHandler(AuthNeedBaseHandler):
@@ -81,7 +51,9 @@ class WXSubscribeLoginHandler(AuthNeedBaseHandler):
             return 
         ackurl = "https://api.weixin.qq.com/sns/oauth2/access_token? \
             appid={0}&secret={1}&code={2}&grant_type=authorization_code"
-        ackurl.format(PUBLIC_APPID,PUBLIC_SECRET,code)
+        ackurl.format(self.application.settings['public_appid'],\
+                      self.application.settings['public_secret'],\
+                      code)
         try: 
             response = yield send_async_request(ackurl)
             response = response.body.decode("utf-8")
@@ -92,9 +64,12 @@ class WXSubscribeLoginHandler(AuthNeedBaseHandler):
                 self.redirect('/login')
                 return   
             del userdata['_id']
+            userdata['longitude'] = userdata['location'][0]
+            userdata['latitude'] = userdata['location'][1]
             self.session.multi_set(userdata)
             yield self.session.save(7200)
             self.set_cookie(self.application.settings['session_cookie'],self.session.session_id)
+            self.set_cookie("auth",'1')
             self.redirect('/')
         except Exception:
             self.redirect('/login')
@@ -144,7 +119,7 @@ class WXAuthCallbackLoginHandler(AuthNeedBaseHandler):
             userdata['latitude'] = userdata['location'][1]
             self.session.multi_set(userdata)
             yield self.session.save(7200)
-            self.set_cookie("auth",1)
+            self.set_cookie("auth",'1')
             self.set_cookie(self.application.settings['session_cookie'],self.session.session_id)
             self.redirect('/')
         except Exception:
