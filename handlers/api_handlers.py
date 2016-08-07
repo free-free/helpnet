@@ -50,8 +50,31 @@ class HelpContentAPIHandler(AuthNeedBaseHandler):
     @gen.coroutine
     def get(self):
         source_url = self.get_argument("source_url")
-        data = self.get_argument("data")
-        print(source_url)
-        print(data)
+        data = self.get_argument("data",{})
+        longitude = data.get("longitude")
+        latitude = data.get("latitude")
+        offset = data.get("offset")
+        if not longitude or not latitude:
+            longitude = self.current_user['longitude']
+            latitude = self.current_user['latitude']
+        try:
+            cursor =  self.application.db['help'].find({  \
+                "location":{"$geoWithin":{"$center":[[longitude,latitude],0.1]}} })
+            cursor.sort("posttime",1).limit(10).skip(offset)
+            helpdata=[]
+            while (yield cursor.fetch_next):
+                dataline = curosr.next_object()
+                del dataline['_id']
+                helpdata.append(dataline)
+            response = {}
+            response['data']={}
+            response['data']['offset'] = offset+10
+            response['data']['helpdata'] = helpdata
+            self.write(response)
+        except Exception:
+            self.write({"errcode":40002,"errmsg":"no data"})
+           
+            
+      
         
                 
