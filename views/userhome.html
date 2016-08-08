@@ -2,11 +2,11 @@
 
 {% block header %}
 {% end %}
-{% block main_content %}
+{% block container %}
 
-    <div id="content" >
-        <div style="background-color: #fff;padding: .75rem .9rem; font-size: 1rem;">
-            <img src="{{static_url('images/cat.jpg')}}" class="head_img_big center" style="    display: block; " >
+<div id="content" >
+    <div style="background-color: #fff;padding: .75rem .9rem; font-size: 1rem;">
+        <img src="{{static_url('images/cat.jpg')}}" class="head_img_big center" style="    display: block; " >
             <!-- <a href="/prfedit" style="display: block; width: 2.25rem;float: right;margin-top: -3rem;">
                 <img src="images/edit.png" style="position: relative; width: 1.8rem;">
             </a> -->
@@ -88,16 +88,11 @@
             </a>
 
         </div>
+    </div>
 
-{% end %}
-       
-{% block js_zone %}
+    {% end %}
 
-    <script type="text/javascript" src="{{ static_url('javascripts/jquery-3.1.0.min.js') }}"></script>
+    {% block js_custom %}
 
-    <script type="text/javascript">
-
-
-    </script>
-{% end %}
+    {% end %}
 

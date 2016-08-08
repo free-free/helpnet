@@ -1,103 +1,86 @@
 {% extends "base.html" %}
 
-{% block header %}
-{% end %}
-{% block main_content %}
 
-    <div id="content" >
-        <div style="background-color: #fff;padding: .75rem .9rem; font-size: 1rem;">
-            <img src="{{static_url('images/cat.jpg')}}" class="head_img_big center" style="    display: block; " >
-            <!-- <a href="/prfedit" style="display: block; width: 2.25rem;float: right;margin-top: -3rem;">
-                <img src="images/edit.png" style="position: relative; width: 1.8rem;">
-            </a> -->
-            <p class="text_center" >Leeon</p>
-            <p class="text_center" >开门！我是来查水表的！</p>
-            <div style="width:8rem; line-height: 2rem; font-size: 1rem; " class="center">
-                <img src="{{static_url('images/zan.png')}}" alt="" style="width:1.5rem; vertical-align: middle;"  >
-                <span style="vertical-align:middle;" > 12</span>
-                <img src="{{static_url('images/zan.png')}}" alt="" style="width:1.5rem; vertical-align: middle;" >
-                <span  style="vertical-align:middle;"> 55</span>
+{% block container %}
 
-            </div>
+<div id="content" >
+   <div style="background-color: #fff;padding: .75rem .9rem; font-size: 1rem;">
+    <img src="{{static_url('images/cat.jpg')}}" class="head_img_big center" style="  display: block; " >
+    <a href="/prfedit" style="display: block; width: 2.25rem;float: right;margin-top: -3rem;">
+        <img src="images/edit.png" style="position: relative; width: 1.8rem;">
+    </a>
+    <p class="text_center" >Leeon</p>
+    <p class="text_center" >开门！我是来查水表的！</p>
+    <div style="width:8rem; line-height: 2rem; font-size: 1rem; " class="center">
+        <img src="{{static_url('images/zan.png')}}" alt="" style="width:1.5rem; vertical-align: middle;"  >
+        <span style="vertical-align:middle;" > 12</span>
+        <img src="{{static_url('images/zan.png')}}" alt="" style="width:1.5rem; vertical-align: middle;" >
+        <span  style="vertical-align:middle;"> 55</span>
+    </div>
+</div>
+
+<div class="weui_cells weui_cells_access" style="font-size:0.8rem;" >
+    <a class="weui_cell" href="/user/gethelp/">
+        <div class="weui_cell_hd">
+            <img src="{{static_url('images/message.png')}}" alt="icon" style="width:20px;margin-right:5px;display:block">
         </div>
-
-
-        <div class="weui_cells weui_cells_access" style="font-size:0.8rem;" >
-
-            <a class="weui_cell" href="/user/gethelp/">
-                <div class="weui_cell_hd">
-                    <img src="{{static_url('images/message.png')}}" alt="icon" style="width:20px;margin-right:5px;display:block">
-                </div>
-                <div class="weui_cell_bd weui_cell_primary">
-                    <p>我的帮助</p>
-                </div>
-                <div class="weui_cell_ft">
-                    说明文字
-                </div>
-            </a>
-            <a class="weui_cell" href="/user/posthelp/" >
-                <div class="weui_cell_hd">
-                    <img src="{{static_url('images/ask.png')}}" alt="icon" style="width:20px;margin-right:5px;display:block">
-                </div>
-                <div class="weui_cell_bd weui_cell_primary">
-                    <p>我的求助</p>
-                </div>
-                <div class="weui_cell_ft">
-                    说明文字
-                </div>
-            </a>
-
+        <div class="weui_cell_bd weui_cell_primary">
+            <p>我的帮助</p>
         </div>
-
-
-        <div class="weui_cells weui_cells_access" style="font-size:0.8rem" >
-
-            <a class="weui_cell" href="/document">
-                <div class="weui_cell_hd">
-                    <img src="{{static_url('images/bookmark.png')}}" alt="icon" style="width:20px;margin-right:5px;display:block">
-                </div>
-                <div class="weui_cell_bd weui_cell_primary">
-                    <p>帮助文档</p>
-                </div>
-                <div class="weui_cell_ft">
-                    说明文字
-                </div>
-            </a>
-            <a class="weui_cell" href="/agreement">
-                <div div="weui_cell_hd">
-                    <img src="{{ static_url('images/agreement.png')}}" alt="icon" style="width:20px;margin-right: 5px;display: block;">
-                </div>
-                <div class="weui_cell_bd weui_cell_primary">
-                    <p>用户协议</p>
-                </div>
-                <div class="weui_cell_ft">
-                    说明文字
-                </div>
-
-            </a>
-            <a class="weui_cell" href="/about">
-                <div class="weui_cell_hd">
-                    <img src="{{ static_url('images/about.png')}}" alt="icon" style="width:20px;margin-right:5px;display:block">
-                </div>
-                <div class="weui_cell_bd weui_cell_primary">
-                    <p>关于我们</p>
-                </div>
-                <div class="weui_cell_ft">
-                    说明文字
-                </div>
-            </a>
-
+        <div class="weui_cell_ft">
+            说明文字
         </div>
+    </a>
+    <a class="weui_cell" href="/user/posthelp/" >
+        <div class="weui_cell_hd">
+            <img src="{{static_url('images/ask.png')}}" alt="icon" style="width:20px;margin-right:5px;display:block">
+        </div>
+        <div class="weui_cell_bd weui_cell_primary">
+            <p>我的求助</p>
+        </div>
+        <div class="weui_cell_ft">
+            说明文字
+        </div>
+    </a>
+</div>
 
+<div class="weui_cells weui_cells_access" style="font-size:0.8rem" >
+    <a class="weui_cell" href="/document">
+        <div class="weui_cell_hd">
+            <img src="{{static_url('images/bookmark.png')}}" alt="icon" style="width:20px;margin-right:5px;display:block">
+        </div>
+        <div class="weui_cell_bd weui_cell_primary">
+            <p>帮助文档</p>
+        </div>
+        <div class="weui_cell_ft">
+            说明文字
+        </div>
+    </a>
+    <a class="weui_cell" href="/agreement">
+        <div div="weui_cell_hd">
+            <img src="{{ static_url('images/agreement.png')}}" alt="icon" style="width:20px;margin-right: 5px;display: block;">
+        </div>
+        <div class="weui_cell_bd weui_cell_primary">
+            <p>用户协议</p>
+        </div>
+        <div class="weui_cell_ft">
+            说明文字
+        </div>
+    </a>
+    <a class="weui_cell" href="/about">
+        <div class="weui_cell_hd">
+            <img src="{{ static_url('images/about.png')}}" alt="icon" style="width:20px;margin-right:5px;display:block">
+        </div>
+        <div class="weui_cell_bd weui_cell_primary">
+            <p>关于我们</p>
+        </div>
+        <div class="weui_cell_ft">
+            说明文字
+        </div>
+    </a>
+</div>
+</div>
 {% end %}
-       
-{% block js_zone %}
-
-    <script type="text/javascript" src="{{ static_url('javascripts/jquery-3.1.0.min.js') }}"></script>
-
-    <script type="text/javascript">
 
 
-    </script>
-{% end %}
 
