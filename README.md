@@ -1,5 +1,7 @@
 ### url description:
+
 '>' 符号表示需要登录才能访问
+类似 '/resource/xxxx/' 这样的url都表示API,需要前台用ajax进行请求
 
 
 |    url                                    |     description                          |
@@ -20,7 +22,7 @@
 | /user/profile/                            | 用户资料url(http get),修改资料(http post),>|
 | /resource/WXQRCodeResource/get/           | 公众号关注二维码 API url，返回二维码url,>|
 | /resource/HelpContenResource/get/         | 获取某一地点周围的请求，需要带上经纬度,> |
-| /help/([0-9a-z-A-Z]+)/                    | 某一请求的详情页url                      |
+| /help/([0-9a-z-A-Z]+)/                    | 某一请求的详情页url,>                    |
 
 
 ### updating ......
