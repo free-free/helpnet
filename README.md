@@ -26,7 +26,7 @@
 
 ### API 说明:
 
-####  /resource/HelpContentResource/get/ 
+####  API: /resource/HelpContentResource/get/ 
 
 > 请求参数
 
@@ -49,7 +49,9 @@
    }
 ```
 
-####  /resource/WXQRCodeResource/get/
+
+
+#### API:  /resource/WXQRCodeResource/get/
 
 > 请求参数
 
@@ -66,7 +68,7 @@
 ``` python 
     response = {
           'res_qrc': 同上,
-          'data':{'qrcode_url':"url"}
+          'data':[{'qrcode_url':"url"},...]
     }
 ```
 
