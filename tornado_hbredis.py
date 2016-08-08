@@ -2,55 +2,76 @@
 from tornado import gen
 import tornadis
 from collections import deque
+import functools
 
+
+def decode(func):
+    @functools.wraps(func)
+    @gen.coroutine
+    def wrapper(*args,**kwargs):
+        data = yield func(*args,**kwargs)
+        if isinstance(data,bytes):
+            data = data.decode("utf-8")
+        return data
+    return wrapper
 
 class StringCommandsMixin:
 
+    @decode
     @gen.coroutine
     def set(self, key, value):
         result = yield self._client.call('set', key, value)
         return result
 
+    @decode
     @gen.coroutine
     def sget(self, key):
         result = yield self._client.call('get', key)
         return result
 
+    @decode
     @gen.coroutine
     def incrby(self, key, inc):
         result = yield self._client.call('incrby', key, inc)
         return result
 
+    @decode
     @gen.coroutine
     def incr(self, key):
         result = yield self._client.call('incr', key)
         return result
 
+    @decode
     @gen.coroutine
     def decrby(self, key, dec):
         result = yield self._client.call('decrby', key, dec)
         return result
-
+ 
+    @decode
     @gen.coroutine
     def decr(self, key):
         result = yield self._client.call('decr', key)
         return result
 
+    @decode
     @gen.coroutine
     def incrbyfloat(self, key, floatinc):
         result = yield self._client.call('incrbyfloat', key, floatinc)
         return result
 
+    @decode
     @gen.coroutine
     def append(self, key, appendstr):
         result = yield self._client.call('append', key, appendstr)
         return result
 
+    @decode
     @gen.coroutine
     def strlen(self, key):
         result = yield self._client.call("strlen", key)
         return result
 
+    @decode
     @gen.coroutine
     def mset(self, pairs):
         pairs_to_list = deque()
@@ -59,16 +80,19 @@ class StringCommandsMixin:
         result = yield self._client.call("mset", *list(pairs_to_list))
         return result
 
+    @decode
     @gen.coroutine
     def mget(self, keys):
         result = yield self._client.call("mget", *list(keys))
         return result
 
+    @decode
     @gen.coroutine
     def getbit(self, key, offset):
         result = yield self._client.call("getbit", key, offset)
         return int(result)
 
+    @decode
     @gen.coroutine
     def setbit(self, key, offset, value):
         if int(value) > 0 or int(value) < 0:
@@ -76,11 +100,13 @@ class StringCommandsMixin:
         result = yield self._client.call("setbit", key, offset, value)
         return result
 
+    @decode
     @gen.coroutine
     def bitcount(self, key, startbyte, endbyte):
         result = yield self._client.call("bitcount", key, int(startbyte), int(endbyte))
         return int(result)
 
+    @decode
     @gen.coroutine
     def bit_or(self, key1, key2, resultkey=None):
         result = None
@@ -93,6 +119,7 @@ class StringCommandsMixin:
             yield self._client.call("del", key1 + '_' + key2)
         return result
 
+    @decode
     @gen.coroutine
     def bit_and(self, key1, key2, resultkey=None):
         result = None
@@ -105,6 +132,7 @@ class StringCommandsMixin:
             yield self._client.call("del", key1 + '_' + key2)
         return result
 
+    @decode
     @gen.coroutine
     def bit_xor(self, key1, key2, resultkey=None):
         result = None
@@ -117,6 +145,7 @@ class StringCommandsMixin:
             yield self._client.call("del", key1 + '_' + key2)
         return result
 
+    @decode
     @gen.coroutine
     def bit_not(self, key, resultkey=None):
         result = None
@@ -199,71 +228,85 @@ class HashCommandsMixin:
 
 class ListCommandsMixin:
 
+    @decode
     @gen.coroutine
     def lpush(self, key, val_l):
         result = yield self._client.call("lpush", key, *list(val_l))
         return result
 
+    @decode
     @gen.coroutine
     def rpush(self, key, val_l):
         result = yield self._client.call("rpush", key, *list(val_l))
         return result
 
+    @decode
     @gen.coroutine
     def lpop(self, key):
         result = yield self._client.call("lpop", key)
         return result
 
+    @decode
     @gen.coroutine
     def rpop(self, key):
         result = yield self._client.call("rpop", key)
         return result
 
+    @decode
     @gen.coroutine
     def llen(self, key):
         result = yield self._client.call("llen", key)
         return result
 
+    @decode
     @gen.coroutine
     def lrange(self, key, start, end):
         result = yield self._client.call("lrange", key, start, end)
         return result
 
+    @decode
     @gen.coroutine
     def lrem(self, key, count, value):
         result = yield self._client.call("lrem", key, count, value)
         return result
 
+    @decode
     @gen.coroutine
     def lindex(self, key, index):
         result = yield self._client.call("lindex", ket, index)
         return result
 
+    @decode
     @gen.coroutine
     def lset(self, key, index, value):
         result = yield self._client.call("lset", key, index, value)
         return result
 
+    @decode
     @gen.coroutine
     def ltrim(self, key, start, end):
         result = yield self._client.call("ltrim", key, start, end)
         return result
 
+    @decode
     @gen.coroutine
     def linsert(self, key, pivot, value, direc="after"):
         result = yield self._client.call("linsert", key, direc, pivot, value)
         return result
 
+    @decode
     @gen.coroutine
     def linsertafter(self, key, pivot, value):
         result = yield self.linsert(key, pivot, value, 'after')
         return result
 
+    @decode
     @gen.coroutine
     def linsertbefore(self, key, pivot, value):
         result = yield self.linsert(key, pivot, value, 'before')
         return result
 
+    @decode
     @gen.coroutine
     def rpoplpush(self, src, dest):
         result = yield self._client.call("rpoplpush", src, dest)
@@ -272,6 +315,7 @@ class ListCommandsMixin:
 
 class SetCommandsMixin:
 
+    @decode
     @gen.coroutine
     def sadd(self, key, vals):
         result = None
@@ -283,6 +327,7 @@ class SetCommandsMixin:
             pass
         return result
 
+    @decode
     @gen.coroutine
     def srem(self, key, vals):
         result = None
@@ -294,16 +339,19 @@ class SetCommandsMixin:
             pass
         return result
 
+    @decode
     @gen.coroutine
     def smembers(self, key):
         result = yield self._client.call("smembers", key)
         return result
 
+    @decode
     @gen.coroutine
     def sismember(self, ket, val):
         result = yield self._client.call("sismember", key, val)
         return result
 
+    @decode
     @gen.coroutine
     def sdiff(self, *args):
         if len(args) == 1:
@@ -314,6 +362,7 @@ class SetCommandsMixin:
             result = yield self._client.call("sdiff", *args)
             return result
 
+    @decode
     @gen.coroutine
     def sinter(self, *args):
         if len(args) == 1:
@@ -324,6 +373,7 @@ class SetCommandsMixin:
             result = yield self._client.call("sinter", *args)
             return result
 
+    @decode
     @gen.coroutine
     def sunion(self, *args):
         if len(args) == 1:
@@ -334,11 +384,13 @@ class SetCommandsMixin:
             result = yield self._client.call("sunion", *args)
             return result
 
+    @decode
     @gen.coroutine
     def scard(self, key):
         result = yield self._client.call("scard", key)
         return result
 
+    @decode
     @gen.coroutine
     def sdiffstore(self, dest, *args):
         if len(args) == 1:
@@ -349,6 +401,7 @@ class SetCommandsMixin:
             result = yield self._client.call("sdiffstore", dest, *args)
             return result
 
+    @decode
     @gen.coroutine
     def sunionstore(self, dest, *args):
         if len(args) == 1:
@@ -359,11 +412,13 @@ class SetCommandsMixin:
             result = yield self._client.call("sunionstore", dest, *args)
             return result
 
+    @decode
     @gen.coroutine
     def srandmember(self, key, count):
         result = yield self._client.call("srandmember", key, count)
         return result
 
+    @decode
     @gen.coroutine
     def spop(self, key):
         result = yield self._client.call("spop", key)
@@ -372,76 +427,91 @@ class SetCommandsMixin:
 
 class GenericCommandsMixin:
 
+    @decode
     @gen.coroutine
     def delete(self, key):
         result = yield self._client.call("del", key)
         return result
 
+    @decode
     @gen.coroutine
     def exists(self, key):
         result = yield self._client.call("exists", key)
         return result
 
+    @decode
     @gen.coroutine
     def expire(self, key, expires):
         result = yield self._client.call("expire", key, int(expires))
         return result
 
+    @decode
     @gen.coroutine
     def expireat(self, key, expire_ts):
         result = yield self._client.call("expireat", key, int(expire_ts))
         return result
 
+    @decode
     @gen.coroutine
     def allkeys(self, pattern):
         result = yield self._client.call("keys", pattern)
         return result
 
+    @decode
     @gen.coroutine
     def keytype(self, key):
         result = yield self._client.call("type", key)
         return result
 
+    @decode
     @gen.coroutine
     def ttl(self, key):
         result = yield self._client.call("ttl", key)
         return result
 
+    @decode
     @gen.coroutine
     def rename(self, key, newkey):
         result = yield self._client.call("rename", key, newkey)
         return result
 
+    @decode
     @gen.coroutine
     def renamenx(self, key, newkey):
         result = yield self._client.call("renamenx", key, newkey)
         return result
 
+    @decode
     @gen.coroutine
     def randomkey(self):
         result = yield self._client.call("randomkey")
         return result
 
+    @decode
     @gen.coroutine
     def move(self, key, db):
         result = yield self._client.call("move", key, db)
         return result
 
+    @decode
     @gen.coroutine
     def persist(self, key):
         result = yield self._client.call("persist", key)
         return result
 
+    @decode
     @gen.coroutine
     def pexpire(self, key, milis):
         result = yield self._client.call("pexpire", key, milis)
         return result
 
+    @decode
     @gen.coroutine
     def pexpireat(self, key, milis_st):
         result = yield self._client.call("pexpireat", key, milis_st)
         return result
 
+    @decode
     @gen.coroutine
     def pttl(self, key):
         result = yield self._client.call("pttl", key)
@@ -450,16 +520,19 @@ class GenericCommandsMixin:
 
 class ServerCommandsMixin:
 
+    @decode
     @gen.coroutine
     def dbsize(self):
         result = yield self._client.call("dbsize")
         return result
 
+    @decode
     @gen.coroutine
     def flushall(self):
         result = yield self._client.call("flushall")
         return result
 
+    @decode
     @gen.coroutine
     def flushdb(self):
         result = yield self._client.call("flushdb")
@@ -511,6 +584,7 @@ class _PipelineWrapper(object):
         self.__commands = attr
         return self._pipeline_commands
 
+    @decode
     @gen.coroutine
     def execute(self):
         result = yield self.__client.call(self.__pipeline)

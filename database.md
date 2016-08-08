@@ -1,39 +1,45 @@
 
-用户:
-user:
-{
-subscribe,
-openid,
-nickname,
-sex,
-city,
-country,
-provience,
-language,
-headimgurl,
-subscribe_time,
-location([latitude,longitude]),
-location_precision,
-}
+## user table
+| field name   |  description            |
+|:------------:|:-----------------------:|
+|subscribe     |                         |
+|userid        |   weixin openid         |
+|username      |  weixin nickname        |
+|usercontact   |                         |
+|sex           |                         |
+|city          |                         |
+|country       |                         |
+|province      |                         |
+|language      |                         |
+|headimgurl    |                         |
+|createtime    |                         |
+|address       |                         |
+|location:lng,lat|                       |
+|locprec       |                         |
 
-求单:
-order:
-{
-object_id,
-order_postser,//nickname
-postuser_openid,
-postuser_headimgurl,
-order_content,
-order_pay,
-order_getuser,
-getuser_openid,
-getuser_headimgurl,
-start_time,
-finish_time,
-time_limit,
-order_state,
-is_pay
-}
+## help table
+| field             |     description    |
+|:-----------------:|:------------------:|
+|helpid             |   unique help id   |
+|post_username      |   user nickname    |
+|post_userid        |   unique user id   |
+|post_userheadimgurl|   user header img url|
+|post_usercontact   |                    |
+|address            |                    |
+|helpcontent        |   help main content|
+|helpremark         |                    |
+|helpreward         |  help tip          |
+|get_userid         |  help user id      |
+|get_username       |                    |
+|get_userheadimgurl |                    |
+|posttime           |  post timestamp    |
+|finishtime         |                    |
+|lifetime           |                    |
+|helpstate          |                    |
+|ispay              |                    |
+|location:lng,lat   |  array             |
+|locprec            |  location precision|
+
 
 
 

@@ -7,6 +7,7 @@ from tornado import web,gen
 from tornado import ioloop
 import json
 from tornado_hbredis import  TornadoHBRedis
+import os
 
 
 class TokenServer(object):
@@ -41,10 +42,10 @@ if __name__ == '__main__':
     def token_refresh():
         app_config = {}
         redis = TornadoHBRedis('localhost',6379)
-        with open("service_account.json") as f:
+        with open(os.path.join(os.path.dirname(__file__),"service_account.json")) as f:
             app_config = json.load(f)
-        server = TokenServer(app_config.get('app_id'),
-                          app_config.get('app_secret'),
+        server = TokenServer(app_config.get('public_appid'),
+                          app_config.get('public_secret'),
                           app_config.get("token_url")
                          )
         token = yield server.get_token()

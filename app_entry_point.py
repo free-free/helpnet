@@ -9,12 +9,13 @@ from tornado.options import options, define
 from handlers.user_handlers import *
 from handlers.auth_handlers import *
 from handlers.search_handlers import *
-from handlers.callback_handlers import *
+from handlers.wxcallback_handlers import *
 from handlers.help_handlers import *
 from handlers.check_signature_handlers import CheckSignatureHandler
 from handlers.about_handler import AboutHandler
 from handlers.document_handler import DocumentHandler
 from handlers.agreement_handler import AgreementHandler
+from handlers.api_handlers import *
 
 
 from tornado_session import SessionCacheFactory
@@ -39,7 +40,8 @@ class DefaultHandler(web.RequestHandler):
 class Application(web.Application):
 
     def __init__(self):
-
+        with open(os.path.join(os.path.dirname(__file__),'service_account.json')) as f:
+            app_config = json.load(f)
         settings = {
             'template_path': os.path.join(os.path.dirname(__file__), 'views'),
             'static_path': os.path.join(os.path.dirname(__file__), 'assets'),
@@ -47,22 +49,31 @@ class Application(web.Application):
             'cookie_secret': 'MmUyZmU2NmIyNDM4NDc4YWE4OTNiODUzMjhhZTgzM2U3NDU5OGUwNzNlODY0ODI5ODM1MGNmNjcxZmU5M2FjNg==',
             #'xsrf_cookies': True,
             'default_handler_class': DefaultHandler,
-            'session_cookie': '_helpnet_sess'
+            'session_cookie': '_helpnet_sess',
+            'site_cookie_name':'_helpnet_com',
+            'site_cookie_val':'djeijioidjeoiodjoiejdoejodeojodejo',
+            'public_appid':app_config['public_appid'],
+            'public_secret':app_config['public_secret'],
         }
 
         handlers = [
             (r'/', HelpListHandler),
             (r'/askhelp/?', PostHelpHandler),
             (r'/logout/?', LogoutHandler),
-            (r'/callback', CallbackHandler),
+            (r'/wxcallback', WXCallbackHandler),
             (r'/login/?', LoginHandler),
+            (r'/wxsublogin/?',WXSubscribeLoginHandler),
             (r'/search/?', SearchHandler),
-            (r'/settings/?', UserSettingsHandler),
             (r'/about/?', AboutHandler), 
             (r'/document/?', DocumentHandler),
             (r'/agreement/?', AgreementHandler),
-            (r'/help/([0-9a-zA-Z]+)/?', HelpHandler),
-            (r'/([a-zA-Z0-9]+)/?', UserHomeHandler),
+            (r'/user/?',UserHomeHandler),
+            (r'/user/posthelp/?',UserPostHelpListHandler),
+            (r'/user/gethelp/?',UserGetHelpListHandler),
+            (r'/user/profile/?',UserProfileHandler),
+            (r'/resource/WXQRCodeResource/get/?',WeixinQRCodeGetAPIHandler),
+            (r'/resource/HelpContentResource/get/?',HelpContentGetAPIHandler),
+            (r'/help/([0-9a-zA-Z]+)/?', HelpDetailHandler),
         ]
         super(Application, self).__init__(handlers=handlers, **settings)
         conn = MotorClient('localhost', 4000)
