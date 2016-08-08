@@ -2,15 +2,17 @@
 
 
 from tornado import gen,web
-from .base_handler import BaseHandler,AuthNeedBaseHandler
 import shortuuid
 import time
 
+from .base_handler import BaseHandler,AuthNeedBaseHandler
+
+
 class HelpListHandler(AuthNeedBaseHandler):
      
-    r'''
+    r"""
      @url: /
-    ''' 
+    """
     @gen.coroutine
     def get(self):
         self.render("helplist.html")
@@ -27,37 +29,33 @@ class PostHelpHandler(AuthNeedBaseHandler):
   
     @gen.coroutine
     def post(self):
-        helpinfo = {}
-        helpinfo['helpid'] = shortuuid.uuid()
-        helpinfo['helpcontent'] = self.get_argument("help_content")
-        helpinfo['helpremark'] = self.get_argument("help_remark")
-        helpinfo['helpreward'] = self.get_argument("help_reward")
-        helpinfo['posttime'] = time.time()
-        helpinfo['finishtime'] = 0
-        helpinfo['lifetime'] = 3600
-        helpinfo['helpstate'] = 0
-        helpinfo['ispay'] = 0
-        helpinfo['location'] = []
-        helpinfo['location'][0] = self.get_argument("longitude")
-        helpinfo['location'][1] = self.get_argument("latitude")
-        helpinfo['address'] = self.get_argument("address",None) \
+        helpdata = {}
+        helpdata['helpid'] = shortuuid.uuid()
+        helpdata['helpcontent'] = self.get_argument("help_content")
+        helpdata['helpremark'] = self.get_argument("help_remark")
+        helpdata['helpreward'] = self.get_argument("help_reward")
+        helpdata['posttime'] = time.time()
+        helpdata['finishtime'] = 0
+        helpdata['lifetime'] = 3600
+        helpdata['helpstate'] = 0
+        helpdata['ispay'] = 0
+        helpdata['location'] = []
+        helpdata['location'][0] = self.get_argument("longitude")
+        helpdata['location'][1] = self.get_argument("latitude")
+        helpdata['address'] = self.get_argument("address",None) \
             or self.current_user['address']
-        helpinfo['locprec'] = 0.0
-        helpinfo['post_username'] = self.current_user['username']
-        helpinfo['post_userid'] = self.current_user['userid']
-        helpinfo['post_userheadimgurl'] = self.current_user['headimgurl']
+        helpdata['locprec'] = 0.0
+        helpdata['post_username'] = self.current_user['username']
+        helpdata['post_userid'] = self.current_user['userid']
+        helpdata['post_userheadimgurl'] = self.current_user['headimgurl']
         helpcontact = self.get_argument("help_contact",None) \
             or self.current_user['usercontact']
-        helpinfo['post_usercontact'] = helpcontact 
+        helpdata['post_usercontact'] = helpcontact 
         try:
-            help_exist = yield self.application.db['help'].find_one({'helpid':helpinfo['helpid']},{"helpid":1})
+            help_exist = yield self.application.db['help'].find_one({'helpid':helpdata['helpid']},{"helpid":1})
             if not help_exist:
-                response = yield self.application.db['help'].insert(helpinfo)
-                if response:
-                    self.write("askhelp_success.html")
-                else:
-                    self.set_status(500)
-                    self.render("errors/500.html")
+                yield self.application.db['help'].insert(helpdata)
+                self.write("askhelp_success.html")
             else:
                 self.set_status(500)
                 self.render("errors/500.html")
@@ -106,11 +104,10 @@ class HelpDetailHandler(AuthNeedBaseHandler):
             helpdata = yield self.application.db['help'].find_one({"helpid":helpid})
             if helpdata:
                 del helpdata['_id']
-                self.write(helpdata)
+                self.render('helpdetail.html', data=helpdata)
             else:
-                self.render("helpdetail.html")
-                #self.set_status(404)
-                #self.render("errors/404.html")
+                self.set_status(404)
+                self.render("errors/404.html")
         except Exception:
             self.set_status(500)
             self.render("errors/500.html")

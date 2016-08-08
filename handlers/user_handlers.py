@@ -1,19 +1,22 @@
 #-*- coding:utf-8 -*-
 
-from tornado import web
-from tornado import gen
-from .base_handler import BaseHandler, AuthNeedBaseHandler
-from concurrent.futures import ThreadPoolExecutor
-import bcrypt
 from datetime import datetime
 import uuid
 import base64
+
+from tornado import web
+from tornado import gen
+from concurrent.futures import ThreadPoolExecutor
+import bcrypt
+
+from .base_handler import BaseHandler, AuthNeedBaseHandler
+
 
 class UserHomeHandler(AuthNeedBaseHandler):
     r"""
         @url:/user/?
     """
-    #@web.authenticated
+    @web.authenticated
     @gen.coroutine
     def get(self):
         self.render("userhome.html")
@@ -49,3 +52,6 @@ class UserProfileHandler(AuthNeedBaseHandler):
     @gen.coroutine
     def get(self):
         self.render("userprofile.html")
+
+    
+          

@@ -74,6 +74,9 @@ class Application(web.Application):
             (r'/user/profile/?',UserProfileHandler),
             (r'/resource/WXQRCodeResource/get/?',WeixinQRCodeGetAPIHandler),
             (r'/resource/HelpContentResource/get/?',HelpContentGetAPIHandler),
+            (r'/resource/UserProfileResource/get/?',UserProfileGetAPIHandler),
+            (r'/resource/UserProfileResource/update/?',UserProfileUpdateAPIHandler),
+
             (r'/help/([0-9a-zA-Z]+)/?', HelpDetailHandler),
         ]
         super(Application, self).__init__(handlers=handlers, **settings)
