@@ -71,8 +71,8 @@ class Application(web.Application):
             (r'/user/posthelp/?',UserPostHelpListHandler),
             (r'/user/gethelp/?',UserGetHelpListHandler),
             (r'/user/profile/?',UserProfileHandler),
-            (r'/resource/WXQRCodeResource/get/?',WeixinQRCodeAPIHandler),
-            (r'/resource/HelpContentResource/get/?',HelpContentAPIHandler),
+            (r'/resource/WXQRCodeResource/get/?',WeixinQRCodeGetAPIHandler),
+            (r'/resource/HelpContentResource/get/?',HelpContentGetAPIHandler),
             (r'/help/([0-9a-zA-Z]+)/?', HelpDetailHandler),
         ]
         super(Application, self).__init__(handlers=handlers, **settings)
