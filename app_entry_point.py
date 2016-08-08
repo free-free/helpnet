@@ -54,6 +54,7 @@ class Application(web.Application):
             'site_cookie_val':'djeijioidjeoiodjoiejdoejodeojodejo',
             'public_appid':app_config['public_appid'],
             'public_secret':app_config['public_secret'],
+            'debug':True,
         }
 
         handlers = [
