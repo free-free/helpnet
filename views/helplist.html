@@ -1,1 +1,86 @@
 {% extends "base.html" %}
+
+
+{% block header %}
+
+<div class="weui-pull-to-refresh-layer">
+	<div class="pull-to-refresh-arrow"></div> <!-- 上下拉动的时候显示的箭头 -->
+	<div class="pull-to-refresh-preloader"></div> <!-- 正在刷新的菊花 -->
+	<div class="down">下拉刷新</div><!-- 下拉过程显示的文案 -->
+	<div class="up">释放刷新</div><!-- 下拉超过50px显示的文案 -->
+	<div class="refresh">正在刷新...</div><!-- 正在刷新时显示的文案 -->
+</div>
+<div class="weui_search_bar" id="search_bar">
+	<form class="weui_search_outer">
+		<div class="weui_search_inner">
+			<i class="weui_icon_search"></i>
+			<input type="search" class="weui_search_input" id="search_input" placeholder="搜索" required/>
+			<a href="javascript:" class="weui_icon_clear" id="search_clear"></a>
+		</div>
+		<label for="search_input" class="weui_search_text" id="search_text">
+			<i class="weui_icon_search"></i>
+			<span>搜索</span>
+		</label>
+	</form>
+	<a href="javascript:" class="weui_search_cancel" id="search_cancel">取消</a>
+</div>
+<header class="center text_center">
+	<a href="" >求单</a>
+
+
+</header>
+{% end %}
+
+
+
+{% block main_content %}
+<div id="content">
+	<ul class="request_list center">
+		<li class="a_help">
+			<a href="/detail">
+				<div class="help_asker">
+					<img class="head_img" src="{{static_url('images/cat.jpg')}}"> 
+					<span class="asker_name">一只叫狗狗的鸡</span>
+					<span class="help_price" >￥20</span>
+				</div>
+				<div>	
+					<p>助！  从360带一桶老坛酸菜泡面，外加一根玉米火腿肠，我住在东六A304，万分感谢！</p>
+				</div>
+				<div class="ask-footer">
+					<span id="post_time" class="footer_p">还剩32分钟</span>
+					<a class="weui_btn weui_btn_primary">详情</a>
+				</div>
+			</a>
+		</li>
+	</ul>
+</div>
+{% end  %}
+
+
+
+
+
+{% block js_custom %}
+
+<script type="text/javascript">
+	
+	var list = document.getElementsByClassName("request_list");
+
+	for(var i=0;i<10;i++){
+		var node=document.createElement("li");
+		node.className="a_help";
+		var nodeContent=' <a href="/detail"><div class="help_asker"><img class="head_img" src="{{static_url("images/cat.jpg")}}"><span class="asker_name">一只叫狗狗的鸡</span>	<span class="help_price" >￥20</span></div>	<div><p>助！  从360带一桶老坛酸菜泡面，外加一根玉米火腿肠，我住在东六A304，万分感谢！</p></div><div class="ask-footer"><span id="post_time" class="footer_p">还剩32分钟</span><a class="weui_btn weui_btn_primary">详情</a>	</div></a>';
+		node.innerHTML=nodeContent;
+		list[0].appendChild(node);
+	}
+
+	$(document.body).pullToRefresh();
+	$(document.body).on("pull-to-refresh", function() {
+		setTimeout(function(){	
+			$(document.body).pullToRefreshDone()
+		},1000);
+	});
+	
+</script>
+
+{% end %}
