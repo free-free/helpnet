@@ -21,7 +21,7 @@
 | /user/posthelp/                           | 用户发送的请求list url, >                |
 | /user/profile/                            | 用户资料url(http get),修改资料(http post),>|
 | /resource/WXQRCodeResource/get/           | 公众号关注二维码 API url，返回二维码url,>|
-| /resource/HelpContenResource/get/         | 获取某一地点周围的请求，需要带上经纬度,> |
+| /resource/HelpContentResource/get/         | 获取某一地点周围的请求，需要带上经纬度,> |
 | /help/([0-9a-z-A-Z]+)/                    | 某一请求的详情页url,>                    |
 
 ### API 说明:
