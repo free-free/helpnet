@@ -13,17 +13,23 @@ class WeixinQRCodeGetAPIHandler(BaseHandler):
     """ 
     @gen.coroutine
     def get(self):
-        qrcode_ticket = yield self.application.cache.sget('weixin_qrcode_ticket')
-        if qrcode_ticket:
-            url = "https://mp.weixin.qq.com/cgi-bin/showqrcode?ticket="+qrcode_ticket
-            self.set_header("Cache-Control","no-cache")
-            self.write({"qrcode_url":url})
-        else:
-            token = yield self.application.cache.sget("weixin_api_token")
-            url = "https://api.weixin.qq.com/cgi-bin/qrcode/create?access_token="+token
-            body = {"expire_seconds": 86400, "action_name": "QR_SCENE", "action_info": {"scene": {"scene_id": 123}}}
-            body = json.dumps(body)
-            try:
+        source_url = self.get_argument("source_url")
+        context = self.get_argument("context")
+        qrc = self.get_argument("qrc")
+        try:
+            qrcode_ticket = yield self.application.cache.sget('weixin_qrcode_ticket')
+            if qrcode_ticket:
+                url = "https://mp.weixin.qq.com/cgi-bin/showqrcode?ticket="+qrcode_ticket
+                response = {}
+                response['qrc'] = qrc
+                response['data'] = []
+                response['data'].append({"qrcode_url": url})
+                self.write(response)
+            else:
+                token = yield self.application.cache.sget("weixin_api_token")
+                url = "https://api.weixin.qq.com/cgi-bin/qrcode/create?access_token="+token
+                body = {"expire_seconds": 86400, "action_name": "QR_SCENE", "action_info": {"scene": {"scene_id": 123}}}
+                body = json.dumps(body)
                 response = yield send_async_request(url, method="POST", body=body)
                 response = response.body.decode("utf-8")
                 response = json.loads(response)
@@ -31,14 +37,15 @@ class WeixinQRCodeGetAPIHandler(BaseHandler):
                     url = "https://mp.weixin.qq.com/cgi-bin/showqrcode?ticket="+response["ticket"]
                     yield self.application.cache.set("weixin_qrcode_ticket",response["ticket"])
                     yield self.application.cache.expire("weixin_qrcode_ticket",response.get("expire_seconds",0))
-                    self.write({"qrcode_url":url})
+                    response = {}
+                    response['qrc'] = qrc
+                    response['data'] = []
+                    response['data'].append({'qrcode_url':url})
+                    self.write(response)
                 else:
-                    self.set_header("Cache-Control","no-cache")
-                    self.write({"errmsg":"can't get qrcode","errcode":40002})
-            except Exception as e:
-                print(e)
-                self.write({"errmsg":"can't get qrcode","errcode":40001})
-    
+                    self.write({"errmsg":"can't get qrcode","errcode":40001})
+        except Exception:  
+            self.write({"errmsg":"can't get qrcode","errcode":40001})
 
 
 class HelpContentGetAPIHandler(AuthNeedBaseHandler):
