@@ -26,14 +26,11 @@
 </div>
 <header class="center text_center">
 	<a href="" >求单</a>
-
-
 </header>
 {% end %}
 
 
-
-{% block main_content %}
+{% block container %}
 <div id="content">
 	<ul class="request_list center">
 		<li class="a_help">
@@ -63,7 +60,7 @@
 {% block js_custom %}
 
 <script type="text/javascript">
-	
+
 	var list = document.getElementsByClassName("request_list");
 
 	for(var i=0;i<10;i++){
@@ -80,7 +77,7 @@
 			$(document.body).pullToRefreshDone()
 		},1000);
 	});
-	
+
 </script>
 
 {% end %}

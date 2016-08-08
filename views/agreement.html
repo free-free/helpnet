@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% block header %}
 {% end %}
-{% block main_content %}
+{% block container %}
 
 	<article class="weui_article">
 		<h2>
@@ -17,7 +17,7 @@
 		</section>
 	</article>
 {% end %}
-{% block js_zone %}
+{% block js_custom %}
 	<script type="text/javascript" src="{{static_url('javascripts/jquery-3.1.0.min.js')}}"></script>
 	<script type="text/javascript">
 		var list=document.getElementsByClassName("weui_article");
