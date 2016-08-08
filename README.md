@@ -24,5 +24,26 @@
 | /resource/HelpContenResource/get/         | 获取某一地点周围的请求，需要带上经纬度,> |
 | /help/([0-9a-z-A-Z]+)/                    | 某一请求的详情页url,>                    |
 
+#### Note:
+>  /resource/HelpContentResource/get/ 的请求参数
 
+```python
+   param ={
+        'source_url':'发出请求的js所在页面url',
+        'context' : '请求上下文,可选值 ["updates","upost","uget"],
+        'qrc': "请求条件"
+   }     
+   当 'context' = "updates" 请求条件qrc={"lng":"经度","lat":"纬度","last_help_pt":"上次请求返回数据的posttime,等于0时表式返回最新的数据"}
+   当 'context' = "upost"  ,qrc ={"last_help_pt":"同上"}
+   当 'context' = "uget"  ,qrc ={"last_help_pt":"同上"}
+```
+
+> /resource/HelpContentResource/get/ 相应数据
+
+```python
+   response = {
+	'res_qrc':响应的请求的条件,以便下一次请求使用，字段和qrc的相同,
+        'data': 响应的数据(数组),每一个数据代表每一个help单子的数据(post_userheadimgurl,helpcontent,helpstate,helprewad,post_username,helpremark)
+   }
+```
 ### updating ......
