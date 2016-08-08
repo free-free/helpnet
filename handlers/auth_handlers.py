@@ -46,8 +46,7 @@ class WXSubscribeLoginHandler(AuthNeedBaseHandler):
         state = self.get_argument("state", "")
         code  = self.get_argument("code","")
         if not code or not certify_state("deude",state):
-            self.set_statue(500)
-            self.render("error/500.html")
+            self.redirect('/login')
             return 
         ackurl = "https://api.weixin.qq.com/sns/oauth2/access_token? \
             appid={0}&secret={1}&code={2}&grant_type=authorization_code"
@@ -59,7 +58,7 @@ class WXSubscribeLoginHandler(AuthNeedBaseHandler):
             response = response.body.decode("utf-8")
             openid = response['openid']
             #check user existence
-            userdata = yield self.application.db['user'].find({"userid":openid})
+            userdata = yield self.application.db['user'].find_one({"userid":openid})
             if not userdata:
                 self.redirect('/login')
                 return   
@@ -102,7 +101,7 @@ class WXAuthCallbackLoginHandler(AuthNeedBaseHandler):
             response = response.body.decode("utf-8")
             openid = response['openid']
             #check user existence
-            userdata = yield self.application.db['user'].find({"userid":openid})
+            userdata = yield self.application.db['user'].find_one({"userid":openid})
             if not userdata:
                 userdataurl = "https://api.weixin.qq.com/sns/userinfo?access_token={0}&openid={1}"
                 userdataurl.format(response['access_token'],openid)
@@ -124,7 +123,6 @@ class WXAuthCallbackLoginHandler(AuthNeedBaseHandler):
             self.redirect('/')
         except Exception:
             self.redirect('/login')
-            self.finish()
 
 
 class LogoutHandler(AuthNeedBaseHandler):
@@ -135,5 +133,9 @@ class LogoutHandler(AuthNeedBaseHandler):
     @gen.coroutine
     def get(self):
         self.clear_all_cookies()
-        yield self.session.destroy()
+        try:
+            yield self.session.destroy()
+        except Exception:
+            self.set_status(500)
+            self.render("errors/500.html")
         self.redirect('/')
