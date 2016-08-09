@@ -1,14 +1,20 @@
 {% extends "base.html" %}
 {% block header %}
-<header class="left text_center">
-	<a href="">互助广场</a>
-</header>
+<!-- <header class="left text_center">
+	<a href="">扫码登陆</a>
+</header> -->
 {% end %}
 
 {% block container %}
-
+<!-- 
 <div class="main-container" style="color:#ee0000;text-align:center;height:400px;line-height:400px;">
 	LOGINT HERE 
+</div> -->
+
+<div class="center text_center" style="margin-top:5rem;">
+	<img src="{{static_url('images/officialQR.jpg')}}" >
+	<p  >请扫码进入互助广场</p>
+
 </div>
 
 {% end %} 
