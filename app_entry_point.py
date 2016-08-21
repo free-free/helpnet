@@ -18,7 +18,7 @@ from handlers.agreement_handler import AgreementHandler
 from handlers.api_handlers import *
 
 
-from tornado_session import SessionCacheFactory
+from tornasess import SessionCacheFactory
 from tornado_hbredis import TornadoHBRedis
 import os
 from motor.motor_tornado import MotorClient
@@ -61,7 +61,8 @@ class Application(web.Application):
             (r'/', HelpListHandler),
             (r'/askhelp/?', PostHelpHandler),
             (r'/logout/?', LogoutHandler),
-            (r'/wxcallback', WXCallbackHandler),
+            (r'/wxcallback/?', WXCallbackHandler),
+            #(r'/wxcallback/?', CheckSignatureHandler),
             (r'/login/?', LoginHandler),
             (r'/wxsublogin/?',WXSubscribeLoginHandler),
             (r'/search/?', SearchHandler),
@@ -83,7 +84,7 @@ class Application(web.Application):
         conn = MotorClient('localhost', 4000)
         self.db = conn['fsp']
         self.executor = concurrent.futures.ThreadPoolExecutor(2)
-        self.session_cache = SessionCacheFactory('redis', 'localhost', 6379)
+        self.session_cache = SessionCacheFactory('redis')
         self.cache = TornadoHBRedis("localhost",6379)
 
 define("port", default=8000, help="server port", type=int)
