@@ -2,3 +2,4 @@ bcrypt
 tornadis
 motor
 shortuuid
+xmltodict
