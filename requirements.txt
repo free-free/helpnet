@@ -3,3 +3,7 @@ tornadis
 motor
 shortuuid
 xmltodict
+requests
+redis
+celery
+
