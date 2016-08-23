@@ -13,6 +13,7 @@ class HelpListHandler(AuthNeedBaseHandler):
     r"""
      @url: /
     """
+    @web.authenticated
     @gen.coroutine
     def get(self):
         self.render("helplist.html")
@@ -23,10 +24,12 @@ class PostHelpHandler(AuthNeedBaseHandler):
     r"""
         @url:/askhelp
     """
+    @web.authenticated
     @gen.coroutine
     def get(self):
         self.render("askhelp.html")
   
+    @web.authenticated
     @gen.coroutine
     def post(self):
         helpdata = {}
@@ -69,6 +72,7 @@ class GetHelpHandler(AuthNeedBaseHandler):
     r"""
         @url:/gethelp/([0-9a-zA-Z]+)/?
     """
+    @web.authenticated
     @gen.coroutine
     def post(self,helpid):
         try:
@@ -98,6 +102,7 @@ class HelpDetailHandler(AuthNeedBaseHandler):
     r"""
         @url:/help/([0-9a-zA-Z]+)/?
     """
+    @web.authenticated
     @gen.coroutine
     def get(self, helpid):
         try:
