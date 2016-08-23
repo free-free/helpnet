@@ -1,14 +1,12 @@
 #coding:utf-8
 
+import json
+import os
 import logging
 logging.basicConfig(level=logging.ERROR)
-from tornado.httpclient import AsyncHTTPClient
-from tornado import web,gen
-from tornado import ioloop
-import json
-from tornado_hbredis import  TornadoHBRedis
-import os
 
+import requests
+from redis import Redis
 
 class TokenServer(object):
      
@@ -19,36 +17,29 @@ class TokenServer(object):
         self.__appid = appid
         self.__appsecret = appsecret
         self.__token_url = token_url + "?grant_type=client_credential&appid={0}&secret={1}".format(self.__appid,self.__appsecret)
-        self.__conn = AsyncHTTPClient()
         self.__token = None
-    @gen.coroutine
+    
     def get_token(self):
         try:
-            response =  yield self.__conn.fetch(self.__token_url)
-            body = response.body.decode("utf-8")
-            if body:
-                body = json.loads(body)
-                self.__token = body.get("access_token")
-                return self.__token 
-        except web.HTTPError as e:
+            req =  requests.get(self.__token_url)
+            body = req.json()
+            self.__token = body.get("access_token")
+            return self.__token 
+        except Exception as e:
             logging.error(e)
-        finally:
-            self.__conn.close()
         
-            
-
-if __name__ == '__main__':    
-    @gen.coroutine
-    def token_refresh():
-        app_config = {}
-        redis = TornadoHBRedis('localhost',6379)
-        with open(os.path.join(os.path.dirname(__file__),"service_account.json")) as f:
-            app_config = json.load(f)
-        server = TokenServer(app_config.get('public_appid'),
+def token_refresh():
+    app_config = {}
+    redis = Redis('localhost',6379)
+    with open(os.path.join(os.path.dirname(__file__),"service_account.json")) as f:
+        app_config = json.load(f)
+    server = TokenServer(app_config.get('public_appid'),
                           app_config.get('public_secret'),
                           app_config.get("token_url")
                          )
-        token = yield server.get_token()
-        yield redis.set("weixin_api_token",token)
-    loop = ioloop.IOLoop.current()
-    loop.run_sync(token_refresh)
+    token = server.get_token()
+    redis.set("weixin_api_token",token)
+
+
+if __name__ == '__main__':
+    token_refresh()
