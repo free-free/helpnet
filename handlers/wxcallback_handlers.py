@@ -1,13 +1,17 @@
 #-*- coding:utf-8 -*-
 
-from tornado import gen,web
-import xml.etree.ElementTree as etree
-from .base_handler import BaseHandler
-from . import send_async_request
 import time
 import json
+
+from tornado import gen,web
+import xml.etree.ElementTree as etree
+import xmltodict
+
+from .base_handler import BaseHandler
+from . import send_async_request
 #
 # weixin callback url handler
+
 class WXCallbackHandler(BaseHandler):
     r'''
        Request Message common keys:
@@ -18,19 +22,21 @@ class WXCallbackHandler(BaseHandler):
            MsgId: int64
     '''
 
-    def get_request_msg(self,name,default=None):
-        if not hasattr(self,"__msg"):
-            self.__msg = etree.fromstring(self.request.body)
-        msg_val = self.__msg.findtext(name) or default
-        return msg_val
+    def prepare(self):
+        super().prepare()
+        self.req_msg = xmltodict.parse(self.request.body)['xml']
 
+    @gen.coroutine
     def handle_text(self):
         r"""
         request text msg keys:
            Content
         """
+        self.application.tasks.send_mail.delay()
+        print("send mail")
         self.write("")
-
+ 
+    @gen.coroutine
     def handle_image(self):
         r"""
          request image msg keys:
@@ -38,6 +44,7 @@ class WXCallbackHandler(BaseHandler):
         """            
         self.write("")
 
+    @gen.coroutine
     def handle_location(self):
         r"""
         request location msg keys:
@@ -48,6 +55,7 @@ class WXCallbackHandler(BaseHandler):
         """    
         self.write("")
 
+    @gen.coroutine
     def handle_link(self):
         r"""
         request  link msg keys:
@@ -78,16 +86,16 @@ class WXCallbackHandler(BaseHandler):
            Event = TEMPLATESENDJOBFINISH
                Status:
         """
-        event_type = self.get_request_msg("Event").lower()
+        event_type = self.req_msg.get("Event").lower()
         yield getattr(self,'handle_'+event_type+'_event',self.handle_other)()
   
     @gen.coroutine 
     def handle_location_event(self):
-        user_openid = self.get_request_msg("FromUserName")
-        user_exist = yield self.application.db.user.find_one({"userid":user_openid},{"userid":1})
-        if user_exist:
-            location = [self.get_request_msg("Longitude"), self.get_request_msg("Latitude")]
-            location_precision = self.get_request_msg("Precision")
+        user_openid = self.req_msg.get("FromUserName")
+        user_exists = yield self.application.db.user.find_one({"userid":user_openid},{"userid":1})
+        if user_exists:
+            location = [self.req_msg.get("Longitude"), self.req_msg.get("Latitude")]
+            location_precision = self.req_msg.get("Precision")
             try:
                 yield self.application.db.user.update({"userid":user_openid},\
                     {"$set":{"location":location,"locprec":location_precision}},\
@@ -98,20 +106,21 @@ class WXCallbackHandler(BaseHandler):
 
     @gen.coroutine
     def handle_subscribe_event(self):
-        user_openid = self.get_request_msg("FromUserName")
-        user_exist = yield self.application.db['user'].find_one({"userid":user_openid},{"userid":1})
-        if not user_exist:
+        user_openid = self.req_msg.get("FromUserName")
+        user_exists = yield self.application.db['user'].find_one({"userid":user_openid},{"userid":1})
+        if not user_exists:
             try:
-                access_token = self.application.cache.sget('weixin_api_token')
-            except Exception:
+                access_token = yield self.application.cache.sget('weixin_api_token')
+            except Exception as e:
                 self.write("")
+                return  
             if access_token:
                 url = "https://api.weixin.qq.com/cgi-bin/user/info?access_token={0}&openid={1}&lang={2}"
-                url.format(access_token,user_openid,"zh_CN")
+                url = url.format(access_token,user_openid,"zh_CN")
                 try:
                     response = yield send_async_request(url)
-                    userdata = response.body.decode("utf-8")
-                    userdata['createtime'] = userdata.pop('subscribe_time',time.time())
+                    userdata = json.loads(response.body.decode("utf-8"))
+                    userdata['createtime'] = userdata.pop('subscribe_time',time.time()) 
                     userdata['userid'] = userdata.pop('openid')
                     userdata['username'] = userdata.pop('nickname')
                     del userdata['remark']
@@ -119,7 +128,7 @@ class WXCallbackHandler(BaseHandler):
                     del userdata['tagid_list']
                     del userdata['language']
                     yield self.application.db['user'].insert(userdata)
-                except Exception:
+                except Exception as e:
                     pass
                 self.write("")  
         else: 
@@ -127,10 +136,10 @@ class WXCallbackHandler(BaseHandler):
 
     @gen.coroutine
     def handle_unsubscribe_event(self):
-        user_openid = self.get_request_msg("FromUserName")
+        user_openid = self.req_msg.get("FromUserName")
         try:
             yield self.application.db.user.remove({"userid":user_openid})
-        except Exception:
+        except Exception as e:
             pass
         self.write("")
     
@@ -148,7 +157,7 @@ class WXCallbackHandler(BaseHandler):
 
     @gen.coroutine
     def post(self):
-        msg_type = self.get_request_msg("MsgType")
+        msg_type = self.req_msg.get("MsgType")
         yield getattr(self,'handle_'+msg_type,self.handle_other)()
         
       
