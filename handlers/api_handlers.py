@@ -14,8 +14,10 @@ class WeixinQRCodeGetAPIHandler(BaseHandler):
     @gen.coroutine
     def get(self):
         source_url = self.get_argument("source_url")
-        context = self.get_argument("context")
-        qrc = self.get_argument("qrc")
+        data = self.get_argument("data")
+        data = data or {}
+        context = data.get("context")
+        qrc = data.get("qrc")
         try:
             qrcode_ticket = yield self.application.cache.sget('weixin_qrcode_ticket')
             if qrcode_ticket:
@@ -67,7 +69,7 @@ class HelpContentGetAPIHandler(AuthNeedBaseHandler):
             err_res["errcode"] = 40000
             err_res["errmsg"] = "not correct source_url"
             self.write(err_res)
-        data = self.get_argument("data",{})
+        data = self.get_argument("data") or {}
         context = data.get("context")  
         qrc = data.get("qrc")
         yield getattr(context+'help',self.default)(qrc)
@@ -171,8 +173,9 @@ class UserProfileGetAPIHandler(AuthNeedBaseHandler):
             err_res["errcode"] = 40000
             err_res["errmsg"] = "not correct source_url"
             self.write(err_res)
-        qrc = self.get_argument("qrc",{})
-        context = self.get_argument("context",{})
+        data = self.get_argument("data") or {}
+        qrc = data.get("qrc")
+        context = data.get("context")
         res = {}
         res["res_qrc"] = qrc
         res["data"] = []
@@ -196,12 +199,13 @@ class UserProfileUpdateAPIHandler(AuthNeedBaseHandler):
             err_res["errcode"] = 40000
             err_res["errmsg"] = "not correct source_url"
             self.write(err_res)
-        context = self.get_argument("context",{})
+        data = self.get_argument("data") or {}
+        context = data.get("context",{})
         updates_profile = {}
         updates_profile['usercontact'] = context.get("user_contact","")
-        qrc = self.get_argument("qrc",{})
+        qrc = data.get("qrc",{})
         try:
-            yield self.session.set("usercontact",updates_profile["usercontact"])
+            self.session["usercontact"] = updates_profile["usercontact"]
             userid = self.current_user['userid']
             yield self.application.db['user'].update({"userid":userid},{"$set":updates_profile})
         except Exception:
