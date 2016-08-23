@@ -1,10 +1,17 @@
 #!/usr/bin/env python3.5
 
+import os
+
+import celery
 from tornado import web
 from tornado import ioloop
 import tornado.options
 import tornado.autoreload
 from tornado.options import options, define
+from tornasess import SessionCacheFactory
+from tornado_hbredis import TornadoHBRedis
+from motor.motor_tornado import MotorClient
+import concurrent.futures
 
 from handlers.user_handlers import *
 from handlers.auth_handlers import *
@@ -16,13 +23,7 @@ from handlers.about_handler import AboutHandler
 from handlers.document_handler import DocumentHandler
 from handlers.agreement_handler import AgreementHandler
 from handlers.api_handlers import *
-
-
-from tornasess import SessionCacheFactory
-from tornado_hbredis import TornadoHBRedis
-import os
-from motor.motor_tornado import MotorClient
-import concurrent.futures
+import tasks
 
 
 class DefaultHandler(web.RequestHandler):
@@ -54,6 +55,7 @@ class Application(web.Application):
             'site_cookie_val':'djeijioidjeoiodjoiejdoejodeojodejo',
             'public_appid':app_config['public_appid'],
             'public_secret':app_config['public_secret'],
+            'wx_state_key':'huzhugc.com',
             'debug':True,
         }
 
@@ -64,7 +66,8 @@ class Application(web.Application):
             (r'/wxcallback/?', WXCallbackHandler),
             #(r'/wxcallback/?', CheckSignatureHandler),
             (r'/login/?', LoginHandler),
-            (r'/wxsublogin/?',WXSubscribeLoginHandler),
+            (r'/wxpubloginredirect/?', WXPubLoginRedirectHandler),
+            (r'/wxpublogin/?', WXPubLoginHandler),
             (r'/search/?', SearchHandler),
             (r'/about/?', AboutHandler), 
             (r'/document/?', DocumentHandler),
@@ -85,7 +88,8 @@ class Application(web.Application):
         self.db = conn['fsp']
         self.executor = concurrent.futures.ThreadPoolExecutor(2)
         self.session_cache = SessionCacheFactory('redis')
-        self.cache = TornadoHBRedis("localhost",6379)
+        self.cache = TornadoHBRedis("localhost",6379, bytes_decode=True)
+        self.tasks = tasks
 
 define("port", default=8000, help="server port", type=int)
 if __name__ == '__main__':
