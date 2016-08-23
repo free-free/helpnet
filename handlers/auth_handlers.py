@@ -1,17 +1,16 @@
 # coding:utf-8
 
 
-from tornado import web
-from tornado import gen
-from .base_handler import BaseHandler, AuthNeedBaseHandler
-from . import send_async_request,generate_state,certify_state
-from concurrent.futures import ThreadPoolExecutor
-import bcrypt
 from datetime import datetime
 import uuid
 import base64
 import json
 import time
+
+from tornado import gen,web
+
+from .base_handler import BaseHandler, AuthNeedBaseHandler
+from . import send_async_request,generate_state,certify_state
 
 
 class LoginHandler(AuthNeedBaseHandler):
@@ -29,48 +28,52 @@ class LoginHandler(AuthNeedBaseHandler):
         self.render('login.html')
 
 
-
-class WXSubscribeLoginHandler(AuthNeedBaseHandler):
-
+class WXPubLoginRedirectHandler(BaseHandler):
+    
     r"""
-        @url:/wxsubslogin/?
+        @url:/wxpubloginredirect/?
     """
     @gen.coroutine
-    def prepare(self):
-        yield super(WXSubscribeLoginHandler,self).prepare()
-        if current_user:
-            self.redirect('/')
+    def get(self):
+        state = generate_state(self.application.settings['wx_state_key'],120)
+        auth_url = "https://open.weixin.qq.com/connect/oauth2/authorize?\
+appid={0}&redirect_uri={1}&response_type=code&scope=snsapi_base&state={2}#wechat_redirect"
+        auth_url = auth_url.format(self.application.settings['public_appid'],
+            "http://www.huzhugc.com/wxpublogin/",state)
+        self.redirect(auth_url)
+
+ 
+class WXPubLoginHandler(AuthNeedBaseHandler):
+
+    r"""
+        @url:/wxpublogin/?
+    """
  
     @gen.coroutine
     def get(self):
-        state = self.get_argument("state", "")
-        code  = self.get_argument("code","")
-        if not code or not certify_state("deude",state):
+        state = self.get_argument("state")
+        code  = self.get_argument("code")
+        if not code or not certify_state(self.application.settings['wx_state_key'],state):
             self.redirect('/login')
             return 
-        ackurl = "https://api.weixin.qq.com/sns/oauth2/access_token? \
-            appid={0}&secret={1}&code={2}&grant_type=authorization_code"
-        ackurl.format(self.application.settings['public_appid'],\
-                      self.application.settings['public_secret'],\
-                      code)
+        code_url = "https://api.weixin.qq.com/sns/oauth2/access_token?appid={0}\
+&secret={1}&code={2}&grant_type=authorization_code"
+        code_url = code_url.format(self.application.settings['public_appid'],
+            self.application.settings['public_secret'],code)
         try: 
-            response = yield send_async_request(ackurl)
-            response = response.body.decode("utf-8")
+            response = yield send_async_request(code_url)
+            response = json.loads(response.body.decode("utf-8"))
             openid = response['openid']
             #check user existence
             userdata = yield self.application.db['user'].find_one({"userid":openid})
             if not userdata:
                 self.redirect('/login')
-                return   
+                return    
             del userdata['_id']
-            userdata['longitude'] = userdata['location'][0]
-            userdata['latitude'] = userdata['location'][1]
             self.session.multi_set(userdata)
-            yield self.session.save(7200)
-            self.set_cookie(self.application.settings['session_cookie'],self.session.session_id)
             self.set_cookie("auth",'1')
             self.redirect('/')
-        except Exception:
+        except Exception as e:
             self.redirect('/login')
             
 
@@ -104,7 +107,7 @@ class WXAuthCallbackLoginHandler(AuthNeedBaseHandler):
             userdata = yield self.application.db['user'].find_one({"userid":openid})
             if not userdata:
                 userdataurl = "https://api.weixin.qq.com/sns/userinfo?access_token={0}&openid={1}"
-                userdataurl.format(response['access_token'],openid)
+                userdataurl = userdataurl.format(response['access_token'],openid)
                 response = yield send_async_request(userdataurl)
                 userdata = response.body.decode('utf-8') 
                 userdata['createtime'] = time.time()
@@ -114,10 +117,7 @@ class WXAuthCallbackLoginHandler(AuthNeedBaseHandler):
                 del userdata['privilege']
                 yield self.application.db['user'].insert(userdata)
             del userdata['_id']
-            userdata['longitude'] = userdata['location'][0]
-            userdata['latitude'] = userdata['location'][1]
             self.session.multi_set(userdata)
-            yield self.session.save(7200)
             self.set_cookie("auth",'1')
             self.set_cookie(self.application.settings['session_cookie'],self.session.session_id)
             self.redirect('/')
@@ -138,4 +138,4 @@ class LogoutHandler(AuthNeedBaseHandler):
         except Exception:
             self.set_status(500)
             self.render("errors/500.html")
-        self.redirect('/')
+        self.redirect('/login/')
