@@ -1,22 +1,152 @@
 {% extends "base.html" %}
-{% block header %}
-<!-- <header class="left text_center">
-	<a href="">扫码登陆</a>
-</header> -->
+{% block head_custom %}
+   <link rel="stylesheet" type="text/css" href="{{static_url('css/login-page-css.css')}}">
 {% end %}
-
+{% block header %}
+<header class="left text_center">
+	<a href="/">互助广场</a>
+</header> 
+{% end %}
 {% block container %}
-<!-- 
-<div class="main-container" style="color:#ee0000;text-align:center;height:400px;line-height:400px;">
-	LOGINT HERE 
-</div> -->
 
-<div class="center text_center" style="margin-top:5rem;">
-	<img src="{{static_url('images/officialQR.jpg')}}" >
-	<p  >请扫码进入互助广场</p>
-
+<div class="center text_center" style="margin-top:10rem;">
+    <a href="#" class="qrcode_btn weui_btn weui_btn_primary" style="width:50%;" >关注公众号</a>
 </div>
 
 {% end %} 
+{% block footer %}
+              <div class="footer">
+                  <div class="footer-container">
+                     <a class="footer-item copyright" href="#">&copy;2016 huzhugc.com 版权所有</a>
+                     <a class="footer-item beian" href="http://www.miitbeian.gov.cn/">蜀ICP备16022847号</a>
+                  </div>
+              </div>
+{% end %}
 {% block js_custom %}
+<script>
+    function create_qrcode_ui(qrcode_img_url){
+                var div,img;
+                div = $(".overlap");
+                img = $(".qrcode_img");
+                note = $(".note_text");
+                if(!div.length)
+                {
+                    div = $("<div></div>");
+                    $(div).css({
+                        'z-index':'999999999',
+                        'background-color':'#000',
+                        'position':'absolute',
+                        'top':'0',
+                        'left':'0',
+                        'filter':'alpha(opacity=50)',
+                        'opacity':'0.5',
+                        'width':'100%',
+                        'height':$(document).height(),
+                    }).click(function(){
+                        $(this).hide();
+                        $(".qrcode_img").hide();
+                        $(".note_text").hide();
+                    }).addClass("overlap");
+                    $('body').append(div);
+                }
+                else
+                {
+                    $(div).css({
+                        'z-index':'999999999',
+                        'background-color':'#000',
+                        'position':'absolute',
+                        'top':'0',
+                        'left':'0',
+                        'filter':'alpha(opacity=50)',
+                        'opacity':'0.5',
+                        'width':'100%',
+                        'height':$(document).height(),
+                    }).click(function(){
+                        $(this).hide();
+                        $(".qrcode_img").hide();
+                    }).addClass("overlap");
+                    $(div).show();
+                }
+
+                if(!img.length)
+                {
+                    img = $("<img/>"); 
+                    $(img).attr('src', qrcode_img_url);
+                    $(img).css({
+                       'z-index':'100000000000',
+                       'position':'absolute',
+                       'top':'0',
+                       'left':'0',
+                       'bottom':'0',
+                       'right':'0',
+                       'margin':'auto',
+                       'max-width':'100%',
+                    }).addClass("qrcode_img");
+                    $('body').append(img);
+                }
+                else
+                {
+                    $(img).attr('src', qrcode_img_url);
+                    $(img).css({
+                       'z-index':'100000000000',
+                       'position':'absolute',
+                       'top':'0',
+                       'left':'0',
+                       'bottom':'0',
+                       'right':'0',
+                       'margin':'auto',
+                       'max-width':'100%',
+                    }).addClass("qrcode_img");
+                    $(img).show();
+                }
+
+                if(!note.length)
+                {
+                    note = $("<p></p>");
+                    note.text("点击黑色透明处取消");
+                    note.css({
+                        'z-index':'1000000000000',
+                        'position':'absolute',
+                        'bottom':'5%',
+                        'width':'100%',
+                        'text-align':'center',
+                        'color':'#fff',
+                    }).addClass("note_text");
+                    $('body').append(note);
+                }
+                else
+                {
+                    note.css({
+                        'z-index':'1000000000000',
+                        'position':'absolute',
+                        'bottom':'5%',
+                        'width':'100%',
+                        'text-align':'center',
+                        'color':'#fff',
+                    }).addClass("note_text");
+                    note.show(); 
+                }
+    }
+
+    $(function(){
+        $(".qrcode_btn").click(function(){
+            url = "/resource/WXQRCodeResource/get/";
+            data = {"qrc":{},"context":{}}
+            data = JSON.stringify(data);
+            req_params = {
+                "source_url":location.pathname,
+                "data":data
+            };
+            $.getJSON("/resource/WXQRCodeResource/get/",req_params,function(json_data){
+                create_qrcode_ui(json_data.data[0].qrcode_url);
+            })
+        })
+        $(window).resize(function(){
+            if($(".overlap:visible").length>=1)
+            {
+                $(".qrcode_btn").click();
+            }
+        })
+    })
+</script>
 {% end %}
