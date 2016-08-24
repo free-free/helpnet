@@ -8,7 +8,7 @@ CELERY_ENABLE_UTC = True
 CELERYBEAT_SCHEDULE = {
     'every-one-hour-and-fifty-minute':{
         'task': 'tasks.wxapi_token_refresh',
-        'schedule': crontab(minute='*/50',hour="*/1"),
+        'schedule': crontab(minute='50',hour="*/1"),
         'args': ''
     }
 }
