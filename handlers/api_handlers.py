@@ -1,8 +1,10 @@
 # coding:utf-8
 
-from tornado import gen,web
-from .base_handler import BaseHandler,AuthNeedBaseHandler
 import json
+
+from tornado import gen,web
+
+from .base_handler import BaseHandler,AuthNeedBaseHandler
 from . import send_async_request
 
 
@@ -14,7 +16,7 @@ class WeixinQRCodeGetAPIHandler(BaseHandler):
     @gen.coroutine
     def get(self):
         source_url = self.get_argument("source_url")
-        data = self.get_argument("data")
+        data = json.loads(self.get_argument("data")) or {}
         data = data or {}
         context = data.get("context")
         qrc = data.get("qrc")
@@ -69,7 +71,7 @@ class HelpContentGetAPIHandler(AuthNeedBaseHandler):
             err_res["errcode"] = 40000
             err_res["errmsg"] = "not correct source_url"
             self.write(err_res)
-        data = self.get_argument("data") or {}
+        data = json.loads(self.get_argument("data")) or {}
         context = data.get("context")  
         qrc = data.get("qrc")
         yield getattr(context+'help',self.default)(qrc)
@@ -173,7 +175,7 @@ class UserProfileGetAPIHandler(AuthNeedBaseHandler):
             err_res["errcode"] = 40000
             err_res["errmsg"] = "not correct source_url"
             self.write(err_res)
-        data = self.get_argument("data") or {}
+        data = json.loads(self.get_argument("data")) or {}
         qrc = data.get("qrc")
         context = data.get("context")
         res = {}
@@ -199,7 +201,7 @@ class UserProfileUpdateAPIHandler(AuthNeedBaseHandler):
             err_res["errcode"] = 40000
             err_res["errmsg"] = "not correct source_url"
             self.write(err_res)
-        data = self.get_argument("data") or {}
+        data = json.loads(self.get_argument("data")) or {}
         context = data.get("context",{})
         updates_profile = {}
         updates_profile['usercontact'] = context.get("user_contact","")
