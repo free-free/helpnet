@@ -138,7 +138,7 @@
                 "data":data
             };
             $.getJSON("/resource/WXQRCodeResource/get/",req_params,function(json_data){
-                create_qrcode_ui(json_data.data[0].qrcode_url);
+                create_qrcode_ui(json_data.resp[0].qrcode_url);
             })
         })
         $(window).resize(function(){
