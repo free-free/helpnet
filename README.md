@@ -48,8 +48,8 @@
 
 ```python
    response = {
-	'res_qrc':这一次的请求条件,以便下一次请求使用，字段和qrc的相同,
-        'data': 响应的数据(数组),每一个数据代表每一个help单子的数据(post_userheadimgurl,helpcontent,helpstate,helprewad,post_username,helpremark)
+	'resp_qrc':这一次的请求条件,以便下一次请求使用，字段和qrc的相同,
+        'resp': 响应的数据(数组),每一个数据代表每一个help单子的数据(post_userheadimgurl,helpcontent,helpstate,helprewad,post_username,helpremark)
    }
 ```
 
@@ -73,8 +73,8 @@
 
 ``` python 
     response = {
-          'res_qrc': 同上,
-          'data':[{'qrcode_url':"url"},...]
+          'resp_qrc': 同上,
+          'resp':[{'qrcode_url':"url"},...]
     }
 ```
 
@@ -96,8 +96,8 @@
 
 ```python
    response = {
-          'res_qrc':'',
-          'data':[{'user_contact':'mobile phone number'}]
+          'resp_qrc':'',
+          'resp':[{'user_contact':'mobile phone number'}]
    }
 ```
 
@@ -119,8 +119,8 @@
 
 ```python
     response = {
-          'res_qrc':'',
-          'data':[]
+          'resp_qrc':'',
+          'resp':[]
    }
 
 ```
