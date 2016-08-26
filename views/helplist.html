@@ -1,6 +1,9 @@
 {% extends "base.html" %}
 
 
+{% block head_custom %}
+<link rel="stylesheet" type="text/css" href="{{ static_url('stylesheets/help-list-page.css')}}">
+{% end %}
 {% block header %}
 <div class="weui-pull-to-refresh-layer">
     <div class="pull-to-refresh-arrow"></div> <!-- 上下拉动的时候显示的箭头 -->
