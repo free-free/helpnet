@@ -27,14 +27,13 @@
 |post_usercontact   |                    |
 |address            |                    |
 |helpcontent        |   help main content|
-|helpremark         |                    |
 |helpreward         |  help tip          |
 |get_userid         |  help user id      |
 |get_username       |                    |
 |get_userheadimgurl |                    |
 |posttime           |  post timestamp    |
 |finishtime         |                    |
-|lifetime           |                    |
+|expiretime         |                    |
 |helpstate          |                    |
 |ispay              |                    |
 |location:lng,lat   |  array             |
