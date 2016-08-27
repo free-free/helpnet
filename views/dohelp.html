@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+
+{% block head_custom %}
+<link rel="stylesheet" type="text/css" href="{{ static_url('stylesheets/do-help-page.css')}}">
+{% end %}
+{% block header %}
+<header class="center text_center" >
+        <p>帮助Ta</p>      
+</header>
+{% end %}
+
+{% block container %}
+    <div id="do_help" >
+        <div  class="do_help_container" >
+        <div class="do_help_head">
+            <img src="{{ static_url('images/cat.jpg')}}" class="post_user_head_img user_head_img">
+            <span class="post_user_name">一只叫狗狗的鸡</span>
+        </div>
+        <div class="do_help_body">
+           <span class="body_note_tag help_content_tag">求助内容:</span>
+           <p class="weui_article help_content">
+                请从360超市带一桶老坛酸菜泡面，外加一根玉米火腿肠，我住在东六A304，万分感谢！
+           </p>
+           <span class="body_note_tag post_user_contact_tag">求助人联系方式:</span>
+           <p class="post_user_contact">182*******</p>
+           <p class="text_center help_reward" >赏金：￥ 1</p>
+           <form id="do_help_form" method="POST" action="#">
+               <input type="text" name="do_user_contact" class="weui_input do_user_contact" placeholder="请留下你的联系方式"/>
+               <button type="submit" class="weui_btn  gethelp_btn ">接单</button>
+           </form>
+        </div>
+        </div>
+    </div>
+{% end %}
+{% block js_custom %}
+    <script type="text/javascript" src="{{ static_url('javascripts/do-help.js')}}"></script>
+    <script type="text/javascript">
+    </script>
+{% end %}
+
