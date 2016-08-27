@@ -79,7 +79,7 @@
             helpTimeout.innerText = data.helptimeout;
             helpDetailBtn.className = "weui_btn weui_btn_primary";
             helpDetailBtn.href = data.helpurl;
-            helpDetailBtn.innerText = "帮助";
+            helpDetailBtn.innerText = "去帮助Ta";
             helpListItemFooter.appendChild(helpTimeout);
             helpListItemFooter.appendChild(helpDetailBtn);
            
