@@ -1,0 +1,88 @@
+#ask_help{
+    margin-left: auto;
+    margin-right: auto;
+    margin-bottom: 3rem;
+    padding-bottom:3rem;
+    max-width: 768px;
+}
+
+.ask_help_container{
+    //background-color: #fff;
+    background:transparent;
+    font-size:.8rem;
+   //margin-bottom: 8rem;
+}
+
+.ask_help_form_item{
+    margin-bottom: .6rem;
+    margin-left:0.5rem;
+    margin-right:0.5rem;
+}
+.ask_help_form_item_title{
+    font-size:0.8rem;
+    color: #5b5b5b;
+    //color:#9d55b8;
+}
+.ask_help_form_item_input{
+    width: 100%;
+    box-sizing:border-box;
+    -moz-box-sizing:border-box; /* Firefox */
+    -webkit-box-sizing:border-box; /* Safari */
+    line-height: 1rem;
+    border-radius: 0.2rem;
+    padding: 0.3rem 0.5rem;
+    border:.05rem solid #ddd;
+    color:#333;
+    font-size:0.8rem;
+}
+
+.post_usercontact_info_item{
+    float:left; 
+    box-sizing:border-box;
+    -moz-box-sizing:border-box; /* Firefox */
+    -webkit-box-sizing:border-box; /* Safari */
+    color:#333;
+    font-size:0.8rem;
+}
+
+
+.post_usercontact_means_container{
+    position relative;
+    width:21%;
+    overflow:hidden;
+    //border:0.05rem solid #ddd;
+    border-top-left-radius:0.2rem;
+    border-bottom-left-radius:0.2rem;
+    
+}
+.post_usercontact_means_cs{
+    line-height:1rem
+    font-size:0.8rem;
+    height:1.6rem;
+    padding: 0.3rem 0.5rem;
+    background:transparent;
+    outline:none;
+}
+.post_usercontact_input{
+   float:right;
+   width:79%;
+   line-height: 1rem;
+   border-left:none;
+   border-top-right-radius:0.2rem;
+   border-bottom-right-radius:0.2rem;
+   border:.05rem solid #ddd;
+   padding: 0.3rem 0.5rem;
+}
+
+
+.btn_container{
+    margin-top:2rem;
+}
+.ask_help_submit_btn{
+    background-color:#f00;
+   
+}
+.clear-fix{
+    clear:both;
+}
+

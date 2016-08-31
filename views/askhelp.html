@@ -1,38 +1,61 @@
 {% extends "base.html" %}
+{% block head_custom %}
+<link rel="stylesheet" type="text/css" href="{{ static_url('stylesheets/ask-help-page.css')}}">
+{% end %}
 {% block header %}
-    <header class="center text_center" style="font-size: 1rem;">
+    <header class="center text_center" >
         <p>发布请求</p>
     </header>
 {% end %}
 {% block container %}
-    <div class="weui_cells weui_cells_form">
-        <div class="weui_cell">
-            <div class="weui_cell_bd weui_cell_primary">
-                <textarea class="weui_textarea" style="font-size:0.8rem" placeholder="请输入详细要求" rows="3"></textarea>
-                <div class="weui_textarea_counter" style="font-size:0.8rem"><span>0</span>/100</div>
-            </div>
-        </div>
+    <div id="ask_help" >
+        <div class="ask_help_container">
+            <form id="ask_help_form" method="POST" action="/askhelp/">
+                <div class="ask_help_form_item">
+                        <label class="ask_help_form_item_title" for="help_content">求助内容</label>
+                        <textarea id="help_content" name="help_content" class="weui_textarea ask_help_form_item_input" placeholder="请输入求助内容" rows="4"></textarea>
+                </div>
+                <div class="ask_help_form_item">
+                    <label class="ask_help_form_item_title help_price" for="help_price">小费</label>
+                    <input id="help_price" class="ask_help_form_item_input" type="text" name="help_price" placeholder="具体价格或面议">
+                </div>
+                <div class="ask_help_form_item user-contact">
+                        <label class="ask_help_form_item_title">联系方式</label>
+                        <div class="post_usercontact_info">
+                             <div class="post_usercontact_info_item post_usercontact_means_container">
+                             <select id="post_usercontact_means" name="post_usercontact_means" class="post_usercontact_means_cs">
+                                 <option value="1" class="p_uc_select_opt phone_option" >电话</option>
+                                 <option value="2" class="p_uc_select_opt qq_option">微信</option>
+                                 <option value="3" class="p_uc_select_opt weixin_option">QQ</option>
+                             </select>
+                             </div>
+                             <input id="post_usercontact" name="post_usercontact" class="post_usercontact_input post_usercontact_info_item" type="text"  placeholder=""/>
+                        </div>
+                        <div class="clear-fix"></div>    
+                </div>
+                 
+                <div class="ask_help_form_item help-position">
+                        <label class="ask_help_form_item_title">求助位置</label>
+                        <input id="help_address" name="help_address" class="ask_help_form_item_input help_address"  placeholder="默认为当前位置" >    
+                        <input id="help_lng" class="help_lng" name="help_lng" type="hidden" value=""/>  
+                        <input id="help_lat" class="help_lat" name="help_lat" type="hidden" value=""/>
+                </div>
 
-        <div class="weui_cell">
-            <div class="weui_cell_bd weui_cell_primary">
-                <textarea class="weui_textarea" style="font-size:0.8rem" placeholder="有需要备注的吗" rows="2"></textarea>
-                <div class="weui_textarea_counter" style="font-size:0.8rem"><span>0</span>/20</div>
-            </div>
+                <div class="ask_help_form_item">
+                        <label class="ask_help_form_item_title">有效时间</label>
+                        <input id="help_expiretime" name="help_expiretime"class="ask_help_form_item_input" type="number"  placeholder="单位为分钟(默认为永久有效)" >    
+                </div>
+                
+                <div class="ask_help_form_item btn_container">
+                    <button type="submit" id="ask_help_submit_btn" class="weui_btn ask_help_submit_btn">发送</button>
+                </div>
+            </form>
         </div>
-
-
-        <div class=" center" style="color: #f00; width:6rem">
-            <lable class="" style="font-size:0.8rem">小费</lable>
-            <input class="weui_input" type="text" name="" style="width: 2.6rem; border-bottom: 1px solid gray;">
-            <span>￥</span>
-        </div>
-        <div class="btn_sp_area">
-            <button type="submit" class="weui_btn " style="width: 5rem;margin-top:1rem;background-color:  #f00;font-size:0.8rem;width: 4rem;">提交</button>
-        </div>
-    </div>
-    <div class="content" style="font-size: 0.8rem; background-color: #fff;">
     </div>
 {% end %}
+
 {% block js_custom %}
-    <script type="text/javascript" src="{{static_url('javascripts/jquery-3.1.0.min.js')}}"></script>
+    <script type="text/javascript" src="http://webapi.amap.com/maps?v=1.3&key=5d370d0efd99ca67cf8324ba65f3e1d5"></script>
+    <script type="text/javascript" src="http://res.wx.qq.com/open/js/jweixin-1.0.0.js"></script>
+    <script type="text/javascript" src="{{ static_url('javascripts/ask-help.js')}}"></script>
 {% end %}
