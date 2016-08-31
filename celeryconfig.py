@@ -6,9 +6,14 @@ CELERY_ACCEPT_CONTENT = ["json", "pickle"]
 CELERY_TIMEZONE = "UTC"
 CELERY_ENABLE_UTC = True
 CELERYBEAT_SCHEDULE = {
-    'every-one-hour-and-fifty-minute':{
+    'access_token_refresh':{
         'task': 'tasks.wxapi_token_refresh',
-        'schedule': crontab(minute='50',hour="*/1"),
+        'schedule': crontab(minute='50', hour="*/1"),
         'args': ''
-    }
+    },
+    'jsapi_ticket_refresh':{
+        'task': 'tasks.wxjsapi_ticket_refresh',
+        'schedule': crontab(minute='55', hour="*/1"),
+        'args':''
+    },
 }
