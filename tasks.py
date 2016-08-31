@@ -3,12 +3,16 @@
 from submail import submail
 
 from tasker import tasker
-from token_servo import token_refresh
+from services import token_refresh, jsapi_ticket_refresh
 
 
 @tasker.task
 def wxapi_token_refresh():
     token_refresh()
+
+@tasker.task
+def wxjsapi_ticket_refresh():
+    jsapi_ticket_refresh()    
 
 @tasker.task
 def send_mail():
