@@ -25,16 +25,19 @@
 |post_userid        |   unique user id   |
 |post_userheadimgurl|   user header img url|
 |post_usercontact   |                    |
-|address            |                    |
-|helpcontent        |   help main content|
-|helpreward         |  help tip          |
-|get_userid         |  help user id      |
-|get_username       |                    |
-|get_userheadimgurl |                    |
+|post_usercontact_means|                 |
+|help_address            |                    |
+|help_content        |   help main content|
+|help_price         |  help tip          |
+|do_userid         |  help user id      |
+|do_username       |                    |
+|do_userheadimgurl |                    |
+|do_usercontact    |                    |
+|do_usercontact_means|                  |
 |posttime           |  post timestamp    |
 |finishtime         |                    |
 |expiretime         |                    |
-|helpstate          |                    |
+|help_state          |                    |
 |ispay              |                    |
 |location:lng,lat   |  array             |
 |locprec            |  location precision|
