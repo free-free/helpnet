@@ -31,11 +31,15 @@
     line-height: 1rem;
     border-radius: 0.2rem;
     padding: 0.3rem 0.5rem;
-    border:.05rem solid #ddd;
+    //border:.05rem solid #ddd;
+    border:0.05rem solid #eee;
     color:#333;
     font-size:0.8rem;
 }
 
+.post_usercontact_info{
+    position:relative;
+}
 .post_usercontact_info_item{
     float:left; 
     box-sizing:border-box;
@@ -44,37 +48,59 @@
     color:#333;
     font-size:0.8rem;
 }
-
-
 .post_usercontact_means_container{
     position relative;
-    width:22%;
-    overflow:hidden;
-    //border:0.05rem solid #ddd;
-    border-top-left-radius:0.2rem;
-    border-bottom-left-radius:0.2rem;
-    
+    width:24%;
+    box-sizing:border-box;
 }
 .post_usercontact_means_cs{
     box-sizing:border-box;
+    appearance:none;
+    -moz-appearance:none; 
+    -webkit-appearance:none; 
+    width:100%;
     padding-left:0.2rem;
     font-size:0.8rem;
     height:1.7rem;
     padding: 0.3rem 0.5rem;
-    background:transparent;
     border:0;
     border:none;
     outline:none;
+    border:0.05rem solid #eee;
+    border-right:none;
+    background-color:#fff;
+    //border-top-left-radius:0.2rem;
+    //border-bottom-left-radius:0.2rem;
+}
+.select-angle{
+    position:absolute;
+    width:0;
+    height:0;
+    top:0.7rem;
+    left:15%;
+    border:0.3rem solid #555;
+    border-color:transparent;
+    border-top-color:#555;
+}
+.select-left-border{
+    position:absolute;
+    height:1rem;
+    width:0.05rem;
+    background-color:#555;
+    top:0.35rem;
+    display:block;
+    left:22%;
+    border:none;
+   float:right;
 }
 .post_usercontact_input{
-   float:right;
-   width:78%;
+   width:76%;
    box-sizing:border-box;
    line-height: 1rem;
-   border-left:none;
    border-top-right-radius:0.2rem;
    border-bottom-right-radius:0.2rem;
-   border:.05rem solid #ddd;
+   border:0.05rem solid #eee;
+   border-left:none; 
    padding: 0.3rem 0.5rem;
 }
 
