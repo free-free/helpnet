@@ -1,12 +1,16 @@
 
 #do_help{
-    margin-bottom: 5rem;
+    margin-left:auto;
+    max-width: 768px;
+    margin-right:auto;
+    padding-bottom:3rem;
 }
 
 .do_help_container
 {
+   
     max-width: 768px;
-    background-color: #fff;
+    background-color:#fff;
     font-size: .8rem;
     margin-bottom: .6rem;
     padding: .75rem .9rem;
@@ -28,9 +32,10 @@
     border-radius: 50%;
 }
 
-.post_user_name{
+.post_username{
    display: inline-block;
    margin-left: .475rem;
+   font-size:0.8rem;
 }
 
 .do_help_body{
@@ -42,6 +47,7 @@
    display: inline-block;
    margin-top: 0.25rem;
    margin-bottom: 0.25rem;
+   font-size:.8rem;
    vertical-align:center;
    
 }
@@ -49,13 +55,14 @@
 .help_content{
    border: 0.05rem solid #eee;
    padding: 0.5rem 0.5rem;
+   font-size:.8rem;
 }
 
-.post_user_contact{
+.post_usercontact{
    padding: .5rem .5rem;
 }
 
-.help_reward{
+.help_price{
    font-size: 0.9rem;
    margin-top: 0.5rem;
    color: #f00;
@@ -66,22 +73,75 @@
     padding-top: 1rem;
 }
 
-.do_user_contact{
-   border: 0;
-   height:2rem;
-   line-height:1.5rem;
-   border-bottom: 0.05rem solid #eee;
-   border-radius: 0.1rem;
-}
-.gethelp_btn{
+.dohelp_btn{
     margin-top: 1rem;
     background-color: #f00;
     font-size: 0.8rem;
 }
 
-.gethelp_btn_disabled{
+.dohelp_btn_disabled{
     margin-top: 1rem;
     background-color: #eee;
     font-size: 0.8rem;
     color: #aaa;
+}
+
+.do_help_form_container{
+   position:relative;
+   border-bottom: 0.05rem solid #eee;
+} 
+.do_usercontact_means{
+    float:left;
+    box-sizing:border-box;
+    display:block;
+    height:2rem;
+    padding-left:0.2rem;
+    appearance:none;
+    -moz-appearance:none; /* Firefox */
+    -webkit-appearance:none; /* Safari 和 Chrome */
+    border:0;
+    border:none;
+    outline:0;
+    font-size:0.8rem;
+    background:transparent;
+    line-height:2rem;
+    width:23%;
+}
+.select-angle{
+    position:absolute;
+    width:0;
+    height:0;
+    top:0.9rem;
+    left:15%;
+    border:0.3rem solid #555;
+    border-color:transparent;
+    border-top-color:#555;
+}
+.select-left-border{
+    position:absolute;
+    height:1rem;
+    width:0.05rem;
+    background-color:#555;
+    top:0.5rem;
+    display:block;
+    left:22%;
+    border:none
+}
+.do_usercontact{
+   box-sizing:border-box;
+   float:right;
+   width:77%;
+   border: 0;
+   height:2rem;
+   line-height:1.0rem;
+   font-size:0.8rem;
+   padding-left:0.5rem;
+   //border-bottom: 0.05rem solid #eee;
+   //border-radius: 0.1rem;
+}
+.do_usercontact:focus{
+   outline:none;
+   appearance:none;
+   -moz-appearance:none; /* Firefox */
+   -webkit-appearance:none; /* Safari 和 Chrome */
 }
