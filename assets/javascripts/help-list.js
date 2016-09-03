@@ -1,49 +1,30 @@
 
         var loading = false;
-        /*
-         data = {"post_userheadimgurl":"","post_username":"","helpreward":"",
-                 "helpcontent":"","helpurl":"","helptimeout":""}
 
-        */
-        function create_infinite_preloader(after, data)
-        {
-            var parent = after.parentNode;
-            var scroll = document.createElement("div");
-            var preloader = document.createElement("div");
-            scroll.className = "weui-infinite-scroll";
-            preloader.className = "infinite-preloader";
-            scroll.appendChild(preloader);
-            scroll.innerHtml += "正在加载...";
-            if(parent.lastChild == after)
-            {
-                parent.appendChild(scroll);
-            }
-            else
-            {
-                parent.insertBefore(scroll, after.nextSibling);
-            }
-        }
-
-        function show_infinite_preloader()
-        {
-           var scroll = document.getElementsByClassName("weui-infinite-scroll");
-           if(scroll.length > 0)
-           {
-               scroll[0].style.display = "block";
-           }
-        }
-
-        function hide_infinite_preloader()
-        {
-
-           var scroll = document.getElementsByClassName("weui-infinite-scroll");
-           if(scroll.length > 0)
-           {
-               scroll[0].style.display = "none";
-           } 
+        function init_timeago(){
+           jQuery.timeago.settings.strings = {
+                        prefixAgo: null,
+                        prefixFromNow: "从现在开始",
+                        suffixAgo: null,
+                        suffixFromNow: null,
+                        seconds: "刚刚",
+                        minute: "1分钟之前",
+                        minutes: "%d分钟之前",
+                        hour: "1小时之前",
+                        hours: "%d小时之前",
+                        day: "1天之前",
+                        days: "%d天之前",
+                        month: "大约1个月之前",
+                        months: "%d月之前",
+                        year: "大约1年之前",
+                        years: "%d年",
+                        numbers: [],
+                        wordSeparator: ""
+            };
         }
 
         function create_help_item_ui(parent, data){
+            pt = new Date(parseFloat(data.posttime)*1000);
             var helpListItem = document.createElement("div");
             var helpListItemContainer = document.createElement("div");
             helpListItem.className = "help_list_item center";
@@ -52,36 +33,58 @@
             var helpListItemHead = document.createElement("div");
             var helpPostUserHeadImg = document.createElement("img");
             var helpPostUserName = document.createElement("span");
-            var helpReward = document.createElement("span");
+            var helpPrice = document.createElement("span");
+            var helpPriceNum = document.createElement("span");
+            var helpPriceTag = document.createElement("span");
             helpListItemHead.className = "help_list_item_head";
             helpPostUserHeadImg.className = "help_post_user_head_img";
             helpPostUserName.className = "help_post_user_name"; 
-            helpReward.className = "help_reward";
+            helpPrice.className = "help_price";
+            helpPriceTag.className= "help_price_tag";
+            helpPriceNum.className = "help_price_num";
+            helpPriceTag.innerText = "小费  ";
+            reg = /^[0-9]+$/;
+            if(reg.test(data.help_price)){
+                helpPriceNum.innerText = "￥"+data.help_price;
+            }else{
+                helpPriceNum.innerText = data.help_price;
+            }
             helpPostUserHeadImg.src = data.post_userheadimgurl;
             helpPostUserName.innerText = data.post_username;
-            helpReward.innerText = data.helpreward;
+            helpPrice.appendChild(helpPriceTag);
+            helpPrice.appendChild(helpPriceNum);
             helpListItemHead.appendChild(helpPostUserHeadImg);
             helpListItemHead.appendChild(helpPostUserName);
-            helpListItemHead.appendChild(helpReward);
+            helpListItemHead.appendChild(helpPrice);
 
             var helpListItemMain = document.createElement("div");
             var helpContent = document.createElement("p");
             helpListItemMain.className = "help_list_item_main";
             helpContent.className = "help_content";
-            helpContent.innerText = data.helpcontent;
+            helpContent.innerText = data.help_content;
             helpListItemMain.appendChild(helpContent);
              
             var helpListItemFooter = document.createElement("div");
+            var helpTimeBox = document.createElement("div");
             var helpTimeout = document.createElement("span");
-            var helpDetailBtn = document.createElement("a");
+            var clear = document.createElement("div");
+            var helpPosttime = document.createElement("addr");
+            var helpBtn = document.createElement("a");
             helpListItemFooter.className = "help_list_item_footer";
-            helpTimeout.className = "help_timeout";
-            helpTimeout.innerText = data.helptimeout;
-            helpDetailBtn.className = "weui_btn weui_btn_primary";
-            helpDetailBtn.href = data.helpurl;
-            helpDetailBtn.innerText = "去帮助Ta";
-            helpListItemFooter.appendChild(helpTimeout);
-            helpListItemFooter.appendChild(helpDetailBtn);
+            helpTimeBox.className = "help_time_box";
+            helpTimeout.className = "help_timeout help_time";
+            helpTimeout.innerText = data.expiretime;
+            helpPosttime.className = "timeago help_posttime help_time";
+            helpPosttime.title = pt.toISOString();
+            clear.className="clear-fix";
+            helpBtn.className = "weui_btn weui_btn_primary";
+            helpBtn.href = data.help_url;
+            helpBtn.innerText = "去帮助Ta";
+            helpTimeBox.appendChild(helpTimeout); 
+            helpTimeBox.appendChild(helpPosttime);
+            helpTimeBox.appendChild(clear);
+            helpListItemFooter.appendChild(helpTimeBox);
+            helpListItemFooter.appendChild(helpBtn);
            
             helpListItemContainer.appendChild(helpListItemHead);
             helpListItemContainer.appendChild(helpListItemMain);
@@ -99,6 +102,7 @@
             for(var i = 0; i < length; i++)
             {
                 create_help_item_ui(list, json_data.resp[i]);
+                $(".timeago").timeago();
             }
           
         }
@@ -121,17 +125,12 @@
                 loading = false;
             })
         }
-        function init_ui()
+
+        function init()
         {
 	    var list = document.getElementById("help_list_container");
-	    $(document.body).pullToRefresh();
-	    $(document.body).on("pull-to-refresh", function() {
-		setTimeout(function(){	
-			$(document.body).pullToRefreshDone()
-                        location.reload();
-		},1000);
-                
-	    });
+            init_timeago();
+            init_p2r();
             create_infinite_preloader(list);
             $(document.body).infinite(200).on("infinite", function(){
                 if(loading) return ;
@@ -140,3 +139,7 @@
             load_help_data();
         }
 
+
+$(function(){
+    init();
+});

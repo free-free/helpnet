@@ -5,14 +5,14 @@
 <link rel="stylesheet" type="text/css" href="{{ static_url('stylesheets/help-list-page.css')}}">
 {% end %}
 {% block header %}
-<div class="weui-pull-to-refresh-layer">
-    <div class="pull-to-refresh-arrow"></div> <!-- 上下拉动的时候显示的箭头 -->
-    <div class="pull-to-refresh-preloader"></div> <!-- 正在刷新的菊花 -->
-    <div class="down">下拉刷新</div><!-- 下拉过程显示的文案 -->
-    <div class="up">释放刷新</div><!-- 下拉超过50px显示的文案 -->
-    <div class="refresh">正在刷新...</div><!-- 正在刷新时显示的文案 -->
+<div class="weui-pull-to-refresh-layer" style="display:none" >
+    <div class="pull-to-refresh-arrow"></div> 
+    <div class="pull-to-refresh-preloader"></div> 
+    <div class="down">下拉刷新</div>
+    <div class="up">释放刷新</div>
+    <div class="refresh">正在刷新...</div>
 </div>
-<header class="left text_center" >
+<header class="left header text_center" >
 	<a href="/">周围求助</a>
 </header> 
 <!--
@@ -40,9 +40,7 @@
 {% end  %}
 
 {% block js_custom %}
+<script src="//cdn.bootcss.com/jquery-timeago/1.5.3/jquery.timeago.min.js"></script>
+<script src="{{ static_url('javascripts/help-list.js') }}"></script>
 
-<script type="text/javascript" src="{{ static_url('javascripts/help-list.js') }}"></script>
-<script type="text/javascript" >
-    init_ui();
-</script>
 {% end %}

@@ -37,12 +37,17 @@
     margin-left: .475rem;
 }
 
-.help_reward
-{
+.help_price{
     float: right;
-
     color: #f85f48;
 
+}
+
+.help_price_tag{
+    font-size:0.7rem;
+}
+.help_price_num{
+    font-size:0.7rem;
 }
 
 .help_post_user_head_img
@@ -59,9 +64,18 @@
     border-radius: 50%;
 }
 
-.help_timeout
+.help_time
 {
     font-size: .65rem;
     line-height: 1.8rem;
     color: #ababab;
+}
+.clear-fix{
+    clear:both;
+}
+.help_timeout{
+    float:left;
+}
+.help_posttime{
+    float:right;
 }
