@@ -16,7 +16,7 @@ class UserHomeHandler(AuthNeedBaseHandler):
     r"""
         @url:/user/?
     """
-    @web.authenticated
+    #@web.authenticated
     @gen.coroutine
     def get(self):
         self.render("userhome.html")
@@ -33,10 +33,10 @@ class UserPostHelpListHandler(AuthNeedBaseHandler):
         self.render("userposthelp.html")
 
 
-class UserGetHelpListHandler(AuthNeedBaseHandler):
+class UserDoHelpListHandler(AuthNeedBaseHandler):
   
     r"""
-        @url:/user/gethelp/?
+        @url:/user/dohelp/?
     """
     @web.authenticated
     @gen.coroutine

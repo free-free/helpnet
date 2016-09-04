@@ -2,6 +2,7 @@
 
 import time
 import json
+from datetime import datetime
 
 from tornado import gen,web
 import xml.etree.ElementTree as etree
@@ -123,6 +124,8 @@ class WXCallbackHandler(BaseHandler):
                     userdata['createtime'] = userdata.pop('subscribe_time',time.time()) 
                     userdata['userid'] = userdata.pop('openid')
                     userdata['username'] = userdata.pop('nickname')
+                    userdata['address'] = ''
+                    userdata['location'] = [0, 0]
                     del userdata['remark']
                     del userdata['groupid']
                     del userdata['tagid_list']

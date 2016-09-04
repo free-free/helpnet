@@ -1,13 +1,57 @@
 # coding:utf-8
 
 import json
+import time
+import hashlib
+from datetime import datetime
 
 from tornado import gen,web
+import shortuuid
 
 from .base_handler import BaseHandler,AuthNeedBaseHandler
 from . import send_async_request
 
 
+class WeixinJSApiAPIHandler(BaseHandler):
+    
+    r"""
+        @url:/resource/WXJSApiResource/get/?
+    """
+    @gen.coroutine
+    def get(self):
+        source_url = self.get_argument("source_url")
+        data = json.loads(self.get_argument("data")) or {}
+        data = data or {}
+        context = data.get("context")
+        qrc = data.get("qrc")
+        try:
+            jsapi_ticket = yield self.application.cache.sget("weixin_jsapi_ticket")
+            if not jsapi_ticket:
+                self.application.tasks.jsapi_ticket_refresh()
+                jsapi_ticket = yield self.application.cache.sget("weixin_jsapi_ticket")
+            appid = self.application.settings['public_appid']
+            timestamp = str(int(time.time()))
+            noncestr = shortuuid.uuid()
+            url = context['req_url']
+            unsort_params = {'url':url, 'timestamp':timestamp,
+                'noncestr':noncestr, 'jsapi_ticket':jsapi_ticket}
+            sort_params= [(k, unsort_params[k]) for k in sorted(unsort_params.keys())]
+            params_str = '&'.join(map(lambda item: item[0]+'='+item[1], sort_params))
+            sha1 = hashlib.sha1()
+            sha1.update(params_str.encode())
+            signature = sha1.hexdigest()
+            response = {}
+            response['resp_qrc'] = qrc
+            response['resp'] = []
+            response['resp'].append({'timestamp':timestamp,
+                'appid':appid, 'noncestr':noncestr, 'signature':signature,
+                'api_list':['openLocation','getLocation']
+            })
+             
+            self.write(response)
+        except Exception as e:
+            self.write({"errmsg":"can't js api signature","errcode":40002})
+               
 class WeixinQRCodeGetAPIHandler(BaseHandler):
 
     r"""
@@ -25,9 +69,9 @@ class WeixinQRCodeGetAPIHandler(BaseHandler):
             if qrcode_ticket:
                 url = "https://mp.weixin.qq.com/cgi-bin/showqrcode?ticket="+qrcode_ticket
                 response = {}
-                response['qrc'] = qrc
-                response['data'] = []
-                response['data'].append({"qrcode_url": url})
+                response['resp_qrc'] = qrc
+                response['resp'] = []
+                response['resp'].append({"qrcode_url": url})
                 self.write(response)
             else:
                 token = yield self.application.cache.sget("weixin_api_token")
@@ -42,9 +86,9 @@ class WeixinQRCodeGetAPIHandler(BaseHandler):
                     yield self.application.cache.set("weixin_qrcode_ticket",response["ticket"])
                     yield self.application.cache.expire("weixin_qrcode_ticket",response.get("expire_seconds",0))
                     response = {}
-                    response['qrc'] = qrc
-                    response['data'] = []
-                    response['data'].append({'qrcode_url':url})
+                    response['resp_qrc'] = qrc
+                    response['resp'] = []
+                    response['resp'].append({'qrcode_url':url})
                     self.write(response)
                 else:
                     self.write({"errmsg":"can't get qrcode","errcode":40001})
@@ -52,7 +96,7 @@ class WeixinQRCodeGetAPIHandler(BaseHandler):
             self.write({"errmsg":"can't get qrcode","errcode":40001})
 
 
-class HelpContentGetAPIHandler(AuthNeedBaseHandler):
+class HelpGetAPIHandler(AuthNeedBaseHandler):
   
     valid_req_urls=[
         "/",
@@ -60,9 +104,9 @@ class HelpContentGetAPIHandler(AuthNeedBaseHandler):
         "/user/gethelp/",
     ]
     r"""
-        @url:/resource/HelpContentResource/get/?
+        @url:/resource/HelpResource/get/?
     """
-    @web.authenticated
+    #@web.authenticated
     @gen.coroutine
     def get(self):
         source_url = self.get_argument("source_url")
@@ -73,14 +117,24 @@ class HelpContentGetAPIHandler(AuthNeedBaseHandler):
             self.write(err_res)
         data = json.loads(self.get_argument("data")) or {}
         context = data.get("context")  
-        qrc = data.get("qrc")
-        yield getattr(context+'help',self.default)(qrc)
+        qrc = data.get("qrc") or {}
+        yield getattr(self, context+'help', self.default)(qrc)
    
     @gen.coroutine
     def updateshelp(self,qrc): 
         longitude = qrc.get("lng")
         latitude = qrc.get("lat")
         last_help_pt = qrc.get("last_help_pt")
+        resp = {"post_userheadimgurl": "/static/images/cat.jpg",
+                "post_username": "hello",
+                "help_price":"20",
+                "help_content":"从360带一桶老坛酸菜泡面，外加一根玉米火腿肠,我住在东六A304，万分感谢！",
+                "help_url":"/dohelp/2123131",
+                "expiretime":"20",
+                "posttime":time.time(),
+        }
+        self.write({"resp_qrc":"","resp":[resp, resp, resp, resp, resp, resp]});
+        return 
         if not longitude or not latitude:
             longitude = self.current_user['longitude']
             latitude = self.current_user['latitude']
@@ -98,8 +152,8 @@ class HelpContentGetAPIHandler(AuthNeedBaseHandler):
                 helpdata.append(dataline)
             qrc["last_help_pt"] = helpdata[-1].get("posttime",0)
             response = {}
-            response['res_qrc'] = qrc
-            response['data'] = helpdata
+            response['resp_qrc'] = qrc
+            response['resp'] = helpdata
             self.write(response)
         except Exception:
             self.write({"errcode":50000,"errmsg":"server internal error"})
@@ -122,8 +176,8 @@ class HelpContentGetAPIHandler(AuthNeedBaseHandler):
                 helpdata.append(dataline)
             qrc["last_help_pt"] = helpdata[-1].get('posttime',0)
             response  = {}
-            response['res_qrc'] = qrc
-            response['data'] = posthelpdata
+            response['resp_qrc'] = qrc
+            response['resp'] = posthelpdata
             self.write(response)
         except Exception:
             self.write({"errcode":50000,"errmsg":"server internal error"})
@@ -146,8 +200,8 @@ class HelpContentGetAPIHandler(AuthNeedBaseHandler):
                 helpdata.append(dataline)
             qrc['last_help_pt'] = helpdata[-1].get("posttime",0)
             response = {}
-            response['res_qrc'] = qrc
-            response['data'] = helpdata
+            response['resp_qrc'] = qrc
+            response['resp'] = helpdata
             self.write(response)
         except Exception:
             self.write({"errcode":50000,"errmsg": "server internal error"})
@@ -155,8 +209,8 @@ class HelpContentGetAPIHandler(AuthNeedBaseHandler):
     @gen.coroutine
     def default(self,qrc):
         response = {}
-        response['res_qrc'] = qrc
-        response['data'] = []
+        response['resp_qrc'] = qrc
+        response['resp'] = []
         self.write(response)
 
 
@@ -179,11 +233,11 @@ class UserProfileGetAPIHandler(AuthNeedBaseHandler):
         qrc = data.get("qrc")
         context = data.get("context")
         res = {}
-        res["res_qrc"] = qrc
-        res["data"] = []
+        res["resp_qrc"] = qrc
+        res["resp"] = []
         profile = {}
         profile['user_contact'] = self.current_user['usercontact']
-        res["data"].append(profile)
+        res["resp"].append(profile)
         self.write(res)
 
 
@@ -216,8 +270,8 @@ class UserProfileUpdateAPIHandler(AuthNeedBaseHandler):
             err_res["errmsg"] = "server internal error"
             self.write(err_res)
         res = {}
-        res["res_qrc"] = qrc
-        res["data"] = []
+        res["resp_qrc"] = qrc
+        res["resp"] = []
         self.write(res)
         
       
