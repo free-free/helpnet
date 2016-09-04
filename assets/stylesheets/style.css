@@ -70,10 +70,6 @@ header
     border-radius: 50%;
 }
 
-
-
-
-
 .font_big
 {
     font-size: 1.25rem;
@@ -88,4 +84,7 @@ header
 .font_normal
 {
     font-size: 0.8rem;
+}
+.clear-fix{
+    clear:both;
 }
