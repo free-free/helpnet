@@ -74,7 +74,7 @@
             var btn = document.createElement("a");
             helpListItemFooter.className = "help_list_item_footer";
             hLocation.className = "location";
-            locationIcon.className = "icon icon-map-marker"
+            locationIcon.className = "icon fa fa-map-marker"
             locationValue.className = "value";
             locationValue.innerText = data.address;
             posttime.className = "timeago posttime";

@@ -76,8 +76,14 @@
     width:60%;  
     overflow:hidden;
 }
-.location .icon, .location .value{
+.location .icon{
    padding-left:0.1rem;
+   padding-right:0.1rem;
+   font-size:0.8rem;
+}
+.location .value{
+   padding-left:0.1rem;
+   padding-right:0.1rem;
    font-size:0.65rem;
    padding-right:0.1rem;
 }
