@@ -115,7 +115,7 @@
         function load_help_data()
         {
             loading = true;
-            url = "/resource/HelpResource/get/";
+            url = "/resource/UpdatesHelpResource/get/";
             data = {
                 "context":"updates",
                 "qrc":"",
