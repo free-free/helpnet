@@ -64,18 +64,26 @@
     border-radius: 50%;
 }
 
-.help_time
-{
-    font-size: .65rem;
-    line-height: 1.8rem;
-    color: #ababab;
-}
 .clear-fix{
     clear:both;
 }
-.help_timeout{
+
+.location{
     float:left;
+    font-size: .65rem;
+    line-height: 1.8rem;
+    color: #ababab;
+    width:60%;  
+    overflow:hidden;
 }
-.help_posttime{
+.location .icon, .location .value{
+   padding-left:0.1rem;
+   font-size:0.65rem;
+   padding-right:0.1rem;
+}
+.posttime{
     float:right;
+    font-size: .65rem;
+    line-height: 1.8rem;
+    color: #ababab;
 }

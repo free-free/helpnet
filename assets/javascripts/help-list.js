@@ -44,10 +44,10 @@
             helpPriceNum.className = "help_price_num";
             helpPriceTag.innerText = "小费  ";
             reg = /^[0-9]+$/;
-            if(reg.test(data.help_price)){
-                helpPriceNum.innerText = "￥"+data.help_price;
+            if(reg.test(data.price)){
+                helpPriceNum.innerText = "￥"+data.price;
             }else{
-                helpPriceNum.innerText = data.help_price;
+                helpPriceNum.innerText = data.price;
             }
             helpPostUserHeadImg.src = data.post_userheadimgurl;
             helpPostUserName.innerText = data.post_username;
@@ -61,30 +61,35 @@
             var helpContent = document.createElement("p");
             helpListItemMain.className = "help_list_item_main";
             helpContent.className = "help_content";
-            helpContent.innerText = data.help_content;
+            helpContent.innerText = data.content;
             helpListItemMain.appendChild(helpContent);
              
             var helpListItemFooter = document.createElement("div");
-            var helpTimeBox = document.createElement("div");
-            var helpTimeout = document.createElement("span");
+            var infoBox = document.createElement("div");
+            var hLocation = document.createElement("span");
+            var locationIcon = document.createElement("i");
+            var locationValue = document.createElement("span");
+            var posttime = document.createElement("addr");
             var clear = document.createElement("div");
-            var helpPosttime = document.createElement("addr");
-            var helpBtn = document.createElement("a");
+            var btn = document.createElement("a");
             helpListItemFooter.className = "help_list_item_footer";
-            helpTimeBox.className = "help_time_box";
-            helpTimeout.className = "help_timeout help_time";
-            helpTimeout.innerText = data.expiretime;
-            helpPosttime.className = "timeago help_posttime help_time";
-            helpPosttime.title = pt.toISOString();
+            hLocation.className = "location";
+            locationIcon.className = "icon icon-map-marker"
+            locationValue.className = "value";
+            locationValue.innerText = data.address;
+            posttime.className = "timeago posttime";
+            posttime.title = pt.toISOString();
             clear.className="clear-fix";
-            helpBtn.className = "weui_btn weui_btn_primary";
-            helpBtn.href = data.help_url;
-            helpBtn.innerText = "去帮助Ta";
-            helpTimeBox.appendChild(helpTimeout); 
-            helpTimeBox.appendChild(helpPosttime);
-            helpTimeBox.appendChild(clear);
-            helpListItemFooter.appendChild(helpTimeBox);
-            helpListItemFooter.appendChild(helpBtn);
+            btn.className = "weui_btn weui_btn_primary";
+            btn.href = data.url;
+            btn.innerText = "去帮助Ta";
+            hLocation.appendChild(locationIcon);
+            hLocation.appendChild(locationValue);
+            infoBox.appendChild(hLocation); 
+            infoBox.appendChild(posttime);
+            infoBox.appendChild(clear);
+            helpListItemFooter.appendChild(infoBox);
+            helpListItemFooter.appendChild(btn);
            
             helpListItemContainer.appendChild(helpListItemHead);
             helpListItemContainer.appendChild(helpListItemMain);
