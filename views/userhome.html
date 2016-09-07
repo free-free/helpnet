@@ -2,6 +2,7 @@
 
 {% block head_custom %}
 <link rel="stylesheet" type="text/css" href="{{ static_url('stylesheets/user-home-page.css')}}">
+<link rel="stylesheet" type="text/css" href="{{ static_url('stylesheets/font-awesome.min.css')}}">
 {% end %}
 {% block header %}
 <div class="weui-pull-to-refresh-layer" style="display:none" >
@@ -31,15 +32,15 @@
         <div class="tabs">
            <ul>
            <li>
-           <a class="post-help active" href="#">
+           <a class="post-help active" href="/user/postedhelp/">
                <span class="value">10</p>
-               <span class="label ">我的帮助</p>
+               <span class="label ">我的求助</p>
            </a>
            </li>
            <li>
-           <a class="do-help" href="#">
+           <a class="do-help" href="/user/donehelp/">
                <p class="value">10</p>
-               <p class="label ">我的求助</p>
+               <p class="label ">我的帮助</p>
            </a>
            </li>
            <div class="clear-fix"></div>
@@ -47,8 +48,8 @@
         </div>
     </div>
 </div>
-<div id="data-list" class="data-list"> 
-    <div class="data-list-container" id="data-list-container">
+<div id="posted-help-list" class="posted-help-list"> 
+    <div class="container" id="container">
 
     </div>
 </div>
