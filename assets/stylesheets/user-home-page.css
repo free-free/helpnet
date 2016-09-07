@@ -1,3 +1,10 @@
+.font-red{
+    color:#f00;
+}
+
+.font-green{
+    color:#04BE02;
+}
 #user-panel{
    width:100%;
    background-color:#fff;
@@ -71,5 +78,3 @@
     color:#555;
 }
 
-.data-list{
-}
