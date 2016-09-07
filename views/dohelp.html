@@ -2,6 +2,7 @@
 
 {% block head_custom %}
 <link rel="stylesheet" type="text/css" href="{{ static_url('stylesheets/do-help-page.css')}}">
+<link rel="stylesheet" type="text/css" href="{{ static_url('stylesheets/font-awesome.min.css')}}">
 {% end %}
 {% block header %}
 <div class="weui-pull-to-refresh-layer" style="display:none" >
@@ -28,8 +29,10 @@
            <p class="weui_article help_content">
                 请从360超市带一桶老坛酸菜泡面，外加一根玉米火腿肠，我住在东六A304，万分感谢！
            </p>
+           <span class="body_note_tag location_tag">求助位置:</span>
+           <p class="location"><i class="fa fa-map-marker icon"></i><span class="value">西南科技大学图书馆<span></p>
            <span class="body_note_tag post_usercontact_tag">求助人联系方式:</span>
-           <p class="post_usercontact"><i></i>182*******</p>
+           <p class="post_usercontact"><i class="fa fa-phone icon"></i><span class="value">182*******<span></p>
            <p class="text_center help_price" >小费：￥ 1</p>
            <form id="do_help_form" method="POST" action="#">
                <div class="do_help_form_container">
