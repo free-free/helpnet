@@ -1,52 +1,4 @@
 
-postedHelpResource = {
-    'get_url':"/resource/PostedHelpResource/get/",
-    'resLoadFailedCnt':0,
-    'lastHelpPt':0.0,
-    'resLoading':false,
-    'qrc':"",
-    'context':"",
-    'getResource':function(){
-         if(this.resLoading) return ;
-         if(this.resLoadFailedCnt >= 3) return ;
-         this.resLoading = true;
-         this.context = {"last_help_pt":this.lastHelpPt};
-         this.qrc = {"rcd_num":6}
-         that = this;
-         sendResourceGetReq(this.get_url, this.qrc, this.context, function(data){
-             if(data.resp.length == 0){
-                 that.resLoadFailedCnt += 1;
-             }else{
-                 that.lastHelpPt = data.resp_qrc['last_help_pt']; 
-             }
-             var container = document.getElementById("container");
-             createDynamicPostedHelpView(container, data);           
-             that.resLoading = false;
-         });
-     }
-
-}
-
-helpResource = {
-    'del_url':"/resource/HelpResource/delete/",
-    'resLoading':false,
-    'qrc':'',
-    'context':'',
-    'delResource':function(helpid, success_callback, failed_callback){
-        if(this.resLoading) return ;
-        this.resLoading = true;
-        this.context = {'helpid':helpid};
-        that = this
-        sendResourceDeleteReq(this.del_url, this.qrc, this.context, function(data){ 
-             if(data.resp_qrc['result'] == "OK"){
-                 success_callback && success_callback(that.context['helpid'])
-             }else{
-                 failed_callback && failed_callback(that.context['helpid']);
-             }
-             that.resLoading = false;
-        });
-    },
-}
 
 function removePostedHelpView(helpid){
     var view = document.getElementById(helpid);
@@ -157,7 +109,11 @@ function createPostedHelpView(container, data){
     userHeadImg.src = data.post_userheadimgurl;
     username.innerText = data.post_username;
     priceTag.innerText = "小费";
-    priceVal.innerText =  data.price;
+    if(/^[0-9]+$/.test(data.price)){
+        priceVal.innerText = "￥"+data.price;
+    }else{
+        priceVal.innerText =  data.price;
+    }
 
     userInfo.appendChild(userHeadImg);
     userInfo.appendChild(username);
@@ -233,7 +189,8 @@ function createPostedHelpView(container, data){
     container.appendChild(view);
 }
 
-function createDynamicPostedHelpView(container, data){
+function createDynamicPostedHelpView(data){
+    var container = document.getElementById("container")
     var dtLen = data.resp_qrc.rcd_num;
     for(var i = 0; i < dtLen; i++){
         createPostedHelpView(container, data.resp[i]);
@@ -246,8 +203,8 @@ $(function(){
     var container = document.getElementById("container")
     initP2r();
     createInfinitePreloader(container);
-    postedHelpResource.getResource();
+    postedHelpResource.getResource(createDynamicPostedHelpView);
     $(document.body).infinite(200).on("infinite", function(){
-         postedHelpResource.getResource();
+         postedHelpResource.getResource(createDynamicPostedHelpView);
     });
 });
