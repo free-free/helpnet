@@ -1,30 +1,3 @@
-updatesHelpResource = {
-    'get_url':"/resource/UpdatesHelpResource/get/",
-    'resLoadFailedCnt':0,
-    'lastHelpPt':0.0,
-    'location':[],
-    'resLoading':false,
-    'qrc':"",
-    'context':"",
-    'getResource':function(callback){
-         if(this.resLoading) return ;
-         if(this.resLoadFailedCnt >= 3) return ;
-         this.resLoading = true;
-         this.context = {"last_help_pt":this.lastHelpPt,'location':this.location};
-         this.qrc = {"rcd_num":6}
-         that = this;
-         sendResourceGetReq(this.get_url, this.qrc, this.context, function(data){
-             if(data.resp_qrc.rcd_num == 0){
-                 that.resLoadFailedCnt += 1;
-             }else{
-                 that.lastHelpPt = data.resp_qrc['last_help_pt']; 
-             }
-             callback && callback(data);         
-             that.resLoading = false;
-         });
-     }
-
-}
 
 function initTimeago(){
            jQuery.timeago.settings.strings = {
