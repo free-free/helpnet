@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+
+{% block head_custom %}
+<link rel="stylesheet" type="text/css" href="{{ static_url('stylesheets/user-home-page.css')}}">
+<link rel="stylesheet" type="text/css" href="{{ static_url('stylesheets/font-awesome.min.css')}}">
+<link rel="stylesheet" type="text/css" href="{{ static_url('stylesheets/done-help-list.css')}}">
+{% end %}
+{% block header %}
+<div class="weui-pull-to-refresh-layer" style="display:none" >
+    <div class="pull-to-refresh-arrow"></div> 
+    <div class="pull-to-refresh-preloader"></div> 
+    <div class="down">下拉刷新</div>
+    <div class="up">释放刷新</div>
+    <div class="refresh">正在刷新...</div>
+</div>
+
+<div class="header" >
+	<a href="/">互助广场</a>
+</div> 
+{% end %}
+{% block container %}
+<div id="user-panel" class="user-panel">
+    <div class="container user-panel-container" id="user-panel-container">
+        <div class="top">
+       
+            <p class="username" >Leeon</p>
+            <div class="head_img_wp">
+                <img src="{{static_url('images/cat.jpg')}}" class="head_img_big user_head_img" >
+            </div>
+            <div class="clear-fix"></div>
+        </div>
+
+        <div class="tabs">
+           <ul>
+           <li>
+           <a class="post-help" href="/user/postedhelp/">
+               <span class="value">10</p>
+               <span class="label ">我的求助</p>
+           </a>
+           </li>
+           <li>
+           <a class="doone-help active" href="/user/donehelp/">
+               <p class="value">10</p>
+               <p class="label ">我的帮助</p>
+           </a>
+           </li>
+           <div class="clear-fix"></div>
+           </ul>
+        </div>
+    </div>
+</div>
+<div id="posted-help-list" class="posted-help-list"> 
+    <div class="container" id="container">
+
+    </div>
+</div>
+    {% end %}
+
+    {% block js_custom %}
+     <script src="{{ static_url('javascripts/done-help-list.js')}}"></script>
+    {% end %}
+
