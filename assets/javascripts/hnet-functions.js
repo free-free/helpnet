@@ -116,22 +116,16 @@ function sendResourceDeleteReq(url, qrc, context, callback){
 }
 
 function wxLocationInit(){
-        url = "/resource/WXJSApiResource/get/";
-        data = {"context":{"req_url":location.href+location.search}, "qrc":""};
-        req_params = {
-            'source_url': location.pathname,
-            'data': JSON.stringify(data)
-        };
-        $.getJSON(url, req_params, function(json_data){
+        wxJSAPIResource.getResource(function(data){
             wx.config({
                 debug: false, 
-                appId: json_data.resp[0].appid, 
-                timestamp:json_data.resp[0].timestamp,
-                nonceStr: json_data.resp[0].noncestr, 
-                signature: json_data.resp[0].signature,
-                jsApiList: json_data.resp[0].api_list 
+                appId: data.resp[0].appid, 
+                timestamp:data.resp[0].timestamp,
+                nonceStr: data.resp[0].noncestr, 
+                signature: data.resp[0].signature,
+                jsApiList: data.resp[0].api_list 
             })
-        });
+        })
 }
 
 function wxGetCurrentLocation(callback){
