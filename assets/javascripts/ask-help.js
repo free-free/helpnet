@@ -1,56 +1,52 @@
 $(function(){
     var geocoder;
     var geolocation;
-    var wx_location_support = false;
+    var wxLocationSupport = false;
+    var address;
 
-    function wx_location_init(){
-        url = "/resource/WXJSApiResource/get/";
-        data = {"context":{"req_url":location.href+location.search}, "qrc":""};
-        req_params = {
-            'source_url': location.pathname,
-            'data': JSON.stringify(data)
-        };
-        $.getJSON(url, req_params, function(json_data){
-            wx.config({
-                debug: false, 
-                appId: json_data.resp[0].appid, 
-                timestamp:json_data.resp[0].timestamp,
-                nonceStr: json_data.resp[0].noncestr, 
-                signature: json_data.resp[0].signature,
-                jsApiList: json_data.resp[0].api_list 
-            })
-        });
-    }
-
-    function check_wx_location(){
+    function checkWXLocation(){
         wx.checkJsApi({
-            jsApiList: ["getLocation"], // 需要检测的JS接口列表，所有JS接口列表见附录2,
+            jsApiList: ["getLocation"],
             success: function(res) {
-                wx_location_support = res.checkResult["getLocation"];
-                if(!wx_location_support){
-                     amap_location_init();
+                wxLocationSupport = res.checkResult["getLocation"];
+                if(!wxLocationSupport){
+                     amapLocationInit();
                 }
             },
        });
     }
 
-    function set_lng_lat(lng, lat){
+    function setLngLat(lng, lat){
         var longitude = document.getElementById("help_lng");
         var latitude = document.getElementById("help_lat");
         longitude.value = lng;
         latitude.value = lat; 
     }
 
-    function wx_get_current_location(){
-            wx.getLocation({
-                type: 'wgs84', 
-                success: function (res) {
-                    set_lng_lat(res.longitude, res.latitude)
-                }
-            });
+    function setAddress(regeocode){
+        
+        simpleReg = regeocode.addressComponent.province+
+            regeocode.addressComponent.city+
+            regeocode.addressComponent.district+
+            regeocode.addressComponent.township;
+        simpleReg = new RegExp(simpleReg);
+        address = regeocode.formattedAddress.replace(simpleReg,"");
+        norepeatReg = /(.)(?=.*\1)/g;
+        address = address.split("").reverse().join("").replace(norepeatReg,"");
+        address = address.split("").reverse().join("");
     }
 
-    function amap_location_init(){
+    function getLocation(){
+        var addressInput = document.getElementById("help_address");
+        if(addressInput.value == "" && !address){
+            wxGetCurrentLocation(setLngLatAndAddr);
+        }else{
+            amapGetLocation();
+        }
+    }
+    
+/*
+    function amapLocationInit(){
         AMap.plugin('AMap.Geolocation', function() {
             geolocation = new AMap.Geolocation({
                 enableHighAccuracy: true,
@@ -58,57 +54,41 @@ $(function(){
             });
             geolocation.getCurrentPosition();
             AMap.event.addListener(geolocation, 'complete', function(data){
-                set_lng_lat( data.position.getLng(),data.position.getLat()); 
+                setLngLat( data.position.getLng(),data.position.getLat()); 
             });
             AMap.event.addListener(geolocation, 'error', function(){
 
             });      
        });
     }
-
-    function amap_get_location(){
-            var address_input = document.getElementById("help_address");
-            geocoder.getLocation(address_input.value, function(status, result){
+*/
+    function amapGetLocation(){
+            var addressInput = document.getElementById("help_address");
+            geocoder.getLocation(addressInput.value, function(status, result){
                 if (status === 'complete' && result.info === 'OK') {
                     lng = result.geocodes[0].location.lng;
                     lat = result.geocodes[0].location.lat;
-                    set_lng_lat(lng, lat);
+                    setLngLat(lng, lat);
                 }else{
                 }
             }); 
     }
 
-    function get_location(){
-        var address_input = document.getElementById("help_address");
-        if(address_input.value == ""){
-            wx_get_current_location();
-        }else{
-            amap_get_location();
-        }
+
+    function amapGetAddress(lngLat, callback){
+       geocoder.getAddress(lngLat, function(status, result) {
+           if (status === 'complete' && result.info === 'OK') {
+               callback && callback(result.regeocode);
+           }
+       });  
     }
 
-    function amap_get_address(){
-        var help_address = document.getElementById("help_address");
-        if(help_address.value == ""){
-            var longitude = document.getElementById("help_lng");
-            var latitude = document.getElementById("help_lat");
-            lng = longitude.value ;
-            lat = latitude.value ; 
-            lnglat = [lng, lat];
-            geocoder.getAddress(lnglat, function(status, result) {
-                 if (status === 'complete' && result.info === 'OK') {
-                     result.regeocode.formattedAddress;
-                 }
-            });
-       }  
-    }
-
-    function amap_init(){
+    function amapInit(){
         AMap.plugin('AMap.Autocomplete',function(){
             var autoOptions = {input:"help_address"};
             autocomplete= new AMap.Autocomplete(autoOptions);
             AMap.event.addListener(autocomplete, "select", function(e){
-                set_lng_lat(e.poi.location.lng, e.poi.location.lat);
+                setLngLat(e.poi.location.lng, e.poi.location.lat);
             }); 
          });
         AMap.service('AMap.Geocoder',function(){
@@ -116,15 +96,14 @@ $(function(){
         });
     }
 
-    amap_init();
-    wx_location_init();
-    wx.ready(function(){
-        check_wx_location();
-        wx_get_current_location();
-    });
+    function setLngLatAndAddr(lng, lat){
+        setLngLat(lng, lat);
+        amapGetAddress([lng, lat], setAddress);   
+    }
 
     $("#help_address").blur(function(){
-        get_location();
+        getLocation();
+        
     }).focus(function(){
        setTimeout(function(){
            offsetTop = parseInt($("#help_address").offset().top)-5;
@@ -133,23 +112,32 @@ $(function(){
     });
 
     $("#ask_help_form").submit(function(){
-        help_content = document.getElementById("help_content");
-        help_price = document.getElementById("help_price");
+        helpContent = document.getElementById("help_content");
+        helpAddress = document.getElementById("help_address");
+        helpPrice = document.getElementById("help_price");
         usercontact = document.getElementById("post_usercontact");
-        help_address = document.getElementById("help_address");
-        help_lng = document.getElementById("help_lng");
-        help_lat = document.getElementById("help_lat");
-        help_expiretime = document.getElementById("help_expiretime");
+        helpLng = document.getElementById("help_lng");
+        helpLat = document.getElementById("help_lat");
          
-        if(help_content.value==''||help_price.value==''|usercontact.value==''){
+        if(helpContent.value==''||helpPrice.value==''|usercontact.value==''){
             $.toptip('求助信息不完整', 'error');
             return false;
         }
-        if(help_address.value!="" &&(help_lng.value == "" || help_lng.value == "undefined"  || help_lat.value=="" ||help_lat.value == "undefined")){
+        if((helpAddress.value!="" &&(!helpLng.value || !helpLat.value))||(!address && !helpAddress.value)){
             $.toptip('获取地理位置失败', 'error');
-            get_location();
+            getLocation();
             return false;
         }
+        if(!helpAddress.value && address){
+            helpAddress.value = address;
+        }
         
+    });
+
+    amapInit();
+    wxLocationInit();
+    wx.ready(function(){
+        checkWXLocation();
+        wxGetCurrentLocation(setLngLatAndAddr);
     });
 })

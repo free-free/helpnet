@@ -1,7 +1,32 @@
+updatesHelpResource = {
+    'get_url':"/resource/UpdatesHelpResource/get/",
+    'resLoadFailedCnt':0,
+    'lastHelpPt':0.0,
+    'location':[],
+    'resLoading':false,
+    'qrc':"",
+    'context':"",
+    'getResource':function(callback){
+         if(this.resLoading) return ;
+         if(this.resLoadFailedCnt >= 3) return ;
+         this.resLoading = true;
+         this.context = {"last_help_pt":this.lastHelpPt,'location':this.location};
+         this.qrc = {"rcd_num":6}
+         that = this;
+         sendResourceGetReq(this.get_url, this.qrc, this.context, function(data){
+             if(data.resp_qrc.rcd_num == 0){
+                 that.resLoadFailedCnt += 1;
+             }else{
+                 that.lastHelpPt = data.resp_qrc['last_help_pt']; 
+             }
+             callback && callback(data);         
+             that.resLoading = false;
+         });
+     }
 
-        var loading = false;
+}
 
-        function init_timeago(){
+function initTimeago(){
            jQuery.timeago.settings.strings = {
                         prefixAgo: null,
                         prefixFromNow: "从现在开始",
@@ -21,9 +46,9 @@
                         numbers: [],
                         wordSeparator: ""
             };
-        }
+}
 
-        function create_help_item_ui(parent, data){
+function createUpdatesHelpView(container, data){
             pt = new Date(parseFloat(data.posttime)*1000);
             var helpListItem = document.createElement("div");
             var helpListItemContainer = document.createElement("div");
@@ -96,54 +121,40 @@
             helpListItemContainer.appendChild(helpListItemFooter);
             
             helpListItem.appendChild(helpListItemContainer);
-            parent.appendChild(helpListItem);
+            container.appendChild(helpListItem);
             
-        }
+}
 
-        function load_help_data_success(json_data)
-        {
-            var length = json_data.resp.length;
-            var list = document.getElementById("help_list_container");
+function createDynamicUpdatesHelpView(data)
+{
+	    var container = document.getElementById("help_list_container");
+            var length = data.resp_qrc.rcd_num;
             for(var i = 0; i < length; i++)
             {
-                create_help_item_ui(list, json_data.resp[i]);
+                createUpdatesHelpView(container, data.resp[i]);
                 $(".timeago").timeago();
             }
           
-        }
+}
 
-        function load_help_data()
-        {
-            loading = true;
-            url = "/resource/UpdatesHelpResource/get/";
-            data = {
-                "context":"updates",
-                "qrc":"",
-            }
-             
-            req_params = { 
-                "source_url":location.pathname,
-                "data":JSON.stringify(data)
-            };
-            $.getJSON(url, req_params, function(json_data){
-                load_help_data_success(json_data);
-                loading = false;
-            })
-        }
-
-        function init()
-        {
-	    var list = document.getElementById("help_list_container");
-            init_timeago();
-            init_p2r();
-            create_infinite_preloader(list);
+function init()
+{
+	    var container = document.getElementById("help_list_container");
+            wxLocationInit();
+            initTimeago();
+            initP2r();
+            createInfinitePreloader(container);
             $(document.body).infinite(200).on("infinite", function(){
-                if(loading) return ;
-                load_help_data();
-            })
-            load_help_data();
-        }
+                updatesHelpResource.getResource(createDynamicUpdatesHelpView);
+            });
+            wx.ready(function(){
+                wxGetCurrentLocation(function(lng, lat){
+                    updatesHelpResource.location = [lng, lat];    
+                    updatesHelpResource.getResource(createDynamicUpdatesHelpView);
+                });
+            });
 
+}
 
 $(function(){
     init();

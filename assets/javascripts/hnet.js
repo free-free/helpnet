@@ -1,5 +1,5 @@
 // init pull to refresh layer
-function init_p2r(){
+function initP2r(){
             $(".weui-pull-to-refresh-layer").show(); 
 	    $(document.body).pullToRefresh();
 	    $(document.body).on("pull-to-refresh", function() {
@@ -13,7 +13,7 @@ function init_p2r(){
 //文档高度
 
 
-function create_infinite_preloader(after, data)
+function createInfinitePreloader(after, data)
 {
             var parent = after.parentNode;
             var scroll = document.createElement("div");
@@ -32,7 +32,7 @@ function create_infinite_preloader(after, data)
             }
 }
 
-function show_infinite_preloader()
+function showInfinitePreloader()
 {
            var scroll = document.getElementsByClassName("weui-infinite-scroll");
            if(scroll.length > 0)
@@ -41,7 +41,7 @@ function show_infinite_preloader()
            }
 }
 
-function hide_infinite_preloader()
+function hideInfinitePreloader()
 {
 
            var scroll = document.getElementsByClassName("weui-infinite-scroll");
@@ -91,11 +91,54 @@ function getScrollHeight() {
 	return scrollHeight;
 }
 
-function sendGetReq(url, qrc, context, callback){
+function sendResourceGetReq(url, qrc, context, callback){
     data = {"qrc":qrc, "context":context};
     req_params={
         "source_url":location.pathname,
         "data":JSON.stringify(data)
-    }
-    $.getJSON(url, req_params,function(json_data){callback(json_data);});
+    };
+    $.getJSON(url, req_params,function(data){callback(data);});
+}
+
+function sendResourceDeleteReq(url, qrc, context, callback){
+    data = {'qrc':qrc, 'context':context};
+    req_params={
+         "source_url":location.pathname,
+         "data":JSON.stringify(data),
+         _method:'delete',
+    };
+    $.ajax({
+        'url':url,
+        'type':'delete',
+        'data': req_params,
+        'success': function(data){callback(data);}
+    });
+}
+
+function wxLocationInit(){
+        url = "/resource/WXJSApiResource/get/";
+        data = {"context":{"req_url":location.href+location.search}, "qrc":""};
+        req_params = {
+            'source_url': location.pathname,
+            'data': JSON.stringify(data)
+        };
+        $.getJSON(url, req_params, function(json_data){
+            wx.config({
+                debug: false, 
+                appId: json_data.resp[0].appid, 
+                timestamp:json_data.resp[0].timestamp,
+                nonceStr: json_data.resp[0].noncestr, 
+                signature: json_data.resp[0].signature,
+                jsApiList: json_data.resp[0].api_list 
+            })
+        });
+}
+
+function wxGetCurrentLocation(callback){
+    wx.getLocation({
+        type: 'gcj02',
+        success: function(res){
+            callback && callback(res.longitude, res.latitude);
+        }
+    });
 }
