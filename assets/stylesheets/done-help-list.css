@@ -1,0 +1,117 @@
+
+.done-help-list{
+    max-width:768px;
+    margin-left:auto;
+    margin-right:auto;
+    min-height:300px;
+}
+
+.done-help-list #container{
+    padding-top:1rem;
+    padding-left:0.5rem;
+    padding-right:0.5rem;
+}
+.done-help-list .help-view{
+    padding: 0.2rem 0.5rem 0.5rem 0.5rem;
+    margin-bottom:1rem;
+    background-color:#fff;
+   // height:50px;
+    border-radius:0.3rem;
+}
+
+.done-help-list .help-view .head {
+    border-bottom:0.05rem solid #eee;
+}
+.done-help-list .help-view .head .state{
+    display:block;
+    float:left;
+    font-size:0.8rem;
+   
+} 
+.done-help-list .help-view .head .operation {
+    float:right;
+}
+.done-help-list .help-view .head .operation ul li{
+    display:inline-block;
+    float:right;
+}
+.done-help-list .help-view .head .operation ul li  .del-btn{
+    background-color:#f00;
+    font-size:0.8rem;
+}
+.done-help-list .help-view .info{
+    height:1.6rem;
+    line-height:1.6rem;
+}
+.done-help-list .help-view .info .location {
+    display:inline-block;
+    float:left;
+    width:50%;
+    overflow:hidden;
+}
+.done-help-list .help-view .info .location .icon{
+    font-size:0.8rem;
+    color:#ababab;
+    padding-right:0.3rem;
+} 
+
+.done-help-list .help-view .info .location .value{
+    font-size:0.65rem;
+    color:#ababab;
+}
+
+.done-help-list .help-view .info .posttime{
+    font-size:0.65rem;
+    display:inline-block;
+    float:right;
+    color:#ababab;
+}
+
+.done-help-list .help-view .content{
+    padding:0.4rem 0.4rem;
+    color:#555;
+    font-size:0.8rem;
+    
+}
+
+.done-help-list .help-view .help-head{
+    border-top:0.05rem solid #eee;
+    padding:0.4rem 0.4rem;
+    padding-top:0.4rem;
+}
+.done-help-list .help-view .help-head .post-user{
+    display:block;
+    float:left;
+}
+.done-help-list .help-view .help-head .post-user .head-img{
+    display:inline-block;
+    width: 1.25rem;
+    height: 1.25rem;
+    vertical-align: bottom;
+    border-radius:50%;
+}
+
+.done-help-list .help-view .help-head .post-user .name{
+    display:inline-block;
+    padding-left:0.2rem;
+    color:#ababab;
+}
+.done-help-list .help-view .help-head .price{
+    display:block;
+    float:right;
+}
+
+.done-help-list .help-view .help-head .price span{
+    color:#f00;
+    padding-left:0.2rem;
+    padding-right:0.2rem
+    
+}
+
+.done-help-list .help-view .help-head .contact .icon{
+    color:#ababab;
+}
+.done-help-list .help-view .help-head .contact .value{
+    color:#ababab;
+}
+
