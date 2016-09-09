@@ -197,14 +197,14 @@ function createPostedHelpView(container, data){
         cValue.className = "value";
         clear.className = "clear-fix";
         switch (data.do_usercontact_means+""){
-            case "0":
+            case "1":
                 cMeans.className = "fa fa-phone means";
                 break;
-            case "1":
+            case "2":
                 cMeans.className = "fa fa-weixin means";
                 break;
-            case "2":
-                cMeans.classname = "fa fa-qq means";
+            case "3":
+                cMeans.className = "fa fa-qq means";
                 break;
             default:
                 cMeans.className = "fa fa-phone means";
@@ -212,7 +212,7 @@ function createPostedHelpView(container, data){
         }
 
         name.innerText = data.do_username;
-        headImg.src = adta.do_userheadimgurl;
+        headImg.src = data.do_userheadimgurl;
         note.innerText = "帮助了你";
         cValue.innerText = data.do_usercontact; 
 
