@@ -95,7 +95,7 @@ class WXCallbackHandler(BaseHandler):
         user_openid = self.req_msg.get("FromUserName")
         user_exists = yield self.application.db.user.find_one({"userid":user_openid},{"userid":1})
         if user_exists:
-            location = [self.req_msg.get("Longitude"), self.req_msg.get("Latitude")]
+            location = [float(self.req_msg.get("Longitude")), float(self.req_msg.get("Latitude"))]
             location_precision = self.req_msg.get("Precision")
             try:
                 yield self.application.db.user.update({"userid":user_openid},\
