@@ -1,4 +1,4 @@
-{% extends "base.html" %}
+{% extends "../base.html" %}
 
 {% block head_custom %}
 <link rel="stylesheet" type="text/css" href="{{ static_url('stylesheets/user-home-page.css')}}">
@@ -23,9 +23,9 @@
     <div class="container user-panel-container" id="user-panel-container">
         <div class="top">
        
-            <p class="username" >Leeon</p>
+            <p class="username" >{{ userdata['username']}}</p>
             <div class="head_img_wp">
-                <img src="{{static_url('images/cat.jpg')}}" class="head_img_big user_head_img" >
+                <img src="{{userdata['headimgurl']}}" class="head_img_big user_head_img" >
             </div>
             <div class="clear-fix"></div>
         </div>
@@ -34,13 +34,13 @@
            <ul>
            <li>
            <a class="post-help active" href="/user/postedhelp/">
-               <span class="value">10</p>
+               <span class="value">{{ int(userdata['help_cnt']['posted_help_num'])}}</p>
                <span class="label ">我的求助</p>
            </a>
            </li>
            <li>
            <a class="do-help" href="/user/donehelp/">
-               <p class="value">10</p>
+               <p class="value">{{ int(userdata['help_cnt']['done_help_num'])}}</p>
                <p class="label ">我的帮助</p>
            </a>
            </li>
