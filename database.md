@@ -16,6 +16,7 @@
 |address       |                         |
 |location:lng,lat|                       |
 |locprec       |                         |
+|help_cnt:posted_help_num,done_help_num| |
 
 ## help table
 | field             |     description    |
@@ -26,9 +27,9 @@
 |post_userheadimgurl|   user header img url|
 |post_usercontact   |                    |
 |post_usercontact_means|                 |
-|help_address            |                    |
-|help_content        |   help main content|
-|help_price         |  help tip          |
+|address            |                    |
+|content        |   help main content|
+|price         |  help tip          |
 |do_userid         |  help user id      |
 |do_username       |                    |
 |do_userheadimgurl |                    |
@@ -37,7 +38,7 @@
 |posttime           |  post timestamp    |
 |finishtime         |                    |
 |expiretime         |                    |
-|help_state          |                    |
+|help_state         |                    |
 |ispay              |                    |
 |location:lng,lat   |  array             |
 |locprec            |  location precision|
