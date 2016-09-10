@@ -31,7 +31,7 @@ function createDoneHelpView(container, data){
     loc.appendChild(locVal);
  
     posttime.className = "posttime";
-    posttime.innerText = (new Date(parseInt(data.posttime*1000))).toLocaleString();
+    posttime.innerText = data.posttime;
     
     infoBox.appendChild(loc);
     infoBox.appendChild(posttime);
