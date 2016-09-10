@@ -34,6 +34,7 @@
 .user-panel .top .username{
     font-size:1.5rem;
     width:50%;
+    height:2rem;
     overflow:hidden;
     float:left;
     color:#555;
