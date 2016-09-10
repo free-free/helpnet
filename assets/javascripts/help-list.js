@@ -22,7 +22,7 @@ function initTimeago(){
 }
 
 function createUpdatesHelpView(container, data){
-            pt = new Date(parseFloat(data.posttime)*1000);
+            //pt = new Date(parseFloat(data.posttime)*1000);
             var helpListItem = document.createElement("div");
             var helpListItemContainer = document.createElement("div");
             helpListItem.className = "help_list_item center";
@@ -76,7 +76,7 @@ function createUpdatesHelpView(container, data){
             locationValue.className = "value";
             locationValue.innerText = data.address;
             posttime.className = "timeago posttime";
-            posttime.title = pt.toISOString();
+            posttime.title = data.posttime;
             clear.className="clear-fix";
             btn.className = "weui_btn weui_btn_primary";
             btn.href = data.url;

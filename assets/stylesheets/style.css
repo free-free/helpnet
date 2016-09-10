@@ -11,6 +11,14 @@ body
     background-color: #f5f5f5;
 }
 
+.font-red{
+    color:#f00;
+}
+
+.font-gray{
+    color:#ababab;
+}
+
 .center
 {
     margin-right: auto;

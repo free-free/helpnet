@@ -47,6 +47,7 @@
     display:inline-block;
     float:left;
     width:50%;
+    height:1.6rem;
     overflow:hidden;
 }
 .done-help-list .help-view .info .location .icon{

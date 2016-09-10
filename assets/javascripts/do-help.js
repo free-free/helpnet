@@ -85,6 +85,10 @@ $(function(){
    $("#do-help #form").submit(function(){
        var doUserContact = document.getElementById("do-usercontact"); 
        var dohelpBtn = document.getElementById("submit-btn");
+       var formDisabled = document.getElementById("form-disabled");
+       if(formDisabled){
+           return false;
+       }
        if(!doUserContact.value){
            $.toptip("请留下你的联系方式",1000,"error");
            return false;
