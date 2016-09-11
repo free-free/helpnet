@@ -12,18 +12,33 @@ from .base_handler import BaseHandler,AuthNeedBaseHandler
 from . import send_async_request
 
 
-class WeixinJSApiAPIHandler(BaseHandler):
+class APIBaseHandler(AuthNeedBaseHandler):
+    
+    @gen.coroutine
+    def prepare(self):
+        yield super().prepare()
+        if self.request.headers.get("X-Requested-With") != "XMLHttpRequest":
+            self.set_status(400)
+            self.render("errors/400.html")
+            return 
+        self.source_url = self.get_argument("source_url")
+        if hasattr(self, "_valid_urls"):
+            if self.source_url not in self._valid_urls:
+                self.write({"errcode":40000, "errmsg":"invalid source_url"})
+                return 
+        data = json.loads(self.get_argument("data")) or {}
+        self.qrc = data.get("qrc") or {}
+        self.context = data.get('context') or {}
+        
+        
+class WeixinJSApiAPIHandler(APIBaseHandler):
     
     r"""
         @url:/resource/WXJSApiResource/get/?
     """
+    @web.authenticated
     @gen.coroutine
     def get(self):
-        source_url = self.get_argument("source_url")
-        data = json.loads(self.get_argument("data")) or {}
-        data = data or {}
-        context = data.get("context")
-        qrc = data.get("qrc")
         try:
             jsapi_ticket = yield self.application.cache.sget("weixin_jsapi_ticket")
             if not jsapi_ticket:
@@ -32,7 +47,7 @@ class WeixinJSApiAPIHandler(BaseHandler):
             appid = self.application.settings['public_appid']
             timestamp = str(int(time.time()))
             noncestr = shortuuid.uuid()
-            url = context['req_url']
+            url = self.context['req_url']
             unsort_params = {'url':url, 'timestamp':timestamp,
                 'noncestr':noncestr, 'jsapi_ticket':jsapi_ticket}
             sort_params= [(k, unsort_params[k]) for k in sorted(unsort_params.keys())]
@@ -41,35 +56,30 @@ class WeixinJSApiAPIHandler(BaseHandler):
             sha1.update(params_str.encode())
             signature = sha1.hexdigest()
             response = {}
-            response['resp_qrc'] = qrc
+            response['resp_qrc'] = self.qrc
             response['resp'] = []
             response['resp'].append({'timestamp':timestamp,
                 'appid':appid, 'noncestr':noncestr, 'signature':signature,
                 'api_list':['openLocation','getLocation']
             })
-             
             self.write(response)
         except Exception as e:
-            self.write({"errmsg":"can't js api signature","errcode":40002})
+            self.write({"errmsg":"can't js api signature","errcode":40001})
                
-class WeixinQRCodeGetAPIHandler(BaseHandler):
+
+class WeixinQRCodeGetAPIHandler(APIBaseHandler):
 
     r"""
         @url:/resource/WXQRCodeResource/get/?
     """ 
     @gen.coroutine
     def get(self):
-        source_url = self.get_argument("source_url")
-        data = json.loads(self.get_argument("data")) or {}
-        data = data or {}
-        context = data.get("context")
-        qrc = data.get("qrc")
         try:
             qrcode_ticket = yield self.application.cache.sget('weixin_qrcode_ticket')
             if qrcode_ticket:
                 url = "https://mp.weixin.qq.com/cgi-bin/showqrcode?ticket="+qrcode_ticket
                 response = {}
-                response['resp_qrc'] = qrc
+                response['resp_qrc'] = self.qrc
                 response['resp'] = []
                 response['resp'].append({"qrcode_url": url})
                 self.write(response)
@@ -86,136 +96,188 @@ class WeixinQRCodeGetAPIHandler(BaseHandler):
                     yield self.application.cache.set("weixin_qrcode_ticket",response["ticket"])
                     yield self.application.cache.expire("weixin_qrcode_ticket",response.get("expire_seconds",0))
                     response = {}
-                    response['resp_qrc'] = qrc
+                    response['resp_qrc'] = self.qrc
                     response['resp'] = []
                     response['resp'].append({'qrcode_url':url})
                     self.write(response)
                 else:
-                    self.write({"errmsg":"can't get qrcode","errcode":40001})
+                    self.write({"errmsg":"can't get qrcode","errcode":40002})
         except Exception:  
-            self.write({"errmsg":"can't get qrcode","errcode":40001})
+            self.write({"errmsg":"can't get qrcode","errcode":40002})
 
 
-class HelpGetAPIHandler(AuthNeedBaseHandler):
+class HelpResourceAPIHandler(AuthNeedBaseHandler):
+    
+    r"""
+        @url:/resource/HelpResource/delete/?
+    """
+    @web.authenticated
+    @gen.coroutine
+    def delete(self):
+        source_url = self.get_argument("source_url")
+        data = json.loads(self.get_argument("data")) or {}
+        context = data.get("context")  or {}
+        qrc = data.get("qrc") or {}
+        helpid = context.get("helpid",None)
+        if not helpid:
+            resp = {"errcode":40003,"errmsg":"invalid helpid"}
+            self.write(resp);
+            return 
+        try:
+            query = {"helpid":helpid,"post_userid":self.current_user['userid']}
+            helpdata = yield self.application.db['help_order'].find_one(query)
+            resp = {}
+            if helpdata:
+                yield self.application.db['help_order'].remove(query)
+                criteria = {"userid":self.current_user['userid']}
+                modifier = {"$inc":{"help_cnt.posted_help_num":-1}}
+                yield self.application.db['user'].update(criteria, modifier)
+                self.session['help_cnt']['posted_help_num'] -= 1
+                if helpdata['state'] == 1: 
+                    criteria = {"userid":helpdata['do_userid']}
+                    modifier = {"$inc":{"help_cnt.done_help_num":-1}}
+                    yield self.application.db['user'].update(criteria, modifier)
+                
+                resp['resp'] = []
+                resp['resp_qrc'] = {}
+                resp['resp_qrc']['result'] = "OK"
+                resp['resp_qrc']['code'] = 0
+            else:
+                resp['resp'] = []
+                resp['resp_qrc'] = {}
+                resp['resp_qrc']['result'] = "NO"
+                resp['resp_qrc']['code'] = -1
+            self.write(resp)
+        except Exception  as e:
+            print(e)
+            self.write({"errcode":50000,"errmsg":"server internal error"})
+       
+
+class UpdatesHelpGetAPIHandler(APIBaseHandler):
   
-    valid_req_urls=[
+    _valid_urls=[
         "/",
-        "/user/posthelp/",
-        "/user/gethelp/",
     ]
     r"""
-        @url:/resource/HelpResource/get/?
+        @url:/resource/UpdatesHelpResource/get/?
     """
-    #@web.authenticated
+    @web.authenticated
     @gen.coroutine
     def get(self):
-        source_url = self.get_argument("source_url")
-        if source_url not in self.valid_req_urls:
-            err_res = {}
-            err_res["errcode"] = 40000
-            err_res["errmsg"] = "not correct source_url"
-            self.write(err_res)
-        data = json.loads(self.get_argument("data")) or {}
-        context = data.get("context")  
-        qrc = data.get("qrc") or {}
-        yield getattr(self, context+'help', self.default)(qrc)
-   
-    @gen.coroutine
-    def updateshelp(self,qrc): 
-        longitude = qrc.get("lng")
-        latitude = qrc.get("lat")
-        last_help_pt = qrc.get("last_help_pt")
-        resp = {"post_userheadimgurl": "/static/images/cat.jpg",
-                "post_username": "hello",
-                "help_price":"20",
-                "help_content":"从360带一桶老坛酸菜泡面，外加一根玉米火腿肠,我住在东六A304，万分感谢！",
-                "help_url":"/dohelp/2123131",
-                "expiretime":"20",
-                "posttime":time.time(),
-        }
-        self.write({"resp_qrc":"","resp":[resp, resp, resp, resp, resp, resp]});
-        return 
-        if not longitude or not latitude:
-            longitude = self.current_user['longitude']
-            latitude = self.current_user['latitude']
+        last_help_pt = float(self.context.get("last_help_pt",0))
+        location = self.context.get("location", self.current_user['location']);
+        location[0] = float(location[0])
+        location[1] = float(location[1])
+        rcd_num = int(self.qrc.get("rcd_num", 0))
+        rcd_cnt = 0
         try:
-            if last_help_pt <= 0:
-                query = {"location":{"$geoWithin":{"$center":[[longitude,latitude],0.1]}}}
+            if last_help_pt <= 0.0:
+                query = {"location":{"$geoWithin":{"$center":[location,0.02]}},"state":0}
             else:
-                query = {"location":{"$geoWithin":{"$center":[[longitude,latitude],0.1]}},"posttime":{"$lt":last_help_pt}}
-            cursor = self.application.db['help'].find(query)
-            cursor.sort("posttime",1).limit(10)
+                query = {"location":{"$geoWithin":{"$center":[location,0.02]}},"state":0,"posttime":{"$lt":last_help_pt}}
+            cursor = self.application.db['help_order'].find(query)
+            cursor.sort("posttime", -1).limit(rcd_num)
             helpdata=[]
             while (yield cursor.fetch_next):
-                dataline = curosr.next_object()
+                dataline = cursor.next_object()
                 del dataline['_id']
+                dataline['url'] = '/dohelp/'+dataline['helpid']+'/';
+                dataline['post_datetime'] = datetime.isoformat(datetime.fromtimestamp(dataline['posttime']))
                 helpdata.append(dataline)
-            qrc["last_help_pt"] = helpdata[-1].get("posttime",0)
+                rcd_cnt += 1
+            if helpdata:
+                self.qrc["last_help_pt"] = helpdata[-1].get("posttime",0)
+            else:
+                self.qrc["last_help_pt"] = last_help_pt
+            self.qrc['rcd_num'] = rcd_cnt
             response = {}
-            response['resp_qrc'] = qrc
+            response['resp_qrc'] = self.qrc
             response['resp'] = helpdata
             self.write(response)
-        except Exception:
+        except Exception as e:
+            print(e)
             self.write({"errcode":50000,"errmsg":"server internal error"})
 
+
+class PostedHelpGetAPIHandler(APIBaseHandler):
+
+    r"""
+        @url:/resource/PostedHelpResource/get/?
+    """
+    @web.authenticated
     @gen.coroutine
-    def uposthelp(self,qrc):
-        last_help_pt = qrc.get("last_help_pt")
+    def get(self):
+        last_help_pt = float(self.context.get("last_help_pt", 0))
+        rcd_num = int(self.qrc.get('rcd_num', 0))
+        rcd_cnt = 0
         try:
             userid = self.current_user["userid"]
-            if last_help_pt <= 0:
+            if last_help_pt <= 0.0:
                 query = {"post_userid":userid}
             else:
                 query = {"post_userid":userid,"posttime":{"$lt":last_help_pt}}
-            cursor = self.application.db['help'].find(query)
-            cursor.sort("posttime",1).limit(10)
+            cursor = self.application.db['help_order'].find(query)
+            cursor.sort("posttime",-1).limit(rcd_num)
             helpdata = []
             while (yield cursor.fetch_next):
                 dataline = cursor.next_object()
                 del dataline['_id']
+                dataline['post_datetime'] = datetime.fromtimestamp(dataline['posttime']).strftime("%Y/%m/%d %H:%M:%S") 
+                rcd_cnt += 1
                 helpdata.append(dataline)
-            qrc["last_help_pt"] = helpdata[-1].get('posttime',0)
+            if helpdata:
+                self.qrc["last_help_pt"] = helpdata[-1].get('posttime',0)
+            else:
+                self.qrc['last_help_pt'] = last_help_pt;
+            self.qrc['rcd_num'] = rcd_cnt
             response  = {}
-            response['resp_qrc'] = qrc
-            response['resp'] = posthelpdata
+            response['resp_qrc'] = self.qrc
+            response['resp'] = helpdata
             self.write(response)
-        except Exception:
+        except Exception as e:
             self.write({"errcode":50000,"errmsg":"server internal error"})
     
+
+class DoneHelpGetAPIHandler(APIBaseHandler):
+
+    r"""
+        @url:/resource/DoneHelpResource/get/?
+    """
+    @web.authenticated
     @gen.coroutine
-    def ugethelp(self,qrc):
-        last_help_pt = qrc.get("last_help_pt")
+    def get(self):
+        last_help_pt = float(self.context.get("last_help_pt", 0.0))
+        rcd_num = int(self.qrc.get("rcd_num",0))
+        rcd_cnt = 0
         try:
             userid = self.current_user['userid'] 
-            if last_help_pt <= 0:
-                query = {"get_userid":userid}
+            if last_help_pt <= 0.0:
+                query = {"do_userid":userid}
             else:
-                query = {"get_userid":userid,"posttime":{"$lt":last_help_pt}}
-            cursor = self.application.db['help'].find(query)
-            cusor.sort("posttime",1).limit(10)
+                query = {"do_userid":userid,"posttime":{"$lt":last_help_pt}}
+            cursor = self.application.db['help_order'].find(query)
+            cursor.sort("posttime",-1).limit(rcd_num)
             helpdata = []
             while (yield cursor.fetch_next):
                 dataline = cursor.next_object()
                 del dataline['_id'] 
+                dataline['post_datetime'] = datetime.fromtimestamp(dataline['posttime']).strftime("%Y/%m/%d %H:%M:%S") 
+                rcd_cnt += 1
                 helpdata.append(dataline)
-            qrc['last_help_pt'] = helpdata[-1].get("posttime",0)
+            if helpdata:
+                self.qrc['last_help_pt'] = helpdata[-1].get("posttime",0)
+            else:
+                self.qrc['last_help_pt'] = last_help_pt;
+            self.qrc['rcd_num'] = rcd_cnt
             response = {}
-            response['resp_qrc'] = qrc
+            response['resp_qrc'] = self.qrc
             response['resp'] = helpdata
             self.write(response)
-        except Exception:
+        except Exception as e:
             self.write({"errcode":50000,"errmsg": "server internal error"})
 
-    @gen.coroutine
-    def default(self,qrc):
-        response = {}
-        response['resp_qrc'] = qrc
-        response['resp'] = []
-        self.write(response)
 
-
-
-class UserProfileGetAPIHandler(AuthNeedBaseHandler):
+class UserProfileGetAPIHandler(APIBaseHandler):
    
     r"""
         @url:/resource/UserProfileResource/get/?
@@ -223,17 +285,8 @@ class UserProfileGetAPIHandler(AuthNeedBaseHandler):
     @web.authenticated
     @gen.coroutine
     def get(self):
-        source_url = self.get_argument("source_url","")
-        if source_url != "/user/profile/":
-            err_res = {}
-            err_res["errcode"] = 40000
-            err_res["errmsg"] = "not correct source_url"
-            self.write(err_res)
-        data = json.loads(self.get_argument("data")) or {}
-        qrc = data.get("qrc")
-        context = data.get("context")
         res = {}
-        res["resp_qrc"] = qrc
+        res["resp_qrc"] = self.qrc
         res["resp"] = []
         profile = {}
         profile['user_contact'] = self.current_user['usercontact']
@@ -249,30 +302,21 @@ class UserProfileUpdateAPIHandler(AuthNeedBaseHandler):
     @web.authenticated
     @gen.coroutine
     def post(self):
-        source_url = self.get_argument("source_url","")
-        if source_url != "/user/profile/":
-            err_res = {}
-            err_res["errcode"] = 40000
-            err_res["errmsg"] = "not correct source_url"
-            self.write(err_res)
-        data = json.loads(self.get_argument("data")) or {}
-        context = data.get("context",{})
         updates_profile = {}
-        updates_profile['usercontact'] = context.get("user_contact","")
-        qrc = data.get("qrc",{})
+        updates_profile['usercontact'] = self.context.get("user_contact","")
         try:
             self.session["usercontact"] = updates_profile["usercontact"]
             userid = self.current_user['userid']
             yield self.application.db['user'].update({"userid":userid},{"$set":updates_profile})
+            res = {}
+            res["resp_qrc"] = self.qrc
+            res["resp"] = []
+            self.write(res)
         except Exception:
             err_res={}
             err_res["errcode"] = 50000
             err_res["errmsg"] = "server internal error"
             self.write(err_res)
-        res = {}
-        res["resp_qrc"] = qrc
-        res["resp"] = []
-        self.write(res)
         
       
         
