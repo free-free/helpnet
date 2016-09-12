@@ -39,9 +39,7 @@
 |finishtime         |                    |
 |expiretime         |                    |
 |help_state         |                    |
-|ispay              |                    |
 |location:lng,lat   |  array             |
-|locprec            |  location precision|
 
 
 
