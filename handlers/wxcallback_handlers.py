@@ -126,6 +126,7 @@ class WXCallbackHandler(BaseHandler):
                     userdata['username'] = userdata.pop('nickname')
                     userdata['address'] = ''
                     userdata['location'] = [0, 0]
+                    userdata['help_cnt'] = {"posted_help_num":0,"done_help_num":0}
                     del userdata['remark']
                     del userdata['groupid']
                     del userdata['tagid_list']
