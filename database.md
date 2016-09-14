@@ -26,18 +26,18 @@
 |post_userid        |   unique user id   |
 |post_userheadimgurl|   user header img url|
 |post_usercontact   |                    |
-|post_usercontact_means|                 |
+|post_usercontact_means| "1"=="phone" "2"=="weixin" "3"=="qq" |
 |address            |                    |
-|content        |   help main content|
-|price         |  help tip          |
-|do_userid         |  help user id      |
-|do_username       |                    |
-|do_userheadimgurl |                    |
-|do_usercontact    |                    |
-|do_usercontact_means|                  |
+|content            |   help main content|
+|price              |  help tip          |
+|do_userid          |  help user id      |
+|do_username        |                    |
+|do_userheadimgurl  |                    |
+|do_usercontact     |                    |
+|do_usercontact_means|  same as "post_usercontact_means" |
 |posttime           |  post timestamp    |
 |finishtime         |                    |
-|expiretime         |                    |
+|expiretime         | when user set expire time,this field will exists|
 |help_state         |                    |
 |location:lng,lat   |  array             |
 
