@@ -119,6 +119,7 @@
     display:inline-block;
     float:right;
     overflow:hidden;
+    
 }
 .posted-help-list .help-view .help-footer .done-user .head-img{
     display:inline-block;
@@ -144,10 +145,18 @@
     color:#ababab;
     padding-left:0.2rem;
     padding-right:0.2rem;
+    font-size:0.65rem;
+    display:inline-block;
+    height:0.65rem;
 }
 
 .posted-help-list .help-view .help-footer .done-user .contact .value{
     color:#ababab;
     padding-left: 0.2rem;
     padding-right: 0.2rem;
+    font-size:0.65rem;
+    height:0.65rem;
+    display:inline-block;
+    overflow:hidden;
+  
 }
