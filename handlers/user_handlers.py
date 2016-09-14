@@ -16,32 +16,53 @@ class UserHomeHandler(AuthNeedBaseHandler):
     r"""
         @url:/user/?
     """
-    #@web.authenticated
+    @web.authenticated
     @gen.coroutine
     def get(self):
-        self.render("userhome.html")
+        try:
+            criteria = {"userid":self.current_user['userid']};
+            projects = {"_id":0,"username":1,"headimgurl":1,"help_cnt":1}
+            userdata = yield self.application.db['user'].find_one(criteria, projects)
+            self.render("UserHome/index.html", userdata=userdata)
+        except Exception :
+            self.set_status(500)
+            self.render("errors/500.html")
 
 
-class UserPostHelpListHandler(AuthNeedBaseHandler):
+class UserPostedHelpHandler(AuthNeedBaseHandler):
    
     r"""
-        @url:/user/posthelp/?
+        @url:/user/postedhelp/?
     """
     @web.authenticated
     @gen.coroutine
     def get(self):
-        self.render("userposthelp.html")
+        try:
+            criteria = {"userid":self.current_user['userid']};
+            projects = {"_id":0,"username":1,"headimgurl":1,"help_cnt":1}
+            userdata = yield self.application.db['user'].find_one(criteria, projects)
+            self.render("UserHome/postedhelp.html", userdata=userdata)
+        except Exception:
+            self.set_status(500)
+            self.render("errors/500.html");
 
 
-class UserDoHelpListHandler(AuthNeedBaseHandler):
+class UserDoneHelpHandler(AuthNeedBaseHandler):
   
     r"""
-        @url:/user/dohelp/?
+        @url:/user/donehelp/?
     """
     @web.authenticated
     @gen.coroutine
     def get(self):
-        self.render("usergethelp.html")
+        try:
+            criteria = {"userid":self.current_user['userid']};
+            projects = {"_id":0,"username":1,"headimgurl":1,"help_cnt":1}
+            userdata = yield self.application.db['user'].find_one(criteria, projects)
+            self.render("UserHome/donehelp.html", userdata=userdata)
+        except Exception:
+            self.set_status(500)
+            self.render("errors/500.html")
 
 
 class UserProfileHandler(AuthNeedBaseHandler):
