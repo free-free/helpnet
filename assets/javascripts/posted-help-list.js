@@ -1,8 +1,12 @@
 
-
 function removePostedHelpView(helpid){
     var view = document.getElementById(helpid);
-    view.parentNode.removeChild(view);
+    view.parentNode.removeChild(view); 
+    helpView = document.getElementsByClassName("help-view");
+    if(helpView.length <= 2  ){
+        postedHelpResource.getResource(createDynamicPostedHelpView);
+    }
+    
 }
 
 
@@ -41,7 +45,7 @@ function createPostedHelpView(container, data){
     ul.appendChild(delBtnLi);
     dataOper.className = "operation";
     dataOper.appendChild(ul);
-   
+  
     switch (data.state+""){
         case "0":
             state.className = "state font-green";
@@ -81,7 +85,7 @@ function createPostedHelpView(container, data){
     loc.appendChild(locVal);
  
     posttime.className = "posttime";
-    posttime.innerText = data.posttime;
+    posttime.innerText = data.post_datetime;
     
     infoBox.appendChild(loc);
     infoBox.appendChild(posttime);
