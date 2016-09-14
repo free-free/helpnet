@@ -31,7 +31,7 @@ function createDoneHelpView(container, data){
     loc.appendChild(locVal);
  
     posttime.className = "posttime";
-    posttime.innerText = data.posttime;
+    posttime.innerText = data.post_datetime;
     
     infoBox.appendChild(loc);
     infoBox.appendChild(posttime);
@@ -69,7 +69,7 @@ function createDoneHelpView(container, data){
             cIcon.className = "fa fa-weixin icon";
             break;
         case "3":
-            cIcon.className = "fa fa-weixin icon";
+            cIcon.className = "fa fa-qq icon";
             break;
         default:
             cIcon.className = "fa fa-phone icon";
