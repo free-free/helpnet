@@ -76,7 +76,7 @@ function createUpdatesHelpView(container, data){
             locationValue.className = "value";
             locationValue.innerText = data.address;
             posttime.className = "timeago posttime";
-            posttime.title = data.posttime;
+            posttime.title = data.post_datetime;
             clear.className="clear-fix";
             btn.className = "weui_btn weui_btn_primary";
             btn.href = data.url;
