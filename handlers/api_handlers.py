@@ -137,7 +137,6 @@ class HelpResourceAPIHandler(AuthNeedBaseHandler):
                     criteria = {"userid":helpdata['do_userid']}
                     modifier = {"$inc":{"help_cnt.done_help_num":-1}}
                     yield self.application.db['user'].update(criteria, modifier)
-                
                 resp['resp'] = []
                 resp['resp_qrc'] = {}
                 resp['resp_qrc']['result'] = "OK"
@@ -164,6 +163,7 @@ class UpdatesHelpGetAPIHandler(APIBaseHandler):
     @web.authenticated
     @gen.coroutine
     def get(self):
+        now_tm = time.time()
         last_help_pt = float(self.context.get("last_help_pt",0))
         location = self.context.get("location", self.current_user['location']);
         location[0] = float(location[0])
@@ -183,6 +183,8 @@ class UpdatesHelpGetAPIHandler(APIBaseHandler):
                 del dataline['_id']
                 dataline['url'] = '/dohelp/'+dataline['helpid']+'/';
                 dataline['post_datetime'] = datetime.isoformat(datetime.fromtimestamp(dataline['posttime']))
+                if 'expiretime' in dataline and dataline['expiretime'] < now_tm:
+                    continue 
                 helpdata.append(dataline)
                 rcd_cnt += 1
             if helpdata:
@@ -207,6 +209,7 @@ class PostedHelpGetAPIHandler(APIBaseHandler):
     @web.authenticated
     @gen.coroutine
     def get(self):
+        now_tm = time.time()
         last_help_pt = float(self.context.get("last_help_pt", 0))
         rcd_num = int(self.qrc.get('rcd_num', 0))
         rcd_cnt = 0
@@ -222,9 +225,11 @@ class PostedHelpGetAPIHandler(APIBaseHandler):
             while (yield cursor.fetch_next):
                 dataline = cursor.next_object()
                 del dataline['_id']
-                dataline['post_datetime'] = datetime.fromtimestamp(dataline['posttime']).strftime("%Y/%m/%d %H:%M:%S") 
-                rcd_cnt += 1
+                dataline['post_datetime'] = datetime.fromtimestamp(dataline['posttime']).strftime("%Y/%m/%d %H:%M:%S")
+                if 'expiretime' in dataline and dataline['expiretime'] < now_tm:
+                    dataline['state'] = 2 
                 helpdata.append(dataline)
+                rcd_cnt += 1
             if helpdata:
                 self.qrc["last_help_pt"] = helpdata[-1].get('posttime',0)
             else:
@@ -262,8 +267,8 @@ class DoneHelpGetAPIHandler(APIBaseHandler):
                 dataline = cursor.next_object()
                 del dataline['_id'] 
                 dataline['post_datetime'] = datetime.fromtimestamp(dataline['posttime']).strftime("%Y/%m/%d %H:%M:%S") 
-                rcd_cnt += 1
                 helpdata.append(dataline)
+                rcd_cnt += 1
             if helpdata:
                 self.qrc['last_help_pt'] = helpdata[-1].get("posttime",0)
             else:
