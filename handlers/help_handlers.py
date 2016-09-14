@@ -2,6 +2,7 @@
 
 import time
 from datetime import datetime
+import re
 
 import shortuuid
 from tornado import gen,web
@@ -20,15 +21,15 @@ class HelpListHandler(AuthNeedBaseHandler):
         self.render("Help/List/index.html")
 
 
-class AskHelpHandler(AuthNeedBaseHandler):
+class PostHelpHandler(AuthNeedBaseHandler):
    
     r"""
-        @url:/askhelp
+        @url:/posthelp
     """
     @web.authenticated
     @gen.coroutine
     def get(self):
-        self.render("Help/Post/index.html")
+        self.render("Help/Post/index.html", defaults={})
   
     @web.authenticated
     @gen.coroutine
@@ -47,7 +48,6 @@ class AskHelpHandler(AuthNeedBaseHandler):
         helpdata['location'][1] = float(helpdata['location'][1])
         helpdata['address'] = self.get_argument("help_address", \
             self.current_user.get("address", ""))
-        helpdata['locprec'] = 0.0
         helpdata['post_username'] = self.current_user['username']
         helpdata['post_userid'] = self.current_user['userid']
         helpdata['post_userheadimgurl'] = self.current_user['headimgurl']
@@ -56,13 +56,10 @@ class AskHelpHandler(AuthNeedBaseHandler):
         helpdata['post_usercontact'] = helpcontact 
         helpdata['post_usercontact_means'] = self.get_argument("post_usercontact_means")
         helpdata['posttime'] = tm
-        helpdata['finishtime'] = tm
+        helpdata['finishtime'] = 0
         if self.get_argument("help_expiretime"): 
-            helpdata['expiretime'] = tm + float(self.get_argument("help_expiretime"))
-        else:
-            helpdata['expiretime'] = 0
+            helpdata['expiretime'] = tm + float(self.get_argument("help_expiretime"))*60
         helpdata['state'] = 0
-        helpdata['ispay'] = 0
         try:
             help_exist = yield self.application.db['help_order'].find_one({'helpid':helpdata['helpid']},{"helpid":1})
             if not help_exist:
@@ -71,10 +68,19 @@ class AskHelpHandler(AuthNeedBaseHandler):
                 modifier = {"$inc":{"help_cnt.posted_help_num":1}}
                 yield self.application.db['user'].update(criteria, modifier ,upsert=True);
                 self.session['help_cnt']['posted_help_num'] = self.session['help_cnt']['posted_help_num']+1 or 1
-                self.write("askhelp_success.html")
+                self.redirect("/")
             else:
-                self.set_status(400)
-                self.render("errors/400.html")
+                defaults = {}
+                defaults['help_content'] = helpdata['content']
+                defaults['help_price'] = helpdata['price']
+                defaults['post_usercontact'] = helpdata['post_usercontact']
+                defaults['post_usercontact_means'] = helpdata['post_usercontact_means']
+                defaults['help_address'] = helpdata['address']
+                defaults['help_lng'] = helpdata['location'][0]
+                defaults['help_lat'] = helpdata['location'][1]
+                defaults['help_expiretime'] = self.get_argument("help_expiretime", '')
+                defaults['toptip'] = True
+                self.render("Help/Post/index.html" , defaults=defaults)
         except Exception as e:
             print(e)
             self.set_status(500)
@@ -83,13 +89,13 @@ class AskHelpHandler(AuthNeedBaseHandler):
 
 class DoHelpHandler(AuthNeedBaseHandler):
    
-
     r"""
         @url:/dohelp/([0-9a-zA-Z]+)/?
     """
     @web.authenticated
     @gen.coroutine
     def get(self, helpid):
+        now_tm = time.time()
         try:
             data = yield self.application.db['help_order'].find_one({"helpid":helpid})
             if not data:
@@ -97,9 +103,12 @@ class DoHelpHandler(AuthNeedBaseHandler):
                 self.render("errors/404.html")
                 return 
             del data['_id']
+            if 'expiretime' in data and data['expiretime'] < now_tm:
+                data['state'] =2
             data['url'] = "/dohelp/"+helpid+"/"
-            self.render("Help/Do/index.html", data=data)
+            self.render("Help/Do/index.html", data=data, re=re)
         except Exception as e:
+            print(e)
             self.set_status(500)     
             self.render("errors/500.html")
 
@@ -107,6 +116,7 @@ class DoHelpHandler(AuthNeedBaseHandler):
     @web.authenticated
     @gen.coroutine
     def post(self, helpid):
+        tm = time.time()
         do_usercontact = self.get_argument("do_usercontact")
         do_usercontact_means = self.get_argument("do_usercontact_means")
         try:
@@ -115,7 +125,12 @@ class DoHelpHandler(AuthNeedBaseHandler):
                 self.set_status(400)
                 self.render("errors/400.html")
                 return 
-            if data['state'] == 0:
+            if data.get('expiretime', tm+100) < tm or data['state'] ==2 :
+                if data['state'] != 2:
+                    data['state'] = 2
+                    yield self.application.db['help_order'].save(data)
+                self.render("Help/Do/expired.html")
+            elif data['state'] == 0:
                 data['state'] = 1
                 data['do_userid'] = self.current_user['userid']
                 data['do_username'] = self.current_user['username']
@@ -128,11 +143,12 @@ class DoHelpHandler(AuthNeedBaseHandler):
                 modifier = {"$inc":{"help_cnt.done_help_num":1}};
                 yield self.application.db['user'].update(criteria, modifier, upsert=True);
                 self.session['help_cnt']['done_help_num'] = self.session['help_cnt']['done_help_num']+1 or 1
-                self.write("dohelp_result.html") 
+                self.redirect('/user/donehelp/') 
             elif data['state'] == 1:
-                self.render("dohelp_result.html",reason="already solved by others")
+                self.render("Help/Do/solved.html")
             else:
-                self.render("dohelp_result.html",readon="expired")
+                self.set_status(400)
+                self.render("errors/400.html")
         except Exception as e:
             print(e)
             self.set_status(500)
