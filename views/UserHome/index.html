@@ -33,14 +33,14 @@
         <div class="tabs">
            <ul>
            <li>
-           <a class="post-help active" href="/user/postedhelp/">
-               <span class="value">{{ int(userdata['help_cnt']['posted_help_num']) }}</p>
+           <a class="posted-help active" href="/user/postedhelp/">
+               <span class="value" id="posted-help-value">{{ int(userdata['help_cnt']['posted_help_num']) }}</p>
                <span class="label ">我的求助</p>
            </a>
            </li>
            <li>
-           <a class="do-help" href="/user/donehelp/">
-               <p class="value">{{ int(userdata['help_cnt']['done_help_num'])}}</p>
+           <a class="done-help" href="/user/donehelp/">
+               <p class="value" id="done-help-value">{{ int(userdata['help_cnt']['done_help_num'])}}</p>
                <p class="label ">我的帮助</p>
            </a>
            </li>

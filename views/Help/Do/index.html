@@ -1,5 +1,4 @@
 {% extends "../../base.html" %}
-
 {% block head_custom %}
 <link rel="stylesheet" type="text/css" href="{{ static_url('stylesheets/do-help-page.css')}}">
 <link rel="stylesheet" type="text/css" href="{{ static_url('stylesheets/font-awesome.min.css')}}">
@@ -44,7 +43,11 @@
            {% end %}                   
            <span class="value">{{ data['post_usercontact'] }}<span></p>
            <p class="text_center price" ><span class="tag">小费：</span>
+	   {% if re.match("^[0-9]+$", data['price']) %}
+           <span class="value">￥{{ data['price'] }}</span></p>
+	   {% else %}
            <span class="value">{{ data['price'] }}</span></p>
+	   {% end %}
            <form class="form" id="form" method="POST" action={{data['url'] }}>
               {% if data['state'] ==0 %}
                <div class="container" >
@@ -63,6 +66,10 @@
                <p class="text_center font-gray" >已经有人帮助Ta了</p>
                <button type="submit" id="submit-btn" class="weui_btn submit-btn-disabled">帮助Ta</button>
                <input type="hidden" id="form-disabled">
+              {% elif data['state'] == 2  %}
+               <p class="text_center font-gray" >已经不需要帮助了</p>
+               <input type="hidden" id="form-disabled">
+               <button type="submit" id="submit-btn" class="weui_btn submit-btn-disabled">帮助Ta</button>
               {% else %}
                <p class="text_center font-gray" >已经不需要帮助了</p>
                <input type="hidden" id="form-disabled">
@@ -76,4 +83,3 @@
 {% block js_custom %}
     <script type="text/javascript" src="{{ static_url('javascripts/do-help.js')}}"></script>
 {% end %}
-

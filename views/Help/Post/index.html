@@ -13,39 +13,53 @@
             <form id="ask_help_form" method="POST" action="/posthelp/">
                 <div class="ask_help_form_item">
                         <label class="ask_help_form_item_title" for="help_content">求助内容</label>
-                        <textarea id="help_content" name="help_content" class="weui_textarea ask_help_form_item_input" placeholder="请输入求助内容" rows="4"></textarea>
+                        <textarea id="help_content" name="help_content" class="weui_textarea ask_help_form_item_input" placeholder="请输入求助内容" rows="4">{{ defaults.get('help_content', '')}}</textarea>
                 </div>
                 <div class="ask_help_form_item">
                     <label class="ask_help_form_item_title help_price" for="help_price">小费</label>
-                    <input id="help_price" class="ask_help_form_item_input" type="text" name="help_price" placeholder="具体价格或面议">
+                    <input id="help_price" class="ask_help_form_item_input" type="text" name="help_price" placeholder="具体价格或面议" value="{{ defaults.get('help_price', '')}}">
                 </div>
                 <div class="ask_help_form_item user-contact">
                         <label class="ask_help_form_item_title">联系方式</label>
                         <div class="post_usercontact_info">
                              <div class="post_usercontact_info_item post_usercontact_means_container">
                              <select id="post_usercontact_means" name="post_usercontact_means" class="post_usercontact_means_cs">
-                                 <option value="1" class="p_uc_select_opt phone_option" >电话</option>
+                                 {% if defaults.get("post_usercontact_means") == "1"%}
+                                 <option value="1" class="p_uc_select_opt phone_option" selected >电话</option>
                                  <option value="2" class="p_uc_select_opt qq_option">微信</option>
                                  <option value="3" class="p_uc_select_opt weixin_option">QQ</option>
+                                 {% elif defaults.get("post_usercontact_means") == "2" %}
+                                 <option value="1" class="p_uc_select_opt phone_option" >电话</option>
+                                 <option value="2" class="p_uc_select_opt qq_option" selected>微信</option>
+                                 <option value="3" class="p_uc_select_opt weixin_option">QQ</option>
+                                 {% elif defaults.get("post_usercontact_means") == "3" %}
+                                 <option value="1" class="p_uc_select_opt phone_option" >电话</option>
+                                 <option value="2" class="p_uc_select_opt qq_option" selected>微信</option>
+                                 <option value="3" class="p_uc_select_opt weixin_option" selected>QQ</option>
+                                 {% else %}
+                                 <option value="1" class="p_uc_select_opt phone_option" >电话</option>
+                                 <option value="2" class="p_uc_select_opt qq_option" >微信</option>
+                                 <option value="3" class="p_uc_select_opt weixin_option">QQ</option>
+                                 {% end %}
                              </select>
                              <span class="select-angle"></span>
                              <span class="select-left-border"></span>
                              </div>
-                             <input id="post_usercontact" name="post_usercontact" class="post_usercontact_input post_usercontact_info_item" type="text"  placeholder="联系方式"/>
+                             <input id="post_usercontact" name="post_usercontact" class="post_usercontact_input post_usercontact_info_item" type="text"  placeholder="联系方式" value="{{ defaults.get("post_usercontact", '')}}"/>
                         </div>
                         <div class="clear-fix"></div>    
                 </div>
                  
                 <div class="ask_help_form_item help-position">
                         <label class="ask_help_form_item_title">求助位置</label>
-                        <input id="help_address" name="help_address" class="ask_help_form_item_input help_address"  placeholder="默认为当前位置" >    
-                        <input id="help_lng" class="help_lng" name="help_lng" type="hidden" value=""/>  
-                        <input id="help_lat" class="help_lat" name="help_lat" type="hidden" value=""/>
+                        <input id="help_address" name="help_address" class="ask_help_form_item_input help_address"  placeholder="默认为当前位置" value="{{ defaults.get("help_address", '')}}">    
+                        <input id="help_lng" class="help_lng" name="help_lng" type="hidden" value="{{ defaults.get("help_lng", '')}}"/>  
+                        <input id="help_lat" class="help_lat" name="help_lat" type="hidden" value="{{ defaults.get("help_lat", '')}}"/>
                 </div>
 
                 <div class="ask_help_form_item">
                         <label class="ask_help_form_item_title">有效时间</label>
-                        <input id="help_expiretime" name="help_expiretime"class="ask_help_form_item_input" type="number"  placeholder="单位为分钟(默认为永久有效)" >    
+                        <input id="help_expiretime" name="help_expiretime"class="ask_help_form_item_input" type="number"  placeholder="单位为分钟(默认为永久有效)" value="{{ defaults.get("help_expiretime", '')}}">    
                 </div>
                 
                 <div class="ask_help_form_item btn_container">
@@ -60,4 +74,9 @@
     <script type="text/javascript" src="http://webapi.amap.com/maps?v=1.3&key=5d370d0efd99ca67cf8324ba65f3e1d5"></script>
     <script type="text/javascript" src="http://res.wx.qq.com/open/js/jweixin-1.0.0.js"></script>
     <script type="text/javascript" src="{{ static_url('javascripts/post-help.js')}}"></script>
+    {% if defaults.get("toptip") %}
+    <script >
+    $.toptip("发送失败，请重试", 1000, "error");
+    </script>
+    {% end %}
 {% end %}

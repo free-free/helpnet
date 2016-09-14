@@ -1,0 +1,31 @@
+<div  id="container" class="container" >
+        <div class="head">
+            <img src="<post-userheadimgurl></post-userheadimgurl>" class="head-img">
+            <span class="username"><post-username></post-username></span>
+        </div>
+        <div class="body">
+           <span class="tag content-tag">求助内容:</span>
+           <p class="weui_article content">
+                <content></content>
+           </p>
+           <span class="tag location-tag">求助位置:</span>
+           <p class="location"><i class="fa fa-map-marker icon"></i><span class="value"><location></location><span></p>
+           <span class="tag post-usercontact-tag">求助人联系方式:</span>
+           <p class="post-usercontact"><i class="fa fa-phone icon"></i><span class="value">post-usercontact></post-usercontact><span></p>
+           <p class="text_center price" ><span class="tag">小费：</span><span class="value"><price></price></span></p>
+           <form class="form" id="form" method="POST" action="">
+               <div class="container" >
+               <select name="do_usercontact_means" class="do-usercontact-means">
+                   <option value="1">电话</option>
+                   <option value="2">微信</option>
+                   <option value="3">QQ</option>
+               </select>
+               <span class="select-angle"></span>
+               <span class="select-left-border"></span>
+               <input type="text" id="do-usercontact" name="do_usercontact" class="do-usercontact" placeholder="请留下你的联系方式"/>
+               <div class="clear-fix" ></div>
+               </div>
+               <button type="submit" id="submit-btn" class="weui_btn  submit-btn">帮助Ta</button>
+           </form>
+        </div>
+</div>
