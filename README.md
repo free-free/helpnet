@@ -14,22 +14,21 @@
 | /askhelp/                                 | 发布请求,>                               |
 | /gethelp/([a-zA-Z0-9]+)/?                 | jie dan                                  |
 | /search/                                  | 搜索页面,暂定,>                          |
-| /about/                                   | 关于url,>                                |
-| /document/                                | 文档url,>                                |
-| /agreement/                               | 用户协议url,>                            |
 | /user/                                    | 用户主页url,>                            |
 | /user/gethelplist/                            | 用户的帮助list url, >                    |
 | /user/posthelplist/                           | 用户发送的请求list url, >                |
 | /user/profile/                            | 用户资料url(http get),修改资料(http post),>|
 | /resource/WXQRCodeResource/get/           | 公众号关注二维码 API url，返回二维码url,>|
-| /resource/HelpResource/get/               | 获取某一地点周围的请求，需要带上经纬度,> |
+| /resource/UpdatesHelpResource/get/        | 获取某一地点周围的请求，需要带上经纬度,> |
+| /resource/DoneHelpResource/get/           | 获取某一用户的帮助,>                     |
+| /resource/PostedHelpResource/get/         | 获取某一用户的求助,>                     |
 | /resource/UserProfileResource/get/        | 获取用户资料API                          |
 | /resource/UserProfileResource/update/     | 更新用户资料API                          |
 | /help/([0-9a-z-A-Z]+)/                    | 某一请求的详情页url,>                    |
 
 ### API 说明:
 
-####  API: /resource/HelpResource/get/ 
+####  API: /resource/UpdatesHelpResource/get/ 
 
 > 请求参数
 
@@ -37,23 +36,111 @@
    request = {
         'source_url':'发出请求的js所在页面url',
         'data':{
-            'context' : '请求上下文,可选值 ["updates","upost","uget"],
-            'qrc': "请求条件"
+            'context' :{"lng":"longitude", "lat":"latitude", "last_help_pt":"last help psottime timestamp"} 
+            'qrc': {"rcd_num":"number"} //rcd_num==> records number 
         }
-   }     
-   当 'context' = "updates" 请求条件qrc={"lng":"经度","lat":"纬度","last_help_pt":"上次请求返回数据中最后一个help单子的posttime,等于0时表式返回最新的数据"}
-   当 'context' = "upost"  ,qrc ={"last_help_pt":"同上"}
-   当 'context' = "uget"  ,qrc ={"last_help_pt":"同上"}
+   }
+
+   !!Note:
+        1. when 'last_help_pt' equal to 0.0, that represents server will return latest help data
+        2. when 'lng' and 'lat' is optional. 
 ```
 > 响应数据
 
 ```python
    response = {
-	'resp_qrc':这一次的请求条件,以便下一次请求使用，字段和qrc的相同,
-        'resp': 响应的数据(数组),每一个数据代表每一个help单子的数据(post_userheadimgurl,helpcontent,helpstate,helprewad,post_username,helpremark)
+	'resp_qrc':{"last_help_pt": "**", "rcd_num":"record number ",
+        'resp':[
+              {'post_userheadimgurl': '**',
+               'content': '**',
+               'state': '**',
+               'price': '**',
+               'post_username': '**'
+               'address': '**',
+               'post_datetime': 'isoformat',
+               'posttime':'**',
+               'helpid': '**'
+              },...
+         ]
    }
 ```
 
+
+####  API: /resource/PostedHelpResource/get/ 
+
+> 请求参数
+
+```python
+   request = {
+        'source_url':'发出请求的js所在页面url',
+        'data':{
+            'context': {"last_help_pt":"last help data posttime"},
+            'qrc': {"rcd_num": ""}
+        }
+   }     
+ 
+```
+> 响应数据
+
+```python
+   response = {
+	'resp_qrc': {"last_help_pt": "**", "rcd_num": "**"},
+        'resp': [
+            {
+             'helpid': '',
+             'post_userheadimgurl': '', 
+             'post_username': '',
+             'content': '', 
+             'address': '',
+             'post_usercontact': '', 
+             'post_usecontact_means': '',
+             'state': '', 
+             'price': '',
+             'posttime': '',
+             'post_datetime': '%Y/%m/%d %H:%M:%S',
+             'do_username':''
+             'do_userheadimgurl': '',
+             'do_usercontact': '',
+             'do_usercontact_means':''
+            },...
+       ]
+             
+   }
+```
+
+
+####  API: /resource/DoneHelpResource/get/ 
+
+> 请求参数
+
+```python
+   request = {
+        'source_url':'发出请求的js所在页面url',
+        'data':{
+            'context' : {"last_help_pt":" last help data posttime"},
+            'qrc': {"rcd_num": "record number"}
+        }
+   }     
+```
+> 响应数据
+
+```python
+   response = {
+	'resp_qrc':{"rcd_num": "recorder number", "last_help_pt:"**"},
+        'resp':[
+               {'post_userheadimgurl': '',
+                'post_username': '',
+                'post_usercontact': '', 
+                'content', ''
+                'state': '', 
+                'price': '',
+                'address': '',
+                'posttime': '',
+                'post_datetime': '%Y/%m/%d %H:%M:%S'
+                },...
+         ]
+   }
+```
 
 
 #### API:  /resource/WXQRCodeResource/get/
@@ -64,8 +151,8 @@
      request = {
             'source_url':'同上',
             'data':{
-                'context' : '请求上下文,目前为空字符，但是为了之后扩展，请求时必须带上此字段，
-                'qrc ' : '目前也为空,请求是必须带上此字段'
+                'context' : ''，
+                'qrc ' : ''
             }
      }
 ```
@@ -74,7 +161,7 @@
 
 ``` python 
     response = {
-          'resp_qrc': 同上,
+          'resp_qrc': {},
           'resp':[{'qrcode_url':"url"},...]
     }
 ```
