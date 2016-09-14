@@ -109,10 +109,21 @@
     
 }
 
+.done-help-list .help-view .help-head .contact {
+}
 .done-help-list .help-view .help-head .contact .icon{
     color:#ababab;
+    font-size:0.65rem;
+    height:0.65rem;
+    display:inline-block;
 }
 .done-help-list .help-view .help-head .contact .value{
     color:#ababab;
+    padding-left:0.2rem;
+    font-size:0.65rem;
+    width:90%;
+    display:inline-block;
+    height:0.65rem;
+    overflow-x:scroll;
 }
 
