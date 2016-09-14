@@ -24,16 +24,25 @@ $(function(){
     }
 
     function setAddress(regeocode){
-        
         simpleReg = regeocode.addressComponent.province+
             regeocode.addressComponent.city+
             regeocode.addressComponent.district+
             regeocode.addressComponent.township;
         simpleReg = new RegExp(simpleReg);
         address = regeocode.formattedAddress.replace(simpleReg,"");
+        if (regeocode.aois){
+            /* following code block is very bad , I think so, fuck you */
+	    aoisName = regeocode.aois[0].name.split("").reverse().join("");
+            removeAoisReg = new RegExp(aoisName); 
+            address = address.split("").reverse().join("").replace(removeAoisReg,"");
+            address = address.split("").reverse().join("");
+        }
+        /*
+	// this is remove repeat substring from string 
         norepeatReg = /(.)(?=.*\1)/g;
         address = address.split("").reverse().join("").replace(norepeatReg,"");
         address = address.split("").reverse().join("");
+        */
     }
 
     function getLocation(){
@@ -92,7 +101,9 @@ $(function(){
             }); 
          });
         AMap.service('AMap.Geocoder',function(){
-            geocoder = new AMap.Geocoder();
+            geocoder = new AMap.Geocoder({
+                'extensions':"all"
+            });
         });
     }
 
