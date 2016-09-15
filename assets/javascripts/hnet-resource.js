@@ -11,7 +11,7 @@ postedHelpResource = {
          this.resLoading = true;
          this.context = {"last_help_pt":this.lastHelpPt};
          this.qrc = {"rcd_num":6}
-         that = this;
+         var that = this;
          sendResourceGetReq(this.get_url, this.qrc, this.context, function(data){
              if(data.resp_qrc.rcd_num == 0){
                  that.resLoadFailedCnt += 1;
@@ -38,7 +38,7 @@ doneHelpResource = {
         this.resLoading = true;
         this.context = {'last_help_pt':this.lastHelpPt};
         this.qrc = {"rcd_num":6};
-        that = this;
+        var that = this;
         sendResourceGetReq(this.get_url, this.qrc, this.context, function(data){
             if(data.resp_qrc.rcd_num == 0){
                 that.resLoadFailedCnt +=1;
@@ -60,7 +60,7 @@ helpResource = {
         if(this.resLoading) return ;
         this.resLoading = true;
         this.context = {'helpid':helpid};
-        that = this
+        var that = this;
         sendResourceDeleteReq(this.del_url, this.qrc, this.context, function(data){ 
              if(data.resp_qrc['result'] == "OK"){
                  success_callback && success_callback(that.context['helpid'])
@@ -86,7 +86,7 @@ updatesHelpResource = {
          this.resLoading = true;
          this.context = {"last_help_pt":this.lastHelpPt,'location':this.location};
          this.qrc = {"rcd_num":6}
-         that = this;
+         var that = this;
          sendResourceGetReq(this.get_url, this.qrc, this.context, function(data){
              if(data.resp_qrc.rcd_num == 0){
                  that.resLoadFailedCnt += 1;
