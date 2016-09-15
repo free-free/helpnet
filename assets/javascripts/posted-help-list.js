@@ -1,8 +1,9 @@
 
 function removePostedHelpView(helpid){
+
     var view = document.getElementById(helpid);
     view.parentNode.removeChild(view); 
-    helpView = document.getElementsByClassName("help-view");
+    var helpView = document.getElementsByClassName("help-view");
     if(helpView.length <= 2  ){
         postedHelpResource.getResource(createDynamicPostedHelpView);
     }
@@ -194,7 +195,7 @@ function createPostedHelpView(container, data){
 }
 
 function createDynamicPostedHelpView(data){
-    var container = document.getElementById("container")
+    var container = document.getElementById("container");
     var dtLen = data.resp_qrc.rcd_num;
     for(var i = 0; i < dtLen; i++){
         createPostedHelpView(container, data.resp[i]);
