@@ -6,7 +6,7 @@ import json
 import requests
 from redis   import Redis
 from submail import submail
-from motor import MotorClient
+from pymongo import MongoClient
 
 from tasker import tasker
 from services import token_refresh, jsapi_ticket_refresh
@@ -33,11 +33,11 @@ def send_mail():
 @tasker.task
 def help_expire():
     now_tm = time.time()
-    mongo = MotorClient("localhost", 4000)
+    mongo = MongoClient("localhost", 4000)
     help_order = mongo['fsp']['help_order']
     criteria = {"expiretime":{"$lt":now_tm}}
-    modifier = {"state":2}
-    help_order.update(criteria, modifier)
+    modifier = {"$set":{"state":2}}
+    resp = help_order.update(criteria, modifier)
    
 @tasker.task
 def create_wx_menu():
