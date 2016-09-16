@@ -1,3 +1,4 @@
+
 {% extends "../../base.html" %}
 
 
@@ -16,22 +17,6 @@
 <header class="left header text_center" >
 	<a href="/">周围求助</a>
 </header> 
-<!--
-<div class="weui_search_bar" id="search_bar" style="position:fixed;top:0px;left:0xp;width:100%;z-index:999999;">
-	<form class="weui_search_outer">
-		<div class="weui_search_inner">
-			<i class="weui_icon_search"></i>
-			<input type="search" class="weui_search_input" id="search_input" placeholder="请输入地名" required/>
-			<a href="javascript:" class="weui_icon_clear" id="search_clear"></a>
-		</div>
-		<label for="search_input" class="weui_search_text" id="search_text">
-			<i class="weui_icon_search"></i>
-			<span>搜索地名</span>
-		</label>
-	</form>
-	<a href="javascript:" class="weui_search_cancel" id="search_cancel">取消</a>
-</div>
--->
 {% end %}
 
 
@@ -39,7 +24,9 @@
 <div id="help_list_container">
 </div>
 {% end  %}
-
+{% block icon-near %}
+<img src="{{static_url('images/icon-near-focus.png')}}" alt=""/>
+{% end %}
 {% block js_custom %}
 <script src="//cdn.bootcss.com/jquery-timeago/1.5.3/jquery.timeago.min.js"></script>
 <script type="text/javascript" src="http://res.wx.qq.com/open/js/jweixin-1.0.0.js"></script>

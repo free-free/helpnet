@@ -34,8 +34,8 @@
            <ul>
            <li>
            <a class="post-help" href="/user/postedhelp/">
-               <span class="value" id="posted-help-value">{{int(userdata['help_cnt']['posted_help_num'])}}</p>
-               <span class="label ">我的求助</p>
+               <p class="value" id="posted-help-value">{{int(userdata['help_cnt']['posted_help_num'])}}</p>
+               <p class="label ">我的求助</p>
            </a>
            </li>
            <li>
@@ -56,6 +56,9 @@
 </div>
     {% end %}
 
+    {% block icon-user %}
+    <img src="{{ static_url('images/icon-user-focus.png')}}" alt=""/>
+    {% end %}
     {% block js_custom %}
      <script src="{{ static_url('javascripts/done-help-list.js')}}"></script>
     {% end %}
