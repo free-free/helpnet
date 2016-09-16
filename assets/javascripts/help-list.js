@@ -1,4 +1,26 @@
+// start 
+function createHelpListEmptyNote(parent){
+    var container = document.getElementById("helplist-note");
+    if(!container){
+        container = document.createElement("div");
+        var text = document.createElement("p");
+        container.id = "helplist-note";
+        text.id = "text";
+        text.innerText = "你周围还没有人需要帮助";
+        container.style = "padding-top:4rem;";
+        text.style = "text-align:center;color:#b3b3b3;";
+        container.appendChild(text);
+        parent.appendChild(container);
+    }
+}
 
+function hideHelpListEmptyNote(){
+   var noteContainer = document.getElementById("helplist-note");
+   if(noteContainer){
+       noteContainer.style.display = "none";
+   }
+}
+// end 
 function initTimeago(){
            jQuery.timeago.settings.strings = {
                         prefixAgo: null,
@@ -98,6 +120,21 @@ function createUpdatesHelpView(container, data){
             
 }
 
+// check help list empty, and show note text 
+function checkHelpListEmpty(){
+    var helpListContainer = document.getElementById("help_list_container");
+    var helpListItem = document.getElementsByClassName("help_list_item");
+    if(helpListItem.length == 0){
+        hideInfinitePreloader();
+	helpListContainer.style.height = getWindowHeight()-60+'px' ;
+        createHelpListEmptyNote(helpListContainer);
+    }else{
+        showInfinitePreloader();
+	helpListContainer.style.height = 'auto' ;
+	hideHelpListEmptyNote();
+    }	       
+}
+
 function createDynamicUpdatesHelpView(data)
 {
 	    var container = document.getElementById("help_list_container");
@@ -107,6 +144,9 @@ function createDynamicUpdatesHelpView(data)
                 createUpdatesHelpView(container, data.resp[i]);
                 $(".timeago").timeago();
             }
+	    if( length == 0){
+	        checkHelpListEmpty();
+	    }
           
 }
 

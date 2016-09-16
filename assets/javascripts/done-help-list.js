@@ -1,4 +1,29 @@
 
+/********  start *****************************************/
+function createDoneHelpEmptyNote(parent){
+    var container = document.getElementById("donehelp-note");
+    if(!container){
+        container = document.createElement("div");
+        var text = document.createElement("p");
+        container.id = "donehelp-note";
+        text.id = "text";
+        text.innerText = "你还没有帮助";
+        container.style = "padding-top:0.5rem;";
+        text.style = "text-align:center;color:#b3b3b3";
+        container.appendChild(text);
+        parent.appendChild(container);
+    }
+}
+
+function hideDoneHelpEmptyNote(){
+    var noteContainer = document.getElementById("donehelp-note");
+    if(noteContainer){
+        noteContainer.style.display = "none";
+    }
+}
+// end 
+
+
 function createDoneHelpView(container, data){
 
 /********************************************************************/
@@ -110,11 +135,27 @@ function createDoneHelpView(container, data){
     container.appendChild(view);
 }
 
+
+function checkDoneHelpEmpty(){
+    var container = document.getElementById("container")
+    var helpView = document.getElementsByClassName("help-view");
+    if(helpView.length == 0){
+        hideInfinitePreloader();
+        createDoneHelpEmptyNote(container);
+    }else{
+	showInfinitePreloader();
+        hideDoneHelpEmptyNote();
+    }
+}
+
 function createDynamicDoneHelpView(data){
     var container = document.getElementById("container");
     var dtLen = data.resp_qrc.rcd_num;
     for(var i = 0; i < dtLen; i++){
         createDoneHelpView(container, data.resp[i]);
+    }
+    if(dtLen == 0){
+        checkDoneHelpEmpty();
     }
 }
 
@@ -122,9 +163,13 @@ function createDynamicDoneHelpView(data){
 $(function(){ 
    
     var container = document.getElementById("container")
+    /* init pull to refresh component */
     initP2r();
+    /* create infinite preloader component */
     createInfinitePreloader(container);
+    /* load done help resource data */
     doneHelpResource.getResource(createDynamicDoneHelpView);
+    /* bind event for infinite preloader */
     $(document.body).infinite(200).on("infinite", function(){
          doneHelpResource.getResource(createDynamicDoneHelpView);
     });

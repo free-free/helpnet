@@ -1,11 +1,44 @@
 
+/************ start ********************************/
+function createPostedHelpEmptyNote(parent){
+    var container = document.getElementById("postedhelp-note");
+    if(!container){
+        container = document.createElement("div");
+        var text = document.createElement("p");
+        container.id = "postedhelp-note";
+        text.id = "text";
+        text.innerText = "你还没有求助";
+        container.style = "padding-top:0.5rem;";
+        text.style = "text-align:center;color:#b3b3b3;";
+        container.appendChild(text);
+        parent.appendChild(container);
+    }
+}
+
+function hidePostedHelpEmptyNote(){
+    var noteContainer = document.getElementById("postedhelp-note");
+    if(noteContainer){
+        noteContainer.style.display = "none";
+    }
+}
+// end
+
+
 function removePostedHelpView(helpid){
 
     var view = document.getElementById(helpid);
     view.parentNode.removeChild(view); 
+    var postedHelpValue = document.getElementById("posted-help-value");
+    postedHelpValue.innerText = parseInt(postedHelpValue.innerText) - 1;
     var helpView = document.getElementsByClassName("help-view");
     if(helpView.length <= 2  ){
         postedHelpResource.getResource(createDynamicPostedHelpView);
+	/* display empty note text */
+	if(helpView.length == 0 ){
+	    hideInfinitePreloader();
+	    createPostedHelpEmptyNote(container);
+	}
+
     }
     
 }
@@ -194,22 +227,44 @@ function createPostedHelpView(container, data){
     container.appendChild(view);
 }
 
+function checkPostedHelpEmpty(){
+    var container = document.getElementById("container")
+    helpView = document.getElementsByClassName("help-view");
+    if(helpView.length == 0){
+        hideInfinitePreloader();
+        createPostedHelpEmptyNote(container);
+    }else{
+        showInfinitePreloader();
+	hidePostedHelpEmptyNote();
+    }
+}
+
 function createDynamicPostedHelpView(data){
     var container = document.getElementById("container");
     var dtLen = data.resp_qrc.rcd_num;
     for(var i = 0; i < dtLen; i++){
         createPostedHelpView(container, data.resp[i]);
     }
+    if(dtLen == 0){
+        checkPostedHelpEmpty();
+    }
 }
-
 
 $(function(){ 
    
     var container = document.getElementById("container")
+    /* init pull to refresh component */
     initP2r();
+    /* create infinite preloader component */
     createInfinitePreloader(container);
+    /* load posted help resource */
     postedHelpResource.getResource(createDynamicPostedHelpView);
+    /* bind event for infinite preloader */
     $(document.body).infinite(200).on("infinite", function(){
          postedHelpResource.getResource(createDynamicPostedHelpView);
     });
+    /* display empty note */
+    window.setTimeout(function(){
+    }, 3000);
+
 });
