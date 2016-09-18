@@ -16,8 +16,8 @@ CELERYBEAT_SCHEDULE = {
         'schedule': crontab(minute='55', hour="*/1"),
         'args':''
     },
-    'help_expire':{
-        'task': 'tasks.help_expire',
+    'update_help_expire':{
+        'task': 'tasks.update_help_expire',
         'schedule': crontab(minute='*/10'),
         'args':''
     }
