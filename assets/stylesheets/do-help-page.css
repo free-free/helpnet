@@ -176,3 +176,17 @@
    -moz-appearance:none; /* Firefox */
    -webkit-appearance:none; /* Safari 和 Chrome */
 }
+
+///////////////////////////////////
+#do-help-result{
+    margin-left:auto;
+    max-width: 768px;
+    margin-right:auto;
+    padding-bottom:3rem;
+}
+
+#do-help-result .text{
+    color:#b1b1b1;
+    text-align:center;
+    padding-top:4rem;
+}
