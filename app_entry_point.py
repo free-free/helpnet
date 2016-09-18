@@ -19,9 +19,6 @@ from handlers.search_handlers import *
 from handlers.wxcallback_handlers import *
 from handlers.help_handlers import *
 from handlers.check_signature_handlers import CheckSignatureHandler
-from handlers.about_handler import AboutHandler
-from handlers.document_handler import DocumentHandler
-from handlers.agreement_handler import AgreementHandler
 from handlers.api_handlers import *
 import tasks
 
@@ -35,6 +32,19 @@ class DefaultHandler(web.RequestHandler):
     def get(self):
         self.set_status(404)
         self.render("errors/404.html")
+        
+    def post(self):
+        self.set_status(404)
+        self.render("errors/404.html")
+
+    def delete(self):
+        self.set_status(404)
+        self.render("errors/404.html")
+
+    def put(self):
+        self.set_status(404)
+        self.render("errors/404.html")
+        
 
 
 
@@ -46,7 +56,7 @@ class Application(web.Application):
         settings = {
             'template_path': os.path.join(os.path.dirname(__file__), 'views'),
             'static_path': os.path.join(os.path.dirname(__file__), 'assets'),
-            'login_url': '/login',
+            'login_url': '/login/',
             'cookie_secret': 'MmUyZmU2NmIyNDM4NDc4YWE4OTNiODUzMjhhZTgzM2U3NDU5OGUwNzNlODY0ODI5ODM1MGNmNjcxZmU5M2FjNg==',
             #'xsrf_cookies': True,
             'default_handler_class': DefaultHandler,
@@ -85,7 +95,7 @@ class Application(web.Application):
         ]
         super(Application, self).__init__(handlers=handlers, **settings)
         conn = MotorClient('localhost', 4000)
-        self.db = conn['fsp']
+        self.db = conn['hnet']
         self.executor = concurrent.futures.ThreadPoolExecutor(2)
         self.session_cache = SessionCacheFactory('redis')
         self.cache = TornadoHBRedis("localhost",6379, bytes_decode=True)
