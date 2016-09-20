@@ -1,0 +1,12 @@
+#error-info{
+  padding-top:7rem; 
+  width:100%;
+  height:100%;
+}
+
+#error-info .text{
+   font-size:1rem;
+   font-weight:500;
+   text-align:center;
+   color:#b3b3b3;
+}
