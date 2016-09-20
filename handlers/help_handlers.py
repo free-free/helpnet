@@ -24,7 +24,7 @@ class HelpListHandler(AuthNeedBaseHandler):
 class PostHelpHandler(AuthNeedBaseHandler):
    
     r"""
-        @url:/posthelp
+        @url:/posthelp/
     """
     @web.authenticated
     @gen.coroutine
@@ -61,13 +61,13 @@ class PostHelpHandler(AuthNeedBaseHandler):
             helpdata['expiretime'] = tm + float(self.get_argument("help_expiretime"))*60
         helpdata['state'] = 0
         try:
-            help_exist = yield self.application.db['help_order'].find_one({'helpid':helpdata['helpid']},{"helpid":1})
+            help_exist = yield self.application.db['permanent_help'].find_one({'helpid':helpdata['helpid']},{"helpid":1})
             if not help_exist:
-                yield self.application.db['help_order'].insert(helpdata)
+                yield self.application.db['permanent_help'].insert(helpdata)
+                yield self.application.db['updates_help'].insert(helpdata);
                 criteria = {"userid":self.current_user["userid"]}
                 modifier = {"$inc":{"help_cnt.posted_help_num":1}}
                 yield self.application.db['user'].update(criteria, modifier ,upsert=True);
-                self.session['help_cnt']['posted_help_num'] = self.session['help_cnt']['posted_help_num']+1 or 1
                 self.redirect("/")
             else:
                 defaults = {}
@@ -82,7 +82,6 @@ class PostHelpHandler(AuthNeedBaseHandler):
                 defaults['toptip'] = True
                 self.render("Help/Post/index.html" , defaults=defaults)
         except Exception as e:
-            print(e)
             self.set_status(500)
             self.render("errors/500.html")
 
@@ -97,7 +96,7 @@ class DoHelpHandler(AuthNeedBaseHandler):
     def get(self, helpid):
         now_tm = time.time()
         try:
-            data = yield self.application.db['help_order'].find_one({"helpid":helpid})
+            data = yield self.application.db['permanent_help'].find_one({"helpid":helpid})
             if not data:
                 self.set_status(404)
                 self.render("errors/404.html")
@@ -108,10 +107,8 @@ class DoHelpHandler(AuthNeedBaseHandler):
             data['url'] = "/dohelp/"+helpid+"/"
             self.render("Help/Do/index.html", data=data, re=re)
         except Exception as e:
-            print(e)
             self.set_status(500)     
             self.render("errors/500.html")
-
 
     @web.authenticated
     @gen.coroutine
@@ -120,16 +117,17 @@ class DoHelpHandler(AuthNeedBaseHandler):
         do_usercontact = self.get_argument("do_usercontact")
         do_usercontact_means = self.get_argument("do_usercontact_means")
         try:
-            data = yield self.application.db['help_order'].find_one({"helpid":helpid})
+            data = yield self.application.db['permanent_help'].find_one({"helpid":helpid})
             if not data:
                 self.set_status(400)
                 self.render("errors/400.html")
                 return 
-            if data.get('expiretime', tm+100) < tm or data['state'] ==2 :
+            elif data.get('expiretime', tm+100) < tm or data['state'] ==2 :
                 if data['state'] != 2:
                     data['state'] = 2
-                    yield self.application.db['help_order'].save(data)
-                self.render("Help/Do/expired.html")
+                    yield self.application.db['permanent_help'].save(data)
+                    yield self.application.db['updates_help'].remove({"helpid": helpid})
+                self.render("Help/Do/result.html", result_text="Ta已经不需要帮助了")
             elif data['state'] == 0:
                 data['state'] = 1
                 data['do_userid'] = self.current_user['userid']
@@ -138,17 +136,14 @@ class DoHelpHandler(AuthNeedBaseHandler):
                 data['do_usercontact'] = do_usercontact
                 data['do_usercontact_means'] = str(do_usercontact_means)
                 data['finishtime'] = time.time()
-                resp = yield self.application.db['help_order'].save(data)
+                resp = yield self.application.db['permanent_help'].save(data)
+                yield self.application.db['updates_help'].remove({"helpid":helpid})
                 criteria = {"userid":self.current_user["userid"]}
                 modifier = {"$inc":{"help_cnt.done_help_num":1}};
                 yield self.application.db['user'].update(criteria, modifier, upsert=True);
-                self.session['help_cnt']['done_help_num'] = self.session['help_cnt']['done_help_num']+1 or 1
                 self.redirect('/user/donehelp/') 
-            elif data['state'] == 1:
-                self.render("Help/Do/solved.html")
             else:
-                self.set_status(400)
-                self.render("errors/400.html")
+                self.render("Help/Do/result.html", result_text="已经有人帮助Ta了")
         except Exception as e:
             print(e)
             self.set_status(500)

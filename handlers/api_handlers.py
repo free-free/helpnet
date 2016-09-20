@@ -106,7 +106,7 @@ class WeixinQRCodeGetAPIHandler(APIBaseHandler):
             self.write({"errmsg":"can't get qrcode","errcode":40002})
 
 
-class HelpResourceAPIHandler(AuthNeedBaseHandler):
+class HelpResourceAPIHandler(APIBaseHandler):
     
     r"""
         @url:/resource/HelpResource/delete/?
@@ -114,25 +114,21 @@ class HelpResourceAPIHandler(AuthNeedBaseHandler):
     @web.authenticated
     @gen.coroutine
     def delete(self):
-        source_url = self.get_argument("source_url")
-        data = json.loads(self.get_argument("data")) or {}
-        context = data.get("context")  or {}
-        qrc = data.get("qrc") or {}
-        helpid = context.get("helpid",None)
+        helpid = self.context.get("helpid",None)
         if not helpid:
             resp = {"errcode":40003,"errmsg":"invalid helpid"}
             self.write(resp);
             return 
         try:
             query = {"helpid":helpid,"post_userid":self.current_user['userid']}
-            helpdata = yield self.application.db['help_order'].find_one(query)
+            helpdata = yield self.application.db['temp_help'].find_one(query)
             resp = {}
             if helpdata:
-                yield self.application.db['help_order'].remove(query)
+                yield self.application.db['permanent_help'].remove(query)
+                yield self.application.db['updates_help'].remove(query)
                 criteria = {"userid":self.current_user['userid']}
                 modifier = {"$inc":{"help_cnt.posted_help_num":-1}}
                 yield self.application.db['user'].update(criteria, modifier)
-                self.session['help_cnt']['posted_help_num'] -= 1
                 if helpdata['state'] == 1: 
                     criteria = {"userid":helpdata['do_userid']}
                     modifier = {"$inc":{"help_cnt.done_help_num":-1}}
@@ -175,7 +171,7 @@ class UpdatesHelpGetAPIHandler(APIBaseHandler):
                 query = {"location":{"$geoWithin":{"$center":[location,0.02]}},"state":0}
             else:
                 query = {"location":{"$geoWithin":{"$center":[location,0.02]}},"state":0,"posttime":{"$lt":last_help_pt}}
-            cursor = self.application.db['help_order'].find(query)
+            cursor = self.application.db['updates_help'].find(query)
             cursor.sort("posttime", -1).limit(rcd_num)
             helpdata=[]
             while (yield cursor.fetch_next):
@@ -219,7 +215,7 @@ class PostedHelpGetAPIHandler(APIBaseHandler):
                 query = {"post_userid":userid}
             else:
                 query = {"post_userid":userid,"posttime":{"$lt":last_help_pt}}
-            cursor = self.application.db['help_order'].find(query)
+            cursor = self.application.db['permanent_help'].find(query)
             cursor.sort("posttime",-1).limit(rcd_num)
             helpdata = []
             while (yield cursor.fetch_next):
@@ -260,7 +256,7 @@ class DoneHelpGetAPIHandler(APIBaseHandler):
                 query = {"do_userid":userid}
             else:
                 query = {"do_userid":userid,"posttime":{"$lt":last_help_pt}}
-            cursor = self.application.db['help_order'].find(query)
+            cursor = self.application.db['permanent_help'].find(query)
             cursor.sort("posttime",-1).limit(rcd_num)
             helpdata = []
             while (yield cursor.fetch_next):
@@ -299,14 +295,14 @@ class UserProfileGetAPIHandler(APIBaseHandler):
         self.write(res)
 
 
-class UserProfileUpdateAPIHandler(AuthNeedBaseHandler):
+class UserProfileUpdateAPIHandler(APIBaseHandler):
 
     r"""
         @url:/resource/UserProfileResource/update/?
     """
     @web.authenticated
     @gen.coroutine
-    def post(self):
+    def put(self):
         updates_profile = {}
         updates_profile['usercontact'] = self.context.get("user_contact","")
         try:

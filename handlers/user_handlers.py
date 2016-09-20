@@ -24,7 +24,8 @@ class UserHomeHandler(AuthNeedBaseHandler):
             projects = {"_id":0,"username":1,"headimgurl":1,"help_cnt":1}
             userdata = yield self.application.db['user'].find_one(criteria, projects)
             self.render("UserHome/index.html", userdata=userdata)
-        except Exception :
+        except Exception as e:
+            print(e)
             self.set_status(500)
             self.render("errors/500.html")
 
