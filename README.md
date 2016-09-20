@@ -15,8 +15,8 @@
 | /gethelp/([a-zA-Z0-9]+)/?                 | jie dan                                  |
 | /search/                                  | 搜索页面,暂定,>                          |
 | /user/                                    | 用户主页url,>                            |
-| /user/gethelplist/                            | 用户的帮助list url, >                    |
-| /user/posthelplist/                           | 用户发送的请求list url, >                |
+| /user/gethelp/                            | 用户的帮助list url, >                    |
+| /user/postedhelp/                           | 用户发送的请求list url, >                |
 | /user/profile/                            | 用户资料url(http get),修改资料(http post),>|
 | /resource/WXQRCodeResource/get/           | 公众号关注二维码 API url，返回二维码url,>|
 | /resource/UpdatesHelpResource/get/        | 获取某一地点周围的请求，需要带上经纬度,> |
