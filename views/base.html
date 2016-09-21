@@ -25,6 +25,7 @@
 	
 	{% end  %}
 	{% block footer %}
+    {% if current_user %}
 	<div class="footer" >
 		<div class="weui_tab">
 		     <div class="weui_tab_bd">
@@ -58,6 +59,7 @@
 	              </div>
 		</div>
 	</div>
+    {% end %}
 	{% end %}
 
 	{%block js_require%}
