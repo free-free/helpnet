@@ -1,1 +1,21 @@
-405 ERROR
+{% extends "../base.html" %}
+{% block head_custom %}
+<link rel="stylesheet" type="text/css" href="{{ static_url('stylesheets/error-page.css')}}">
+{% end %}
+{% block header %}
+<header class="center text_center" >
+        <p>互助广场</p>      
+        {% if not current_user %}
+        <span class="oper-panel"><a href="/login/" class="login-btn weui_btn weui_btn_mini ">登入</a></span>
+        {% end %}
+</header>
+{% end %}
+
+{% block container %}
+<div id="error-info">
+        <p class="text">啊哦! 似乎出错了,我们正在维修...</p>
+</div>
+
+{% end %}
+{% block js_require %}
+{% end %}
