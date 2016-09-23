@@ -152,20 +152,30 @@ function createDynamicUpdatesHelpView(data)
 
 function init()
 {
-	    var container = document.getElementById("help_list_container");
-            wxLocationInit();
-            initTimeago();
-            initP2r();
-            createInfinitePreloader(container);
-            $(document.body).infinite(200).on("infinite", function(){
-                updatesHelpResource.getResource(createDynamicUpdatesHelpView);
+    var container = document.getElementById("help_list_container");
+    wxLocationInit();
+    initTimeago();
+    initP2r();
+    createInfinitePreloader(container);
+    updatesHelpResource.getResource(createDynamicUpdatesHelpView);
+    $(document.body).infinite(200).on("infinite", function(){
+        updatesHelpResource.getResource(createDynamicUpdatesHelpView);
+    });
+    wx.ready(function(){
+        wxGetCurrentLocation(function(lng, lat){
+            updatesHelpResource.location = [lng, lat];    
+            userPositionResource.location = [lng, lat];
+            userPositionResource.updateResource();
+        });
+        locationIntervalTask = window.setInterval(function(){
+            wxGetCurrentLocation(function(lng, lat){
+                updatesHelpResource.location = [lng, lat];    
+                userPositionResource.location = [lng, lat];
+                userPositionResource.updateResource();
             });
-            wx.ready(function(){
-                wxGetCurrentLocation(function(lng, lat){
-                    updatesHelpResource.location = [lng, lat];    
-                    updatesHelpResource.getResource(createDynamicUpdatesHelpView);
-                });
-            });
+        }, 60000);
+
+    });
 
 }
 
