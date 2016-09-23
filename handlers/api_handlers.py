@@ -161,16 +161,18 @@ class UpdatesHelpGetAPIHandler(APIBaseHandler):
     def get(self):
         now_tm = time.time()
         last_help_pt = float(self.context.get("last_help_pt",0))
-        location = self.context.get("location", self.current_user['location']);
+        location = self.context.get("location");
+        if not location:
+            location = self.current_user['location']
         location[0] = float(location[0])
         location[1] = float(location[1])
         rcd_num = int(self.qrc.get("rcd_num", 0))
         rcd_cnt = 0
         try:
             if last_help_pt <= 0.0:
-                query = {"location":{"$geoWithin":{"$center":[location,0.02]}},"state":0}
+                query = {"location":{"$geoWithin":{"$center":[location,0.05]}},"state":0}
             else:
-                query = {"location":{"$geoWithin":{"$center":[location,0.02]}},"state":0,"posttime":{"$lt":last_help_pt}}
+                query = {"location":{"$geoWithin":{"$center":[location,0.05]}},"state":0,"posttime":{"$lt":last_help_pt}}
             cursor = self.application.db['updates_help'].find(query)
             cursor.sort("posttime", -1).limit(rcd_num)
             helpdata=[]
@@ -276,6 +278,33 @@ class DoneHelpGetAPIHandler(APIBaseHandler):
             self.write(response)
         except Exception as e:
             self.write({"errcode":50000,"errmsg": "server internal error"})
+
+
+class UserPositionUpdateAPIHandler(APIBaseHandler):
+
+    r"""
+        @url:/resource/UserPositionResource/update/
+    """
+    @web.authenticated
+    @gen.coroutine
+    def post(self):
+        lng = float(self.context.get("lng"))
+        lat = float(self.context.get("lat"))
+        userid = self.current_user['userid']
+        criteria = {"userid": userid}
+        modifier = {"$set":{"location":[lng, lat]}}
+        try:
+            result = yield self.application.db['user'].update(criteria, modifier)
+            self.session['location'] = [lng, lat]
+            resp = {}
+            resp['resp_qrc'] = ''
+            if not result:
+                resp['resp'] = {"result":"OK", "code":"0"}
+            else:
+                resp['resp'] = {"result":"NO", "code":"-1"}
+            self.write(resp)
+        except Exception as e:
+            self.write({"errcode": 50000, "errmsg": "server internal error"})
 
 
 class UserProfileGetAPIHandler(APIBaseHandler):
