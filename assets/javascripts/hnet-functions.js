@@ -100,6 +100,21 @@ function sendResourceGetReq(url, qrc, context, callback){
     $.getJSON(url, req_params,function(data){callback(data);});
 }
 
+function sendResourceUpdateReq(url, qrc, context, callback){
+    data = {"qrc": qrc, "context": context};
+    req_params = {
+        "source_url": location.pathname,
+        "data": JSON.stringify(data)
+    }
+    $.ajax({
+        'url': url,
+        'type': 'post',
+        'data': req_params,
+        'success': function(data){callback(data);}
+    });
+
+}
+
 function sendResourceDeleteReq(url, qrc, context, callback){
     data = {'qrc':qrc, 'context':context};
     req_params={
