@@ -2,6 +2,7 @@
 
 import time
 import json
+from datetime import datetime
 
 import requests
 from redis   import Redis
@@ -31,30 +32,61 @@ def send_mail():
     mail.send("xsend")
 
 @tasker.task
-def send_help_sovled_msg(uid, d_name, d_uct, d_uctm, content):
-    if ductm == "1":
-        d_uct += "(电话)"
-    elif d_uctm == "2":
-        d_uct += "(微信)"
+def send_help_solved_msg(uid,
+                         do_username, 
+                         do_usercontact,
+                         do_usercontact_means,
+                         post_username, 
+                         posttime,
+                         failed_cnt=0):
+
+    if failed_cnt < 3:
+        try:
+            if do_usercontact_means == "1":
+                do_usercontact += "(电话)"
+            elif do_usercontact_means == "2":
+                do_usercontact += "(微信)"
+            else:
+                do_usercontact += "(QQ)"
+            p_datetime = datetime.fromtimestamp(posttime)
+            p_datetime = datetime.strftime(p_datetime, "%Y/%m/%d %H:%M")
+            req_param = {}
+            req_param['touser'] = uid
+            req_param['template_id'] = "_lxGE1RWoMgEnj5eSQa96_eiuCo4PUMmjGMMRhZDlQU"
+            req_param['url'] = "http://www.huzhugc.com/user/postedhelp/"
+            req_param['data'] = {}
+            req_param['data']['first']={"value":"你好，有人接受了你的求助","color":"#000"}
+            req_param['data']['keyword1'] = {"value":do_username, "color":"#173177"}
+            req_param['data']['keyword2'] = {"value":post_username, "color":"#173177"}
+            req_param['data']['keyword3'] = {"value":p_datetime, "color":"#173177"}
+            req_param['data']['remark'] = {"value":"Ta的联系方式 : "+do_usercontact,"color":"#173177"}
+            redis = Redis("localhost", 6379)
+            access_token = redis.get("weixin_api_token")
+            access_token = access_token.decode()
+            req_url = "https://api.weixin.qq.com/cgi-bin/message/template/send?access_token={0}"
+            req_url = req_url.format(access_token)
+            req = requests.post(req_url , data=json.dumps(req_param))
+            resp = req.json()
+            if resp['errmsg'] != "ok":
+                send_help_solved_msg(uid,
+                                    do_username,
+                                    do_usercontact,
+                                    do_usercontact_means,
+                                    post_username,
+                                    posttime,
+                                    failed_cnt+1
+                                    )
+        except Exception as e:
+            send_help_solved_msg(uid,
+                                 do_username,
+                                 do_usercontact,
+                                 do_usercontact_means,
+                                 post_username,
+                                 posttime,
+                                 failed_cnt+1
+                                 )
     else:
-        d_uct += "(QQ)"
-    req_param = {}
-    req_param['userid'] = userid
-    req_param['template_id'] = ""
-    req_param['url'] = "http://www.huzhugc.com/user/postedhelp/"
-    req_param['data'] = {}
-    req_param['data']['first']={"value":"","color":"#173177"}
-    req_param['data']['do_username'] = {"value":d_name, "color":"#173177"}
-    req_param['data']['do_usercontact'] = {"value":d_uct, "color":"#173177"}
-    req_param['data']['content'] = {"value":content, "color":"#173177"}
-    req_param['data']['remark'] = ""
-    redis = Redis("localhost", 6379)
-    access_token = redis.get("weixin_api_token")
-    access_token = access_token.decode()
-    req_url = "https://api.weixin.qq.com/cgi-bin/message/template/send?access_token={0}"
-    req_url = req_url.format(access_token)
-    req = requests.post(req_url , data=req_param)
-    resp = req.json()
+        pass
 
 @tasker.task
 def update_help_expire(failed_cnt = 0):
@@ -95,4 +127,15 @@ def create_wx_menu():
     return req.json()
 
 if __name__ == '__main__':
-    update_help_expire()
+    pass
+    '''
+    send_help_solved_msg("oCyhTwZIMGZr7Izq175-peLFZAF0",
+                        "tornado",
+                        "18281573692",
+                        "1",
+                        "leeon",
+                        time.time()
+                    )
+    '''
+    #update_help_expire()
+
