@@ -100,6 +100,30 @@ updatesHelpResource = {
 
 }
 
+userPositionResource = {
+    'update_url':"/resource/UserPositionResource/update/",
+    'location':[],
+    'resLoading':false,
+    'qrc':"",
+    'context':"",
+    'updateResource':function(lng, lat, callback){
+         if(this.resLoading) return ;
+         this.resLoading = true;
+         if (!lng || !lat){
+             lng = this.location[0];
+             lat = this.location[1];
+         }
+         this.context = {"lng": lng, "lat":lat};
+         this.qrc = {}
+         var that = this;
+         sendResourceUpdateReq(this.update_url, this.qrc, this.context, function(data){
+             callback && callback(data);         
+             that.resLoading = false;
+         });
+     }
+
+}
+
 wxJSAPIResource = {
     'get_url':'/resource/WXJSApiResource/get/',
     'qrc':'',
