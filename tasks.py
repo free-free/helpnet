@@ -57,18 +57,23 @@ def send_help_sovled_msg(uid, d_name, d_uct, d_uctm, content):
     resp = req.json()
 
 @tasker.task
-def update_help_expire():
-    now_tm = time.time()
-    mongo = MongoClient("localhost", 4000)
-    temp_help = mongo['hnet']['permanent_help']
-    updates_help = mongo['hnet']['updates_help']
-    criteria = {"expiretime":{"$lt":now_tm}}
-    modifier = {"$set":{"state":2}}
-    try:
-        resp1 = updates_help.remove(criteria, modifier)
-        resp2 = temp_help.update(criteria, modifier)
-    except Exception as e:
-        update_help_expire()
+def update_help_expire(failed_cnt = 0):
+    if failed_cnt < 3:
+        now_tm = time.time()
+        mongo = MongoClient("localhost", 4000)
+        permanent_help = mongo['hnet']['permanent_help']
+        updates_help = mongo['hnet']['updates_help']
+        modifier = {"$set":{"state":2}}
+        try:
+           criteria = {"$and":[{"expiretime":{"$lt":now_tm}},{"state":0}]}
+           resp1 = permanent_help.update(criteria, modifier)
+           criteria = {"expiretime":{"$lt": now_tm}}
+           resp2 = updates_help.remove(criteria)
+        except Exception as e:
+           print(e)
+           update_help_expire(failed_cnt+1)
+    else:
+        pass
    
 @tasker.task
 def create_wx_menu():
@@ -89,3 +94,5 @@ def create_wx_menu():
     req = requests.post(url, data=data)
     return req.json()
 
+if __name__ == '__main__':
+    update_help_expire()
