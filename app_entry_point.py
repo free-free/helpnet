@@ -90,13 +90,14 @@ class Application(web.Application):
             (r'/resource/PostedHelpResource/get/?', PostedHelpGetAPIHandler),
             (r'/resource/DoneHelpResource/get/?', DoneHelpGetAPIHandler),
             (r'/resource/HelpResource/delete/?', HelpResourceAPIHandler),
+            (r'/resource/UserPositionResource/update/?', UserPositionUpdateAPIHandler),
             (r'/resource/UserProfileResource/get/?', UserProfileGetAPIHandler),
             (r'/resource/UserProfileResource/update/?', UserProfileUpdateAPIHandler),
         ]
         super(Application, self).__init__(handlers=handlers, **settings)
         conn = MotorClient('localhost', 4000)
         self.db = conn['hnet']
-        self.executor = concurrent.futures.ThreadPoolExecutor(2)
+        #self.executor = concurrent.futures.ThreadPoolExecutor(2)
         self.session_cache = SessionCacheFactory('redis')
         self.cache = TornadoHBRedis("localhost",6379, bytes_decode=True)
         self.tasks = tasks
