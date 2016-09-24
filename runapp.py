@@ -95,7 +95,7 @@ class Application(web.Application):
             (r'/resource/UserProfileResource/update/?', UserProfileUpdateAPIHandler),
         ]
         super(Application, self).__init__(handlers=handlers, **settings)
-        conn = MotorClient('localhost', 4000)
+        conn = MotorClient('10.251.32.12', 4000)
         self.db = conn['hnet']
         #self.executor = concurrent.futures.ThreadPoolExecutor(2)
         self.session_cache = SessionCacheFactory('redis')
