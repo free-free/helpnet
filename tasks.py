@@ -92,7 +92,7 @@ def send_help_solved_msg(uid,
 def update_help_expire(failed_cnt = 0):
     if failed_cnt < 3:
         now_tm = time.time()
-        mongo = MongoClient("localhost", 4000)
+        mongo = MongoClient("10.251.32.12", 4000)
         permanent_help = mongo['hnet']['permanent_help']
         updates_help = mongo['hnet']['updates_help']
         modifier = {"$set":{"state":2}}
