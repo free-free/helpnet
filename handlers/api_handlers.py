@@ -121,7 +121,7 @@ class HelpResourceAPIHandler(APIBaseHandler):
             return 
         try:
             query = {"helpid":helpid,"post_userid":self.current_user['userid']}
-            helpdata = yield self.application.db['temp_help'].find_one(query)
+            helpdata = yield self.application.db['permanent_help'].find_one(query)
             resp = {}
             if helpdata:
                 yield self.application.db['permanent_help'].remove(query)
