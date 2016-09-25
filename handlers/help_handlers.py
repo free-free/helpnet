@@ -118,11 +118,7 @@ class DoHelpHandler(AuthNeedBaseHandler):
         do_usercontact_means = self.get_argument("do_usercontact_means")
         try:
             data = yield self.application.db['permanent_help'].find_one({"helpid":helpid})
-            if not data:
-                self.set_status(400)
-                self.render("errors/400.html")
-                return 
-            elif data.get('expiretime', tm+100) < tm or data['state'] ==2 :
+            if data.get('expiretime', tm+100) < tm or data['state'] ==2 :
                 if data['state'] != 2:
                     data['state'] = 2
                     yield self.application.db['permanent_help'].save(data)
@@ -141,6 +137,14 @@ class DoHelpHandler(AuthNeedBaseHandler):
                 criteria = {"userid":self.current_user["userid"]}
                 modifier = {"$inc":{"help_cnt.done_help_num":1}};
                 yield self.application.db['user'].update(criteria, modifier, upsert=True);
+                # send help solved msg to post username
+                self.application.tasks.send_help_solved_msg.delay(data['post_userid'],
+                                                             data['do_username'],
+                                                             data['do_usercontact'],
+                                                             data['do_usercontact_means'],
+                                                             data['post_username'],
+                                                             data['posttime']
+                                                             )
                 self.redirect('/user/donehelp/') 
             else:
                 self.render("Help/Do/result.html", result_text="已经有人帮助Ta了")
