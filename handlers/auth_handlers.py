@@ -53,8 +53,9 @@ class WXPubLoginHandler(AuthNeedBaseHandler):
     def get(self):
         state = self.get_argument("state")
         code  = self.get_argument("code")
-        if not code or not certify_state(self.application.settings['wx_state_key'],state):
-            self.redirect('/login')
+        certify_result = certify_state(self.application.settings['wx_state_key'], state)
+        if not code or not certify_result:
+            self.redirect('/login/')
             return 
         code_url = "https://api.weixin.qq.com/sns/oauth2/access_token?appid={0}\
 &secret={1}&code={2}&grant_type=authorization_code"
@@ -67,14 +68,17 @@ class WXPubLoginHandler(AuthNeedBaseHandler):
             #check user existence
             userdata = yield self.application.db['user'].find_one({"userid":openid})
             if not userdata:
-                self.redirect('/login')
+                self.redirect('/login/')
                 return    
             del userdata['_id']
             self.session.multi_set(userdata)
             self.set_cookie("auth",'1')
-            self.redirect('/')
+            if isinstance(certify_result, dict):
+                self.redirect(certify_result.get('redirect','/'))
+            else:
+                self.redirect('/')
         except Exception as e:
-            self.redirect('/login')
+            self.redirect('/login/')
             
 
 class WXAuthCallbackLoginHandler(AuthNeedBaseHandler):
