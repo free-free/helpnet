@@ -53,7 +53,7 @@ def send_help_solved_msg(uid,
             req_param = {}
             req_param['touser'] = uid
             req_param['template_id'] = "_lxGE1RWoMgEnj5eSQa96_eiuCo4PUMmjGMMRhZDlQU"
-            req_param['url'] = "http://www.huzhugc.com/user/postedhelp/"
+            req_param['url'] = "https://open.weixin.qq.com/connect/oauth2/authorize?appid=wxdfd14622e7cf37bc&redirect_uri=http://www.huzhugc.com/wxpublogin/&response_type=code&scope=snsapi_base&state=MDo1ZTkxZDk1NGYwMTJkODc1ZDE0NGQ3NTNiNjY1OTU4ZThiNGQ4OTI4OnJlZGlyZWN0PWh0dHAlM0ElMkYlMkZ3d3cuaHV6aHVnYy5jb20lMkZ1c2VyJTJGcG9zdGVkaGVscCUyRg==#wechat_redirect"
             req_param['data'] = {}
             req_param['data']['first']={"value":"你好，有人接受了你的求助","color":"#000"}
             req_param['data']['keyword1'] = {"value":do_username, "color":"#173177"}
@@ -92,7 +92,7 @@ def send_help_solved_msg(uid,
 def update_help_expire(failed_cnt = 0):
     if failed_cnt < 3:
         now_tm = time.time()
-        mongo = MongoClient("10.251.32.12", 4000)
+        mongo = MongoClient("10.251.32.12",27017)
         permanent_help = mongo['hnet']['permanent_help']
         updates_help = mongo['hnet']['updates_help']
         modifier = {"$set":{"state":2}}
