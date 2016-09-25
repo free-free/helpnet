@@ -1,15 +1,17 @@
 # coding=utf8
-# Nothing is here
 
-from tornado import gen,web
-from tornado import ioloop
-from tornado.httpclient import AsyncHTTPClient,HTTPRequest
-from urllib.parse import urlencode
 import json
 import time
 import base64
 import hmac
 import timeit
+from urllib.parse import urlencode, parse_qsl
+
+from tornado import gen,web
+from tornado import ioloop
+from tornado.httpclient import AsyncHTTPClient,HTTPRequest
+
+
 @gen.coroutine
 def send_async_request(url, method="GET", headers={},body=""):
     if method.upper() == "POST":
@@ -28,7 +30,7 @@ def send_async_request(url, method="GET", headers={},body=""):
     return response 
 
 
-def generate_state(key, state_expire=3600):
+def generate_state(key, state_expire=3600, **kwargs):
     r'''
         @Args:
             key: str
@@ -36,10 +38,14 @@ def generate_state(key, state_expire=3600):
         @Return:
             state: str
     '''
-    ts_str = str(time.time()+state_expire)
+    if state_expire == 0:
+        ts_str = "0"
+    else:
+        ts_str = str(time.time()+state_expire)
     ts_byte = ts_str.encode("utf-8")
-    sha1_tshexstr  = hmac.new(key.encode("utf-8"),ts_byte,'sha1').hexdigest() 
-    state = ts_str+':'+sha1_tshexstr
+    sha1_tshexstr  = hmac.new(key.encode("utf-8"),ts_byte,'sha1').hexdigest()
+    qs_str = urlencode(kwargs)
+    state = ts_str + ':' + sha1_tshexstr + ':' + qs_str
     b64_state = base64.urlsafe_b64encode(state.encode("utf-8"))
     return b64_state.decode("utf-8")
 
@@ -54,10 +60,10 @@ def certify_state(key, state):
     try:
         state_str = base64.urlsafe_b64decode(state).decode('utf-8')
         state_list = state_str.split(':')
-        if len(state_list) != 2:
+        if len(state_list) != 3:
             return False
         ts_str = state_list[0]
-        if float(ts_str) < time.time():
+        if float(ts_str) != 0 and float(ts_str) < time.time() :
             # state expired
             return False
         known_sha1_tsstr = state_list[1]
@@ -66,6 +72,7 @@ def certify_state(key, state):
         if calc_sha1_tsstr != known_sha1_tsstr:
             # state certification failed
             return False
+        return dict(parse_qsl(state_list[2])) or True
     except Exception: 
         return False 
     # state certification success
@@ -74,9 +81,12 @@ def certify_state(key, state):
 
 if __name__ == '__main__':
     def test_state():
-        key = "huangbiao"
-        state = generate_state(key)
-        certify_state(key,state)
+        state = generate_state("huzhugc.com",0, redirect="http://www.huzhugc.com/user/postedhelp/")
+        auth_url = "https://open.weixin.qq.com/connect/oauth2/authorize?\
+appid={0}&redirect_uri={1}&response_type=code&scope=snsapi_base&state={2}#wechat_redirect"
+        auth_url = auth_url.format("wxdfd14622e7cf37bc","http://www.huzhugc.com/wxpublogin/",state)
+        return auth_url
+
     print(timeit.timeit('test_state()','from __main__ import test_state',number=1))
     r'''
     token = "wsSLlSIeJR-y5ghocGjHQpfLp97raFyGizissm6Tn6HTrq8rjLNSMV_z49ggBanRF1qScppSLF_TEbaWQnQbkgfzI97TwVwHR3ojRUJikFt9ZJ8aVZ4lFsqiZEywY4hyTEEfAJAXII"
