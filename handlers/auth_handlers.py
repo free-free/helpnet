@@ -1,11 +1,12 @@
 # coding:utf-8
 
 
-from datetime import datetime
 import uuid
 import base64
 import json
 import time
+from datetime import datetime
+from urllib.parse import unquote
 
 from tornado import gen,web
 
@@ -35,7 +36,9 @@ class WXPubLoginRedirectHandler(BaseHandler):
     """
     @gen.coroutine
     def get(self):
-        state = generate_state(self.application.settings['wx_state_key'],120)
+        redirect = unquote(self.get_argument("redirect", "/"))
+        expiretime = int(self.get_argument("expiretime", 120))
+        state = generate_state(self.application.settings['wx_state_key'], expiretime, redirect=redirect)
         auth_url = "https://open.weixin.qq.com/connect/oauth2/authorize?\
 appid={0}&redirect_uri={1}&response_type=code&scope=snsapi_base&state={2}#wechat_redirect"
         auth_url = auth_url.format(self.application.settings['public_appid'],
@@ -73,7 +76,7 @@ class WXPubLoginHandler(AuthNeedBaseHandler):
             del userdata['_id']
             self.session.multi_set(userdata)
             self.set_cookie("auth",'1')
-            if isinstance(certify_result, dict):
+            if isinstance(certify_result, dict) and certify_result:
                 self.redirect(certify_result.get('redirect','/'))
             else:
                 self.redirect('/')
