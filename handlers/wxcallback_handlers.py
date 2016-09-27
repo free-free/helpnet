@@ -33,7 +33,7 @@ class WXCallbackHandler(BaseHandler):
         request text msg keys:
            Content
         """
-        self.application.tasks.send_mail.delay()
+        self.application.task.send_task('worker.send_mail')
         print("send mail")
         self.write("")
  
