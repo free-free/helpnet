@@ -138,13 +138,14 @@ class DoHelpHandler(AuthNeedBaseHandler):
                 modifier = {"$inc":{"help_cnt.done_help_num":1}};
                 yield self.application.db['user'].update(criteria, modifier, upsert=True);
                 # send help solved msg to post username
-                self.application.tasks.send_help_solved_msg.delay(data['post_userid'],
+                self.application.task.send_task('worker.send_help_solved_msg', args=(
+                                                             data['post_userid'],
                                                              data['do_username'],
                                                              data['do_usercontact'],
                                                              data['do_usercontact_means'],
                                                              data['post_username'],
                                                              data['posttime']
-                                                             )
+                                                ))
                 self.redirect('/user/donehelp/') 
             else:
                 self.render("Help/Do/result.html", result_text="已经有人帮助Ta了")
