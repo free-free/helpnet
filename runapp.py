@@ -2,7 +2,7 @@
 
 import os
 
-import celery
+from celery import Celery
 from tornado import web
 from tornado import ioloop
 import tornado.options
@@ -18,9 +18,9 @@ from handlers.auth_handlers import *
 from handlers.search_handlers import *
 from handlers.wxcallback_handlers import *
 from handlers.help_handlers import *
+from handlers.feelback_handlers import *
 from handlers.check_signature_handlers import CheckSignatureHandler
 from handlers.api_handlers import *
-import tasks
 
 
 class DefaultHandler(web.RequestHandler):
@@ -81,6 +81,7 @@ class Application(web.Application):
             (r'/dohelp/([0-9a-zA-Z]+)/?', DoHelpHandler),
             (r'/search/?', SearchHandler), 
             (r'/user/?', UserHomeHandler),
+            (r'/feelback/?', FeelbackHandler),
             (r'/user/postedhelp/?', UserPostedHelpHandler),
             (r'/user/donehelp/?', UserDoneHelpHandler),
             (r'/user/profile/?', UserProfileHandler),
@@ -100,7 +101,8 @@ class Application(web.Application):
         #self.executor = concurrent.futures.ThreadPoolExecutor(2)
         self.session_cache = SessionCacheFactory('redis')
         self.cache = TornadoHBRedis("localhost",6379, bytes_decode=True)
-        self.tasks = tasks
+        self.task = Celery()
+        self.task.config_from_object("celeryconfig")
 
 define("port", default=8000, help="server port", type=int)
 if __name__ == '__main__':
