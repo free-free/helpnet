@@ -9,10 +9,13 @@ import requests
 from redis   import Redis
 from submail import submail
 from pymongo import MongoClient
+from celery import Celery
 
-from tasker import tasker
 from services import token_refresh, jsapi_ticket_refresh
 
+#tasker = Celery("tasker", broker="redis://localhost:6379/1", include=['tasks'])
+tasker = Celery('worker')
+tasker.config_from_object("celeryconfig")
 
 @tasker.task
 def wxapi_token_refresh():
@@ -129,17 +132,4 @@ def create_wx_menu():
     }
     req = requests.post(url, data=data)
     return req.json()
-
-if __name__ == '__main__':
-    pass
-    '''
-    send_help_solved_msg("oCyhTwZIMGZr7Izq175-peLFZAF0",
-                        "tornado",
-                        "18281573692",
-                        "1",
-                        "leeon",
-                        time.time()
-                    )
-    '''
-    #update_help_expire()
 
