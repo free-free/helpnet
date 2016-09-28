@@ -1,0 +1,63 @@
+#container{
+    width:100%;
+}
+
+.feelback{
+    max-width:768px;
+    padding-top:1rem;
+    margin-left:auto;
+    margin-right:auto;
+}
+
+.feelback form p label{
+    font-size:0.8rem;
+    color:#666;
+    padding-left:5%;
+    padding-bottom:0.5rem;
+}
+
+.feelback form p .text{
+    color:#888;
+    width:90%;
+    resize:none;
+    box-sizing:border-box;
+    margin-left:5%;
+    margin-right:5%;
+    font-size:0.8rem;
+    padding:0.4rem 0.4rem;
+    border-radius:0.2rem;
+    outline:none;
+}
+
+.feelback form p .submit-btn{
+    margin-top:2rem;
+    width:90%;
+    margin-left:auto;
+    margin-right:auto;
+}
+
+
+#feelback-result{
+    margin-left:auto;
+    margin-right:auto;
+    max-width:768px;
+    padding-bottom:3rem;
+}
+#feelback-result .text{
+    color:#b1b1b1;
+    text-align:center;
+    padding-top:4rem;
+}
+
+#feelback-result .after{
+    padding-top:2rem;
+    display:block;
+    width:5rem;
+    margin-left:auto;
+    margin-right:auto;
+}
+#feelback-result .after .btn{
+    margin-left:auto;
+    margin-right:auto;
+}
+
