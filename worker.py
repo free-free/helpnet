@@ -116,20 +116,4 @@ def update_help_expire(failed_cnt = 0):
    
 @tasker.task
 def create_wx_menu():
-    redis = Redis("localhost", 6379)
-    access_token = redis.get("weixin_api_token")
-    access_token = access_token.decode()
-    url = "https://api.weixin.qq.com/cgi-bin/menu/create?access_token={0}"
-    url = url.format(access_token)
-    data = {
-        "button":[
-            {
-	        "type": "view",
-                "name": "寻求帮助",
-                "url": "http://www.huzhugc.com/wxpubloginredirect/"
-            },
-	]
-    }
-    req = requests.post(url, data=data)
-    return req.json()
-
+    pass
