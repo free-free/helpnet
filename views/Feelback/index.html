@@ -1,0 +1,41 @@
+{% extends "../base.html" %}
+
+{% block head_custom %}
+
+<link rel="stylesheet" type="text/css" href="{{ static_url('stylesheets/feelback-page.css')}}">
+<link rel="stylesheet" type="text/css" href="{{ static_url('stylesheets/font-awesome.min.css')}}">
+{% end %}
+{% block header %}
+<header class="header text_center" >
+	<a href="/">互助广场</a>
+</header> 
+{% end %}
+{% block container %}
+<div id="container">
+        <div class="feelback">
+            <form action="/feelback/" method="post" id="feelback-form">
+                    <p><label for="fb_text">反馈意见</label></p>
+                    <p><textarea class="text" name="fb_text" rows="13" cols="30" placeholder="请输入你的反馈意见"></textarea><p>
+                    <p><button type="submit" class="weui_btn weui_btn_primary submit-btn">提交反馈</button></p>
+            </form>
+        </div>
+</div>
+{% end %}
+
+{% block js_custom %}
+<script >
+    $(function(){
+        $("#feelback-form").submit(function(){
+            return true;
+            var text = $(".feelback form .text").get(0).value;
+            text = text.trim();
+            if (!text){
+                $.toptip("请输入反馈意见", "error");
+                return false;
+            }
+            return true;
+        })
+    });
+</script>
+{% end %}
+
