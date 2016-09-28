@@ -1,9 +1,12 @@
-#coding:utf-8
+# -*- coding:utf-8 -*-
 
 import json
 import os
+import argparse
 import logging
+import sys
 logging.basicConfig(level=logging.ERROR)
+from urllib.parse import urlencode, unquote
 
 import requests
 from redis import Redis
@@ -66,6 +69,50 @@ def jsapi_ticket_refresh():
     ticket = servo.get_ticket()
     redis.set("weixin_jsapi_ticket", ticket)
    
+def create_weixin_menu():
+    redis = Redis("localhost", 6379)
+    access_token = redis.get("weixin_api_token")
+    access_token = access_token.decode()
+    url = "https://api.weixin.qq.com/cgi-bin/menu/create?access_token={0}"
+    url = url.format(access_token)
+    qs = {}
+    qs['redirect'] = "http://www.huzhugc.com/feelback/"
+    data = {"button":[
+             {"type":"view","name":"寻求帮助","url":"http://www.huzhugc.com/wxpubloginredirect/"},
+             {"type":"view","name":"反馈意见","url":"http://www.huzhugc.com/wxpubloginredirect/?"+urlencode(qs)}]}
+    req = requests.post(url, json.dumps(data,ensure_ascii=False).encode("utf-8"))
+    return req.json()
+
+
 if __name__ == '__main__':
-    token_refresh()
-    jsapi_ticket_refresh()
+    operation_help = """
+        operation can't be empty, must be equal to 'run'
+    """
+    target_help = """
+        target can't be empty,
+        target corresponding to following function
+        0 : token_refresh(),jsapi_ticket_refresh(),create_weixin_menu()
+        1 : create_weixin_menu()
+        2 : token_refresh()
+        3 : jsapi_ticket_refresh()
+    """
+    parser = argparse.ArgumentParser()
+    parser.add_argument("operation", type=str, help=operation_help)
+    parser.add_argument("target", type=tuple, help=target_help)
+    args = parser.parse_args()
+    if '0' in args.target:
+        print('running all services')
+        token_refresh()
+        jsapi_ticket_refresh()
+        print(create_weixin_menu())
+    elif '1' in args.target:
+        print('running create_weixin_menu()')
+        print(create_weixin_menu())
+    elif '2' in args.target:
+        print('running token_refresh()')
+        token_refresh()
+    elif '3' in args.target:
+        print('running jsapi_ticket_refresh()')
+        jsapi_ticket_refresh()
+    else:
+        print("run nothing")
