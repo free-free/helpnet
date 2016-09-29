@@ -10,21 +10,22 @@
 | /logout/                                  | 登出,>                                   |
 | /wxcallback/                              | 微信公众号事件或消息推送回调url          |
 | /login/                                   | 登录页面，                               |
+| /wxpubloginredirect/                      | 微信公众登陆重定向url                    |
 | /wxpublogin/                              | 微信网页认证URL                          |
-| /askhelp/                                 | 发布请求,>                               |
-| /gethelp/([a-zA-Z0-9]+)/?                 | jie dan                                  |
+| /feelback/                                | 用户反馈意见,>                           |
+| /posthelp/                                 | 发布请求,>                               |
+| /dohelp/([a-zA-Z0-9]+)/?                  | 接受的求助                               |
 | /search/                                  | 搜索页面,暂定,>                          |
 | /user/                                    | 用户主页url,>                            |
-| /user/gethelp/                            | 用户的帮助list url, >                    |
-| /user/postedhelp/                           | 用户发送的请求list url, >                |
-| /user/profile/                            | 用户资料url(http get),修改资料(http post),>|
+| /user/donehelp/                            | 用户的帮助list url, >                    |
+| /user/postedhelp/                           | 用户发送的请求list url, >              |
+| /resource/WXJSAPIResource/get/?           | 获取微信jsapi ticket,>                   | 
 | /resource/WXQRCodeResource/get/           | 公众号关注二维码 API url，返回二维码url,>|
 | /resource/UpdatesHelpResource/get/        | 获取某一地点周围的请求，需要带上经纬度,> |
 | /resource/DoneHelpResource/get/           | 获取某一用户的帮助,>                     |
 | /resource/PostedHelpResource/get/         | 获取某一用户的求助,>                     |
-| /resource/UserProfileResource/get/        | 获取用户资料API                          |
-| /resource/UserProfileResource/update/     | 更新用户资料API                          |
-| /help/([0-9a-z-A-Z]+)/                    | 某一请求的详情页url,>                    |
+| /resource/HelpResource/delete/            | 删除某一求助,>                           |
+| /resource/UserPositionResource/update/    | 更新用户位置                             |
 
 ### API 说明:
 
@@ -164,6 +165,57 @@
           'resp_qrc': {},
           'resp':[{'qrcode_url':"url"},...]
     }
+```
+
+#### API: /resource/WSJSApiResource/get/
+
+> 请求参数
+
+```python
+
+    request = {
+              "source_url:"同上",
+              "data":{
+                  "context":"",
+                  "qrc": ""
+              }
+    }
+```
+
+> 响应数据
+```python
+    response = {
+        'resp_qrc':request.qrc,
+        'resp':[{
+            "appid":"",
+            "noncestr":"",
+            "signature":"",
+            "api_list":["openLocation", "getLocation"],
+            "timestamp":""
+        }]
+    }
+```
+
+#### API: /resource/UserPositionResource/update/
+
+> request parameters
+```python
+    request = {
+              "source_url":"same as before",
+              "data":{
+                   "lng":"",
+                   "lat":"",
+              }
+    }
+```
+
+> response data
+```python
+    response = {
+          "resp_qrc":"",
+          "resp":{"result":"OK/NO", "code":0/-1}
+    }
+
 ```
 
 #### API: /resource/UserProfileResource/get/
