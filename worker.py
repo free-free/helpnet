@@ -36,6 +36,40 @@ def send_mail():
     mail.send("xsend")
 
 @tasker.task
+def send_welcome_text(uid):
+    redis = Redis("localhost", 6379)
+    access_token = redis.get("weixin_api_token")
+    access_token = access_token.decode()
+    req_url = "https://api.weixin.qq.com/cgi-bin/message/custom/send?access_token={0}"
+    req_url = req_url.format(access_token)
+    data = {}
+    data['touser'] = uid
+    data['msgtype'] = 'text'
+    data['text'] = {}
+    data['text']['content'] = "\n欢迎来到「互助广场」！\n\n「互助广场」\
+是一个互相帮助的平台，在这里你可以发送求助，你周围的人来帮助你，并支付一定的小费给帮助你的人，\
+同时你也可以帮助你周围的人。\n\n\
+欢迎向我们反馈你对互助广场的改进意见，请点击底栏的\"反馈意见\"进入。\n\n\
+请点击底栏\"开始互助\"进入互助广场。\n"
+    req = requests.post(req_url, data=json.dumps(data,ensure_ascii=False).encode("utf-8"))
+    return req.json()
+
+@tasker.task
+def send_failed_text(uid):
+    redis = Redis("localhost", 6379)
+    access_token = redis.get("weixin_api_token")
+    access_token = access_token.decode()
+    req_url = "https://api.weixin.qq.com/cgi-bin/message/custom/send?access_token={0}"
+    req_url = req_url.format(access_token)
+    data = {}
+    data['touser'] = uid
+    data['msgtype'] = 'text'
+    data['text'] = {}
+    data['text']['content'] = "\n 关注公众号失败，请重新关注！\n"
+    req = requests.post(req_url, data=json.dumps(data, ensure_ascii=False).encode("utf-8"))
+    return req.json()
+
+@tasker.task
 def send_help_solved_msg(uid,
                          do_username, 
                          do_usercontact,
@@ -75,25 +109,16 @@ def send_help_solved_msg(uid,
             req = requests.post(req_url , data=json.dumps(req_param))
             resp = req.json()
             if resp['errmsg'] != "ok":
-                send_help_solved_msg(uid,
-                                    do_username,
-                                    do_usercontact,
-                                    do_usercontact_means,
-                                    post_username,
-                                    posttime,
-                                    failed_cnt+1
-                                    )
+                raise Exception("sending message failed")
         except Exception as e:
             send_help_solved_msg(uid,
-                                 do_username,
-                                 do_usercontact,
-                                 do_usercontact_means,
-                                 post_username,
-                                 posttime,
-                                 failed_cnt+1
-                                 )
-    else:
-        pass
+                do_username,
+                do_usercontact,
+                do_usercontact_means,
+                post_username,
+                posttime,
+                failed_cnt+1
+            )
 
 @tasker.task
 def update_help_expire(failed_cnt = 0):
@@ -113,7 +138,6 @@ def update_help_expire(failed_cnt = 0):
            update_help_expire(failed_cnt+1)
     else:
         pass
-   
-@tasker.task
-def create_wx_menu():
-    pass
+ 
+if __name__ == '__main__':
+    send_welcome_text("oCyhTwZIMGZr7Izq175-peLFZAF0")
