@@ -183,6 +183,7 @@
 ```
 
 > 响应数据
+
 ```python
     response = {
         'resp_qrc':request.qrc,
@@ -199,6 +200,7 @@
 #### API: /resource/UserPositionResource/update/
 
 > request parameters
+
 ```python
     request = {
               "source_url":"same as before",
@@ -210,6 +212,7 @@
 ```
 
 > response data
+
 ```python
     response = {
           "resp_qrc":"",
