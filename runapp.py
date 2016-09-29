@@ -60,12 +60,13 @@ class Application(web.Application):
             'cookie_secret': 'MmUyZmU2NmIyNDM4NDc4YWE4OTNiODUzMjhhZTgzM2U3NDU5OGUwNzNlODY0ODI5ODM1MGNmNjcxZmU5M2FjNg==',
             #'xsrf_cookies': True,
             'default_handler_class': DefaultHandler,
-            'session_cookie': '_helpnet_sess',
-            'site_cookie_name':'_helpnet_com',
-            'site_cookie_val':'djeijioidjeoiodjoiejdoejodeojodejo',
+            'session_cookie_name': '_huzhugc_sess',
+            'site_cookie_name':'_huzhugc_com',
+            'site_cookie_val':'c88e90e3a7390246a53cef4bf3c145f0ad3215cc',
             'public_appid':app_config['public_appid'],
             'public_secret':app_config['public_secret'],
             'wx_state_key':'huzhugc.com',
+            'wx_callback_token':'huzhugctoken',
             'debug':True,
         }
 
