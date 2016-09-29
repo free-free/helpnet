@@ -78,7 +78,7 @@ def create_weixin_menu():
     qs = {}
     qs['redirect'] = "http://www.huzhugc.com/feelback/"
     data = {"button":[
-             {"type":"view","name":"寻求帮助","url":"http://www.huzhugc.com/wxpubloginredirect/"},
+             {"type":"view","name":"开始互助","url":"http://www.huzhugc.com/wxpubloginredirect/"},
              {"type":"view","name":"反馈意见","url":"http://www.huzhugc.com/wxpubloginredirect/?"+urlencode(qs)}]}
     req = requests.post(url, json.dumps(data,ensure_ascii=False).encode("utf-8"))
     return req.json()
