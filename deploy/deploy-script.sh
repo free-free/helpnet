@@ -89,11 +89,13 @@ start_app(){
 }
 main()
 {
+    rm -rf /var/www/huzhu/
     check_nginx
     check_supervisor
     create_log_dir
     copy_app_package
     config
+    supervisorctl stop all
     start_app
     echo "success to deploy app"
 }
