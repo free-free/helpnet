@@ -72,9 +72,10 @@ config(){
     fi
 }
 start_app(){
+    supervisorctl stop all
     supervisor_pid=$(ps -aux |grep supervisord|awk '{print $2,$7}'|grep '?'|awk '{print $1}')
     kill -9  ${supervisor_pid}
-    nginx -s quit>/dev/null 2>&1
+    nginx -s quit >/dev/null 2>&1
     supervisord -c /etc/supervisord.conf > /dev/null 2>&1
     supervisor_pid=$(ps -aux |grep supervisord|awk '{print $2,$7}'|grep '?'|awk '{print $1}')
     if [ ! "$supervisor_pid" ];then
@@ -87,6 +88,13 @@ start_app(){
             exit -1
     fi 
 }
+compress_js(){
+    for js_file in `ls $APP_DEPLOY_DIR/huzhu/static/javascripts`
+    do
+          uglifyjs ${APP_DEPLOY_DIR}/huzhu/static/javascripts/${js_file} -m -o ${APP_DEPLOY_DIR}/huzhu/static/javascripts/${js_file}
+    done 
+
+}
 main()
 {
     rm -rf /var/www/huzhu/
@@ -95,10 +103,9 @@ main()
     create_log_dir
     copy_app_package
     config
-    supervisorctl stop all
+    compress_js
     start_app
     echo "success to deploy app"
 }
 
 main
-
