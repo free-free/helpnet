@@ -116,3 +116,8 @@
     clear:both;
 }
 
+.amap-sug-result{
+    display:hidden;
+    outline:none;
+    border:none;
+}
