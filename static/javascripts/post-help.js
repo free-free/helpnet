@@ -129,9 +129,14 @@ $(function(){
         usercontact = document.getElementById("post_usercontact");
         helpLng = document.getElementById("help_lng");
         helpLat = document.getElementById("help_lat");
-         
+        expiretime = document.getElementById("help_expiretime");
+        timeCheckReg = /^[0-9]*$/;
         if(helpContent.value==''||helpPrice.value==''|usercontact.value==''){
             $.toptip('求助信息不完整', 'error');
+            return false;
+        }
+        if(!timeCheckReg.test(expiretime.value)){
+            $.toptip("有效时间不合法", 'error');
             return false;
         }
         if((helpAddress.value!="" &&(!helpLng.value || !helpLat.value))||(!address && !helpAddress.value)){
