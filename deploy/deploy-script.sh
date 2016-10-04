@@ -1,4 +1,6 @@
-#!/bin/sh
+#!/bin/bash
+set -e
+#set -x
 
 APP_PACKAGE_DIR=/home/john/huzhu
 APP_DEPLOY_DIR=/var/www/
@@ -7,13 +9,13 @@ SUPERVISOR_CONFIG_DIR=$APP_PACKAGE_DIR/deploy/config/supervisor
 
 install_nginx()
 {
-        echo "start to install nginx"
+        echo -e "\e[0;33m start to install nginx \e[m"
         yum -y install nginx>>/dev/null
         nginx_installcation_ok=$(rpm -qa "nginx")
         if [ "$nginx_installation_ok" ];then
-                echo "success to install nginx"
+                echo -e "\e[0;32m success to install nginx \e[m" 
         else
-                echo "failed to install nginx"
+                echo -e "\e[0;31m failed to install nginx \e[m"
                 exit -1
         fi
 }
@@ -27,13 +29,13 @@ check_nginx()
 }
 
 install_supervisor(){
-        echo "start to install supervisor"
+        echo -e "\e[0;33m start to install supervisor \e[m"
         yum -y install supervisor>>/dev/null
         supervisor_installation_ok=$(rpm -qa "supervisor")
         if [ "$supervisor_installation_ok" ];then
-                echo "success to install supervisor"
+                echo -e "\e[0;32m success to install supervisor \e[m"
         else
-                echo "failed to install supervisor"
+                echo -e "\e[0;31m failed to install supervisor \e[m"
                 exit -1
         fi
 }
@@ -47,7 +49,7 @@ check_supervisor(){
 create_log_dir(){
     mkdir_log_dir_err=$(mkdir -p /var/log/huzhu/{tornado,celery})
     if [ "$mkdir_log_dir_err" ];then
-        echo "make log file directory failed!"
+        echo -e "\e[0;31m make log file directory failed! \e[m"
         exit -1
     fi
 }
@@ -55,19 +57,19 @@ copy_app_package(){
     mkdir -p "$APP_DEPLOY_DIR"
     cp_app_pack_err=$(cp -af "$APP_PACKAGE_DIR" "$APP_DEPLOY_DIR/" )
     if [  "$cp_app_pack_err" ];then
-        echo "copy app package failed!"
+        echo -e "\e[0;31m copy app package failed! \e[m"
         exit -1
     fi 
 }
 config(){
     OK=$(cp -af $NGINX_CONFIG_DIR/* /etc/nginx/)
     if [  "$OK" ];then
-        echo "failed to copy nginx config file"
+        echo  -e "\e[0;31m failed to copy nginx config file \e[m"
         exit -1
     fi
     OK=$(cp -af $SUPERVISOR_CONFIG_DIR/* /etc/supervisord.d/)
     if [  "$OK" ];then
-       echo "failed to copy supervisor config file"
+       echo -e "\e[0;31m failed to copy supervisor config file \e[m"
        exit -1
     fi
 }
@@ -79,15 +81,24 @@ start_app(){
     supervisord -c /etc/supervisord.conf > /dev/null 2>&1
     supervisor_pid=$(ps -aux |grep supervisord|awk '{print $2,$7}'|grep '?'|awk '{print $1}')
     if [ ! "$supervisor_pid" ];then
-            echo "failed to start supervisor"
+            echo -e "\e[0;31m failed to start supervisor \e[m"
             exit -1
     fi
     nginx_is_on=$(nginx)
     if [  "$nginx_is_on" ];then
-            echo "failed to start nginx"
+            echo -e "\e[0;31m failed to start nginx \e[m"
             exit -1
     fi 
 }
+
+restart_app(){
+    supervisorctl restart all
+}
+
+stop_app(){
+    supervisorctl stop all
+}
+
 compress_js(){
     for js_file in `ls $APP_DEPLOY_DIR/huzhu/static/javascripts`
     do
@@ -95,8 +106,9 @@ compress_js(){
     done 
 
 }
-main()
+deploy_app()
 {
+    echo -e "\e[0;33m start to deploy app \e[m"
     rm -rf /var/www/huzhu/
     check_nginx
     check_supervisor
@@ -105,7 +117,27 @@ main()
     config
     compress_js
     start_app
-    echo "success to deploy app"
+    echo -e "\e[0;32m success to deploy app \e[m"
 }
 
-main
+
+case $1 in 
+    "deploy")
+            deploy_app
+     ;;
+    "restart")
+            restart_app
+     ;;
+    "stop")
+            stop_app
+     ;;
+     *)
+             echo -e "\e[0;31m please input one of them in the following commands:
+                          'deploy',
+                          'restart',
+                          'stop' 
+                       \e[m"
+     ;;
+esac
+
+
