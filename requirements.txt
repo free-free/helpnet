@@ -3,11 +3,11 @@ futures
 bcrypt
 tornadis
 motor
-pymongo
+pymongo==2.8
 shortuuid
 xmltodict
 requests
 redis
 tornasess
 celery
-
+submail
