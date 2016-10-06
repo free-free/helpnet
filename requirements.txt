@@ -1,9 +1,13 @@
+tornado
+futures
 bcrypt
 tornadis
 motor
+pymongo
 shortuuid
 xmltodict
 requests
 redis
+tornasess
 celery
 
