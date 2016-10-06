@@ -21,7 +21,7 @@ from handlers.help_handlers import *
 from handlers.feelback_handlers import *
 from handlers.check_signature_handlers import CheckSignatureHandler
 from handlers.api_handlers import *
-
+from config import config
 
 class DefaultHandler(web.RequestHandler):
 
@@ -51,8 +51,6 @@ class DefaultHandler(web.RequestHandler):
 class Application(web.Application):
 
     def __init__(self):
-        with open(os.path.join(os.path.dirname(__file__),'service_account.json')) as f:
-            app_config = json.load(f)
         settings = {
             'template_path': os.path.join(os.path.dirname(__file__), 'views'),
             'static_path': os.path.join(os.path.dirname(__file__), 'assets'),
@@ -63,8 +61,8 @@ class Application(web.Application):
             'session_cookie_name': '_huzhugc_sess',
             'site_cookie_name':'_huzhugc_com',
             'site_cookie_val':'c88e90e3a7390246a53cef4bf3c145f0ad3215cc',
-            'public_appid':app_config['public_appid'],
-            'public_secret':app_config['public_secret'],
+            'public_appid':config['public_appid'],
+            'public_secret':config['public_secret'],
             'wx_state_key':'huzhugc.com',
             'wx_callback_token':'huzhugctoken',
             'debug':True,
@@ -97,11 +95,11 @@ class Application(web.Application):
             (r'/resource/UserProfileResource/update/?', UserProfileUpdateAPIHandler),
         ]
         super(Application, self).__init__(handlers=handlers, **settings)
-        conn = MotorClient('10.251.32.12', 27017)
+        conn = MotorClient(config['mongodb']['host'], config['mongodb']['port'])
         self.db = conn['hnet']
         #self.executor = concurrent.futures.ThreadPoolExecutor(2)
         self.session_cache = SessionCacheFactory('redis')
-        self.cache = TornadoHBRedis("localhost",6379, bytes_decode=True)
+        self.cache = TornadoHBRedis(config['redis']['host'], config['redis']['port'], bytes_decode=True)
         self.task = Celery()
         self.task.config_from_object("celeryconfig")
 
