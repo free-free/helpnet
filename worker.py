@@ -12,6 +12,7 @@ from pymongo import MongoClient
 from celery import Celery
 
 from services import token_refresh, jsapi_ticket_refresh
+from config import config
 
 #tasker = Celery("tasker", broker="redis://localhost:6379/1", include=['tasks'])
 tasker = Celery('worker')
@@ -37,7 +38,7 @@ def send_mail():
 
 @tasker.task
 def send_welcome_text(uid):
-    redis = Redis("localhost", 6379)
+    redis = Redis(config['redis']['host'], config['redis']['port'])
     access_token = redis.get("weixin_api_token")
     access_token = access_token.decode()
     req_url = "https://api.weixin.qq.com/cgi-bin/message/custom/send?access_token={0}"
@@ -56,7 +57,7 @@ def send_welcome_text(uid):
 
 @tasker.task
 def send_failed_text(uid):
-    redis = Redis("localhost", 6379)
+    redis = Redis(config['redis']['host'], config['redis']['port'])
     access_token = redis.get("weixin_api_token")
     access_token = access_token.decode()
     req_url = "https://api.weixin.qq.com/cgi-bin/message/custom/send?access_token={0}"
@@ -101,7 +102,7 @@ def send_help_solved_msg(uid,
             req_param['data']['keyword2'] = {"value":post_username, "color":"#173177"}
             req_param['data']['keyword3'] = {"value":p_datetime, "color":"#173177"}
             req_param['data']['remark'] = {"value":"Ta的联系方式 : "+do_usercontact,"color":"#173177"}
-            redis = Redis("localhost", 6379)
+            redis = Redis(config['redis']['host'], config['redis']['port'])
             access_token = redis.get("weixin_api_token")
             access_token = access_token.decode()
             req_url = "https://api.weixin.qq.com/cgi-bin/message/template/send?access_token={0}"
@@ -124,7 +125,7 @@ def send_help_solved_msg(uid,
 def update_help_expire(failed_cnt = 0):
     if failed_cnt < 3:
         now_tm = time.time()
-        mongo = MongoClient("10.251.32.12",27017)
+        mongo = MongoClient(config['mongodb']['host'], config['mongodb']['port'])
         permanent_help = mongo['hnet']['permanent_help']
         updates_help = mongo['hnet']['updates_help']
         modifier = {"$set":{"state":2}}
