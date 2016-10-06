@@ -11,6 +11,8 @@ from urllib.parse import urlencode, unquote
 import requests
 from redis import Redis
 
+from config import config
+
 class JSAPITicketServo(object):
   
     def __init__(self, ticket_url):
@@ -50,19 +52,17 @@ class TokenServo(object):
         
 def token_refresh():
     app_config = {}
-    redis = Redis('localhost',6379)
-    with open(os.path.join(os.path.dirname(__file__),"service_account.json")) as f:
-        app_config = json.load(f)
-    servo = TokenServo(app_config.get('public_appid'),
-                          app_config.get('public_secret'),
-                          app_config.get("token_url")
+    redis = Redis(config['redis']['host'], config['redis']['port'])
+    servo = TokenServo(config.get('public_appid'),
+                          config.get('public_secret'),
+                          config.get("token_url")
                          )
     token = servo.get_token()
     redis.set("weixin_api_token",token)
 
 def jsapi_ticket_refresh():
     jsapi_ticket_url = "https://api.weixin.qq.com/cgi-bin/ticket/getticket?access_token={0}&type=jsapi"
-    redis = Redis("localhost", 6379)
+    redis = Redis(config['redis']['host'], config['redis']['port'])
     access_token = redis.get("weixin_api_token").decode()
     jsapi_ticket_url = jsapi_ticket_url.format(access_token)
     servo = JSAPITicketServo(jsapi_ticket_url)
@@ -70,7 +70,7 @@ def jsapi_ticket_refresh():
     redis.set("weixin_jsapi_ticket", ticket)
    
 def create_weixin_menu():
-    redis = Redis("localhost", 6379)
+    redis = Redis(config['redis']['host'], config['redis']['port'])
     access_token = redis.get("weixin_api_token")
     access_token = access_token.decode()
     url = "https://api.weixin.qq.com/cgi-bin/menu/create?access_token={0}"
