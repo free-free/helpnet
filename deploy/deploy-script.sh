@@ -2,7 +2,7 @@
 set -e
 #set -x
 
-APP_PACKAGE_DIR=/home/john/huzhu
+APP_PACKAGE_DIR=/root/project/huzhu/
 APP_DEPLOY_DIR=/var/www/
 NGINX_CONFIG_DIR=$APP_PACKAGE_DIR/deploy/config/nginx
 SUPERVISOR_CONFIG_DIR=$APP_PACKAGE_DIR/deploy/config/supervisor
@@ -11,7 +11,7 @@ install_nginx()
 {
         echo -e "\e[0;33m start to install nginx \e[m"
         yum -y install nginx>>/dev/null
-        nginx_installcation_ok=$(rpm -qa "nginx")
+        nginx_installation_ok=$(rpm -qa "nginx")
         if [ "$nginx_installation_ok" ];then
                 echo -e "\e[0;32m success to install nginx \e[m" 
         else
@@ -45,6 +45,7 @@ check_supervisor(){
         if [ ! "$supervisor_exists" ];then
              install_supervisor
         fi
+
 }
 create_log_dir(){
     mkdir_log_dir_err=$(mkdir -p /var/log/huzhu/{tornado,celery})
@@ -76,7 +77,9 @@ config(){
 start_app(){
     supervisorctl stop all
     supervisor_pid=$(ps -aux |grep supervisord|awk '{print $2,$7}'|grep '?'|awk '{print $1}')
-    kill -9  ${supervisor_pid}
+    if [ "$supervisor_pid" ];then
+        kill -9  ${supervisor_pid}
+    fi
     nginx -s quit >/dev/null 2>&1
     supervisord -c /etc/supervisord.conf > /dev/null 2>&1
     supervisor_pid=$(ps -aux |grep supervisord|awk '{print $2,$7}'|grep '?'|awk '{print $1}')
