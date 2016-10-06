@@ -9,5 +9,5 @@ xmltodict
 requests
 redis
 tornasess
-celery
+celery==3.1.23
 submail
