@@ -2,7 +2,7 @@
 set -e
 #set -x
 
-APP_PACKAGE_DIR=/root/project/huzhu/
+APP_PACKAGE_DIR=/home/john/project/huzhu/
 APP_DEPLOY_DIR=/var/www/
 NGINX_CONFIG_DIR=$APP_PACKAGE_DIR/deploy/config/nginx
 SUPERVISOR_CONFIG_DIR=$APP_PACKAGE_DIR/deploy/config/supervisor
