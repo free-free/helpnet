@@ -53,7 +53,7 @@ class Application(web.Application):
     def __init__(self):
         settings = {
             'template_path': os.path.join(os.path.dirname(__file__), 'views'),
-            'static_path': os.path.join(os.path.dirname(__file__), 'assets'),
+            'static_path': os.path.join(os.path.dirname(__file__), 'static'),
             'login_url': '/login/',
             'cookie_secret': 'MmUyZmU2NmIyNDM4NDc4YWE4OTNiODUzMjhhZTgzM2U3NDU5OGUwNzNlODY0ODI5ODM1MGNmNjcxZmU5M2FjNg==',
             #'xsrf_cookies': True,
