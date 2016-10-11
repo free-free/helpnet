@@ -170,9 +170,8 @@ class UpdatesHelpGetAPIHandler(APIBaseHandler):
         rcd_cnt = 0
         try:
             if last_help_pt <= 0.0:
-                query = {"location":{"$geoWithin":{"$center":[location,0.05]}},"state":0}
-            else:
-                query = {"location":{"$geoWithin":{"$center":[location,0.05]}},"state":0,"posttime":{"$lt":last_help_pt}}
+                last_help_pt = time.time()
+            query = {"location":{"$geoWithin":{"$center":[location,0.05]}},"state":0,"posttime":{"$lt":last_help_pt}}
             cursor = self.application.db['updates_help'].find(query)
             cursor.sort("posttime", -1).limit(rcd_num)
             helpdata=[]
