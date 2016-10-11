@@ -112,6 +112,7 @@ compress_js(){
 deploy_app()
 {
     echo -e "\e[0;33m start to deploy app \e[m"
+    stop_app
     rm -rf /var/www/huzhu/
     check_nginx
     check_supervisor
